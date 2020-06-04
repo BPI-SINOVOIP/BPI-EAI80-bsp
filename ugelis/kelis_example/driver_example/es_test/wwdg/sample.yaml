@@ -1,0 +1,7 @@
+sample:
+  name: GM6721 iwdg sample application
+tests:
+  test:
+    platform_whitelist: gm6721_evb
+    tags: samples
+    depends_on: watchdog

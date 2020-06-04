@@ -35,7 +35,8 @@ extern "C" {
 //#define  F6721B_EVB_144PIN 1
 //#define  F6721B_EVB_176PIN 1
 //#define  F6721B_EVB_QFN40PIN 1
-#define  F6721B_EVB_QFN80PIN 1
+//#define  F6721B_EVB_QFN80PIN 1
+#define  BANPIBOARD_QFN80PIN 1
 
 //#define  GM6721_EVB_QFN40PIN
 //#define  GM6721_EVB_QFN80PIN
@@ -45,6 +46,7 @@ extern "C" {
 #define  CHIP_F6721B
 //#define QFN80_SORTING_BOARD //open when use sorting board, default is demo board
 //#define LQFP176_DEMO_BOARD
+//#define QFN80_DEMO_BOARD_V3 //qfn80 demo board v3.0(black board)
 /**
  *feature for your project
  */
@@ -52,9 +54,9 @@ extern "C" {
 
 
 #define CONFIG_DISPLAY
-#define CONFIG_GT9147   //4.3'touch screen
-//#define CONFIG_FT5426   //7'(800x480) touch screen and 7'(800x480) touch screen
-
+//#define CONFIG_GT9147   //4.3'touch screen
+//#define CONFIG_FT5426   //7'(800x480) touch screen and 7'(1024x600) touch screen
+#define CONFIG_GT911    //7'(800x480) bananapi touch screen
 #ifdef __cplusplus
 }
 #endif

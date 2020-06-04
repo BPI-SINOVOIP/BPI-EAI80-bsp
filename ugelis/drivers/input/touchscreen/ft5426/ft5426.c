@@ -127,14 +127,6 @@ static uint8_t ft5426_init(struct device *dev)
     {
         gpio_pin_configure(data->rst_port, data->rst_pin, GPIO_DIR_OUT);
     }
-    data->int_port = device_get_binding(data->int_port_name);
-    if (data->int_port)
-    {
-        gpio_pin_configure(data->int_port, data->int_pin, GPIO_DIR_OUT);
-    }
-
-    gpio_pin_write(data->int_port, data->int_pin, 1);
-
     gpio_pin_write(data->rst_port, data->rst_pin, 0);
 
     k_sleep(20);

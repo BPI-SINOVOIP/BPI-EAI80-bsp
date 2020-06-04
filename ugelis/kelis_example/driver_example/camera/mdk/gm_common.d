@@ -1,0 +1,12 @@
+.\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\lib\common\gm_common.c
+.\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\lib\common\gm_common.h
+.\gm_common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\gm_common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\lib\common\gm_io.h
+.\gm_common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\lib\common\gm_basic_types.h
+.\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\config\gm_config.h
+.\gm_common.o: ..\..\..\..\include\config.h
+.\gm_common.o: ..\..\camera\prj_config.h
+.\gm_common.o: ..\..\..\..\..\ulibs\hal\cmsis\Include\cmsis_compiler.h
+.\gm_common.o: ..\..\..\..\..\ulibs\hal\cmsis\Include\cmsis_armcc.h

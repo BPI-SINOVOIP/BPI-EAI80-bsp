@@ -1,0 +1,1 @@
+slave bootloader source code has been moved to kabbit\example\bootloader\bootloader\.

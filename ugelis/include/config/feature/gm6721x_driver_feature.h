@@ -252,11 +252,14 @@
 /********************************************/
 /* TOUCHSCREEN Configuration */
 /********************************************/
-#if defined(CONFIG_GT9147) || defined (CONFIG_FT5426)
+#if defined(CONFIG_GT9147) || defined (CONFIG_FT5426) || defined(CONFIG_GT911)
     #define CONFIG_TOUCHSCREEN  1
     #if defined(LQFP176_DEMO_BOARD)
         #define CONFIG_I2C_1    1
         #define TOUCH_I2C_NAME  CONFIG_I2C1
+    #elif defined(BANPIBOARD_QFN80PIN)
+        #define CONFIG_I2C_2    1
+        #define TOUCH_I2C_NAME  CONFIG_I2C2
     #else
         #define CONFIG_TOUCH_I2C_GPIO   1
     #endif
@@ -292,7 +295,17 @@
         #define CONFIG_I2C_GPIO_1_GPIO "GPIOD"
         #define CONFIG_I2C_GPIO_1_SCL_PIN 6
         #define CONFIG_I2C_GPIO_1_SDA_PIN 7
+    #elif defined(QFN80_DEMO_BOARD_V3)
+        /*qfn80 demo board v3.0(black board)*/
+        #define CONFIG_I2C_GPIO_1_GPIO "GPIOC"
+        #define CONFIG_I2C_GPIO_1_SCL_PIN 10
+        #define CONFIG_I2C_GPIO_1_SDA_PIN 11
+    #elif defined(BANPIBOARD_QFN80PIN)
+        #define CONFIG_I2C_GPIO_1_GPIO "GPIOC"
+        #define CONFIG_I2C_GPIO_1_SCL_PIN 9
+        #define CONFIG_I2C_GPIO_1_SDA_PIN 8
     #else
+        /*qfn80 demo board v2.0*/
         #define CONFIG_I2C_GPIO_1_GPIO "GPIOC"
         #define CONFIG_I2C_GPIO_1_SCL_PIN 9
         #define CONFIG_I2C_GPIO_1_SDA_PIN 11

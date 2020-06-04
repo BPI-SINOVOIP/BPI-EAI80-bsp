@@ -58,7 +58,7 @@ extern "C" {
 #define CONFIG_POLL
 
 #define CONFIG_DISPLAY
-//#define CONFIG_LCD800x480
+#define CONFIG_LCD800x480
 //#define CONFIG_LCD1024x600
 
 //#define CONFIG_GT9147   //4.3'touch screen

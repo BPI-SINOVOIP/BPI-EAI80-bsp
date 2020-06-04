@@ -26,7 +26,7 @@ K_SYSCALL_DECLARE5(K_SYSCALL_FB_MIX_COLORS, fb_mix_colors, int, struct device *,
 
 K_SYSCALL_DECLARE7(K_SYSCALL_FB_CONVERT_COLOR, fb_convert_color, int, struct device *, dev, void *, src, void *, dst, uint32_t, src_pixfmt, uint32_t, dst_pixfmt, uint32_t, xsize, uint32_t, ysize);
 
-K_SYSCALL_DECLARE9(K_SYSCALL_FB_MIX_COLORSBULK, fb_mix_colorsbulk, int, struct device *, dev, uint32_t *, fg_color, uint32_t *, bg_color, uint32_t *, dst, uint8_t, alpha, uint32_t, pixel_num, uint32_t, input_fmt_fg, uint32_t, input_fmt_bg, uint32_t, output_fmt);
+K_SYSCALL_DECLARE2(K_SYSCALL_FB_MIX_COLORSBULK, fb_mix_colorsbulk, int, struct device *, dev, const struct fb_mixcolorbulk *, mixcolorbulk);
 
 K_SYSCALL_DECLARE8(K_SYSCALL_FB_DRAW_BITMAPL8, fb_draw_bitmapl8, int, struct device *, dev, void *, src, void *, dst, uint32_t, offline_src, uint32_t, offline_dst, uint32_t, pixfmt, uint32_t, xsize, uint32_t, ysize);
 

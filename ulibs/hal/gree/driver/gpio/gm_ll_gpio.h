@@ -1638,8 +1638,8 @@ typedef enum
 #define GPIOC2_AF2_I2C1_SCL                 ((uint8_t)0x02)    /**< I2C1_SCL alternate function mapping */
 #define GPIOC3_AF2_I2C1_SDA                 ((uint8_t)0x02)    /**< I2C1_SDA alternate function mapping */
 #define GPIOC5_AF2_UART4_RX                 ((uint8_t)0x02)    /**< UART4_RX alternate function mapping */
-#define GPIOC8_AF2_I2C2_SCL                 ((uint8_t)0x02)    /**< I2C2_SCL alternate function mapping */
-#define GPIOC9_AF2_I2C2_SDA                 ((uint8_t)0x02)    /**< I2C2_SDA alternate function mapping */
+#define GPIOC9_AF2_I2C2_SCL                 ((uint8_t)0x02)    /**< I2C2_SCL alternate function mapping */
+#define GPIOC8_AF2_I2C2_SDA                 ((uint8_t)0x02)    /**< I2C2_SDA alternate function mapping */
 #define GPIOC10_AF2_I2C0_SCL                ((uint8_t)0x02)    /**< I2C0_SCLalternate function mapping */
 #define GPIOC11_AF2_I2C0_SDA                ((uint8_t)0x02)    /**< I2C0_SDA alternate function mapping */
 #define GPIOC12_AF2_SPI0_SS                 ((uint8_t)0x02)    /**< SPI0_SS   alternate function mapping */

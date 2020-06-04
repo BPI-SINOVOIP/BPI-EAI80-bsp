@@ -56,12 +56,12 @@ typedef struct
  * Specify macros of Callback
  * @{
  */
-typedef void (*Timer_Callback) (int);
+typedef void (*Timer_Callback)(int);
 
 typedef enum
 {
-	HAL_RTC_ALARM = 0,
-	HAL_RTC_TIMER = 1,
+    HAL_RTC_ALARM = 0,
+    HAL_RTC_TIMER = 1,
 } Rtc_Callback_T;
 
 /**
@@ -73,9 +73,9 @@ typedef enum
  */
 typedef enum
 {
-    HAL_RTC_CLOCK_LIRC	            = 0, /**< RTC clock is sourced by LIRC */
-    HAL_RTC_CLOCK_LOSC                ,  /**< RTC clock is sourced by LOSC */
-    HAL_RTC_CLOCK_HOSC                ,  /**< RTC clock is sourced by HOSC/HOSC_DIV_RTC */
+    HAL_RTC_CLOCK_LIRC              = 0, /**< RTC clock is sourced by LIRC */
+    HAL_RTC_CLOCK_LOSC,                  /**< RTC clock is sourced by LOSC */
+    HAL_RTC_CLOCK_HOSC,                  /**< RTC clock is sourced by HOSC/HOSC_DIV_RTC */
 } HAL_RTC_Clock_T;
 
 /**
@@ -97,17 +97,26 @@ typedef struct
  * RTC about power pin
  *
  */
-
+#if defined(CHIP_GM6721)
 typedef enum
 {
-    RTC_WAKEUP_PIN_XPA7              = 0 ,
-    RTC_WAKEUP_PIN_XPA8                  ,
+    RTC_WAKEUP_PIN_XPA7              = 0,
+    RTC_WAKEUP_PIN_XPA8,
+} RTC_PowerPin_T;
+#elif defined(CHIP_F6721B)
+typedef enum
+{
+    RTC_WAKEUP_PIN_XPB12              = 0,
+    RTC_WAKEUP_PIN_XPB13,
 } RTC_PowerPin_T;
 
+#endif
+
+
 typedef enum
 {
-  	RTC_WKPIN_RISING_EDGE      = 0,
-    RTC_WKPIN_FALLING_EDGE        ,
+    RTC_WKPIN_RISING_EDGE      = 0,
+    RTC_WKPIN_FALLING_EDGE,
 } RTC_PowerPinVaildTpye_T;
 
 
@@ -172,7 +181,7 @@ void HAL_RTC_SetTickSecond(const Time_T *pTime);
  * @param   pTime   the seconds which are needed to be converted.
  * @retval  Return the corresponding utc time structure.
  */
-UTCTime_T* HAL_RTC_ConvertToUtcTime(const Time_T *pTime);
+UTCTime_T *HAL_RTC_ConvertToUtcTime(const Time_T *pTime);
 
 /**
  * @brief Convert UTC time to Time_T seconds.
@@ -246,7 +255,7 @@ void HAL_RTC_SetDate(uint32_t year, uint32_t mon, uint32_t day);
  * @retval          None.
  */
 RET_CODE HAL_RTC_SetDateTime(uint32_t year, uint32_t mon, uint32_t day,
-                     uint32_t hour, uint32_t min, uint32_t sec);
+                             uint32_t hour, uint32_t min, uint32_t sec);
 
 /**
  * @brief Get UTC time.
@@ -254,13 +263,13 @@ RET_CODE HAL_RTC_SetDateTime(uint32_t year, uint32_t mon, uint32_t day,
  * @param               None.
  * @retval  UTCTime_T*  Current time with UTC format.
  */
-UTCTime_T* HAL_RTC_GetTime(void);
+UTCTime_T *HAL_RTC_GetTime(void);
 
 /**
  * @brief Enable the trigger event from RTC to the ACMP module.
  *
  * @param               None.
- * @retval				None.
+ * @retval              None.
  */
 void HAL_RTC_TriggerACMPEnable(void);
 

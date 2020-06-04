@@ -26,8 +26,8 @@
 /* Code 128 specific decode state */
 typedef struct code128_decoder_s {
 #if 1//Evan: some embeded compiler will be not correct if bit filed character is set to -1, so not use bit filed
-    unsigned direction;         /* scan direction: 0=fwd/space, 1=rev/bar */
-    unsigned element;           /* element offset 0-5 */
+    unsigned direction : 13;    /* scan direction: 0=fwd/space, 1=rev/bar */
+    unsigned element : 3;       /* element offset 0-5 */
     int character;              /* character position in symbol */
 #else
     unsigned direction : 1;     /* scan direction: 0=fwd/space, 1=rev/bar */

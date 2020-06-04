@@ -174,7 +174,7 @@ zbar_symbol_type_t zbar_decoder_get_type (const zbar_decoder_t *dcode)
     return(dcode->type);
 }
 
-zbar_symbol_type_t zbar_decode_width (zbar_decoder_t *dcode,
+inline zbar_symbol_type_t zbar_decode_width (zbar_decoder_t *dcode,
                                       unsigned w)
 {
     dcode->w[dcode->idx & (DECODE_WINDOW - 1)] = w;

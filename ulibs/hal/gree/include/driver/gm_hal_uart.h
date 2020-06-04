@@ -45,6 +45,20 @@ struct UART_Handle;
  * @}
  */
 
+
+/**
+ * @defgroup kind of UART_CLOCK or UART_BAUDRATE
+ * @brief Specify UART clock and baudrate data macro
+ * @{
+ */
+#define UART_CLOCK_8M                       (8000000)
+#define UART_BAUDRATE_19200                 (19200)
+#define UART_CLOCK_48M                      (48000000)
+#define UART_BAUDRATE_115200                (115200)
+/**
+ * @}
+ */
+
 /**
  * @defgroup UART_DATABITS_COUNT
  * @brief Specify UART data bit count

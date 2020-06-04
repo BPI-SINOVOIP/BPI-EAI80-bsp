@@ -23,7 +23,11 @@
         lvd  = &lvd;
         camera0 = &camera0;
 		camera1 = &camera1;
-		camera2 = &camera2;
+        sccb0 = &sccb0;
+        sccb1 = &sccb1;
+        i2c0 = &i2c0;
+        i2c1 = &i2c1;
+        i2c2 = &i2c2;
 		tim1 = &tim1;
 		tim2 = &tim2;
 		tim3 = &tim3;
@@ -35,7 +39,7 @@
 	};
 
 	chosen {
-		ugelis,console = &uart1;
+		ugelis,console = &uart2;
         ugelis,sram = &sram0;
         #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
         ugelis,sdram = &sdram0;
@@ -93,50 +97,93 @@
 };
 
 &vout {
-       vbp = <8>;                        //<20>;
-       vfp = <8>;                        //<12>;
-       hbp = <40>;                       //<140>;
-       hfp = <5>;                        //<160>;
-       vsw = <1>;                        //<3>;
-       hsw = <1>;                        //<20>;
-       pllsain = <16>;                  //<52>;
-       pllsaiq = <8>;                    //<8>;
-       pllsaidivr = <4>;        //<0>;
-       width = <480>;                    //<1024>;
-       height = <272>;                   //<600>;
+#if defined (CONFIG_LCD1024x600)
+       vbp = <20>;
+       vfp = <12>;
+       hbp = <140>;
+       hfp = <160>;
+       vsw = <3>;
+       hsw = <20>;
+       pllsain = <170>;
+       pllsaiq = <2>;
+       pllsaidivr = <3>;
+       width = <1024>;
+       height = <600>;
+#elif defined(CONFIG_LCD800x480)
+       vbp = <23>;
+       vfp = <22>;
+       hbp = <46>;
+       hfp = <210>;
+       vsw = <10>;
+       hsw = <20>;
+       pllsain = <150>;
+       pllsaiq = <2>;
+       pllsaidivr = <4>;
+       width = <800>;
+       height = <480>;
+#else
+       vbp = <8>;
+       vfp = <8>;
+       hbp = <40>;
+       hfp = <5>;
+       vsw = <1>;
+       hsw = <1>;
+       pllsain = <0>;
+       pllsaiq = <8>;
+       pllsaidivr = <4>;
+       width = <480>;
+       height = <272>;
+#endif
        status = "ok";
 };
 
 &camera0 {
-       gpio_rst_port = "GPIOE";
-       gpio_rst_pin  =  <10>;
-       gpio_pwdn_port = "GPIOE";
-       gpio_pwdn_pin  =  <12>;
+       gpio_rst_port = "GPIOJ";
+       gpio_rst_pin  =  <2>;
+       gpio_pwdn_port = "GPIOJ";
+       gpio_pwdn_pin  =  <3>;
+       gpio_scl_port = "GPIOI";
+       gpio_scl_pin  =  <2>;
+       gpio_sda_port = "GPIOI";
+       gpio_sda_pin  =  <3>;
+#if defined (CONFIG_OV5640)||defined(OV7725)||defined(BF3007)
        pclk_polarity  =  <1>;
        hsync_polarity =  <0>;
        vsync_polarity  =  <0>;
+#elif defined (CONFIG_GC0308)
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <1>;
+#elif defined (CONFIG_GC2145)
+       pclk_polarity  =  <0>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <1>;
+#endif
        status = "ok";
 };
 
 &camera1 {
-       gpio_rst_port = "GPIOG";
-       gpio_rst_pin  =  <11>;
-       gpio_pwdn_port = "GPIOG";
-       gpio_pwdn_pin  =  <7>;
+       gpio_rst_port = "GPIOE";
+       gpio_rst_pin  =  <7>;
+       gpio_pwdn_port = "GPIOE";
+       gpio_pwdn_pin  =  <8>;
+       gpio_scl_port = "GPIOE";
+       gpio_scl_pin  =  <6>;
+       gpio_sda_port = "GPIOE";
+       gpio_sda_pin  =  <5>;
+#if defined (CONFIG_OV5640)||defined(OV7725)||defined(BF3007)
        pclk_polarity  =  <1>;
        hsync_polarity =  <0>;
        vsync_polarity  =  <0>;
-       status = "ok";
-};
-
-&camera2 {
-       gpio_scl_port = "GPIOI";
-       gpio_scl_pin  =  <0>;
-       gpio_sda_port = "GPIOI";
-       gpio_sda_pin  =  <1>;
+#elif defined (CONFIG_GC0308)
        pclk_polarity  =  <1>;
        hsync_polarity =  <0>;
-       vsync_polarity  =  <0>;
+       vsync_polarity  =  <1>;
+#elif defined (CONFIG_GC2145)
+       pclk_polarity  =  <0>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <1>;
+#endif
        status = "ok";
 };
 
@@ -144,6 +191,26 @@
       status = "ok";
 };
 &imp {
+	status = "ok";
+};
+
+&sccb0 {
+	status = "ok";
+};
+
+&sccb1 {
+	status = "ok";
+};
+
+&i2c0 {
+	status = "ok";
+};
+
+&i2c1 {
+	status = "ok";
+};
+
+&i2c2 {
 	status = "ok";
 };
 &iwdg {
@@ -202,11 +269,14 @@
 };
 
 &power {
-
-       wkpin_xpa0_vaild_edge  =  <0>; // 0: falling edge  1:rasing edge
-       wkpin_xpa7_vaild_edge  =  <0>; // 0: falling edge  1:rasing edge
-       wkpin_xpa8_vaild_edge  =  <0>; // 0: falling edge  1:rasing edge
-       status = "ok";
+       wkpin_xpa0_status                =  <1>; // 0: disable    1: enable
+       wkpin_xpa0_valid_edge            =  <1>; // 0: rising edge  1:falling edge
+       wkpin_xpb12_status               =  <0>; // 0: disable    1: enable
+       wkpin_xpb12_valid_edge           =  <0>; // 0: rising edge  1:falling edge
+       wkpin_xpb13_status               =  <1>; // 0: disable    1: enable
+       wkpin_xpb13_valid_edge           =  <1>; // 0: rising edge  1:falling edge
+       pm_hash_status                   =  <1>; // 0: disable    1: enable
+       pm_shutdown_status_pin_inv       =  <1>; // 0: when system enter shutdown mode,status pin is High,when wake up,shut down pin is Low; 1:inverse
 };
 
 &sflash {

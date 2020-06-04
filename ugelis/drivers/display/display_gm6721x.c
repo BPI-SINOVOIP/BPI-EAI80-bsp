@@ -382,7 +382,7 @@ static inline int vout_gm6721x_convert_color(struct device *dev, void *src, void
  * @retval 0 If successful.
  * @retval Negative errno code if failure.
  */
-static inline int vout_gm6721x_mix_colorsbulk(struct device *dev, uint32_t *fg_addr, uint32_t *bg_addr, uint32_t *dst, uint8_t alpha, uint32_t pixel_num, uint32_t input_fmt_fg, uint32_t input_fmt_bg, uint32_t output_fmt)
+static inline int vout_gm6721x_mix_colorsbulk(struct device *dev, const struct fb_mixcolorbulk *mixcolorbulk)
 {
     struct vout_gm6721x_data *data = DEV_DATA(dev);
     IMP_Device_T *pIMP = IMP_STRUCT(dev);
@@ -395,29 +395,29 @@ static inline int vout_gm6721x_mix_colorsbulk(struct device *dev, uint32_t *fg_a
 
     memset(&config, 0, sizeof(IMP_Config_T));
     config.mode = IMP_M2M_BLEND;
-    config.colorMode = output_fmt;
+    config.colorMode = mixcolorbulk->dst_pixfmt;
     config.outputOffset = 0;
     HAL_IMP_Init(pIMP, &config);
 
     memset(&layerCfg, 0, sizeof(IMP_LayerCfg_T));
-    layerCfg.inputColorMode = input_fmt_fg;
+    layerCfg.inputColorMode = mixcolorbulk->fg_pixfmt;
     layerCfg.inputOffset = 0;
     layerCfg.alphaMode = IMP_REPLACE_ALPHA;
-    layerCfg.inputAlpha = 255 - alpha;
+    layerCfg.inputAlpha = 255 - mixcolorbulk->alpha;
 
     HAL_IMP_ConfigLayer(pIMP, &layerCfg, 0);
 
-    layerCfg.inputColorMode = input_fmt_bg;
+    layerCfg.inputColorMode = mixcolorbulk->bg_pixfmt;
     layerCfg.inputOffset = 0;
     layerCfg.alphaMode = IMP_REPLACE_ALPHA;
-    layerCfg.inputAlpha = alpha;
+    layerCfg.inputAlpha = mixcolorbulk->alpha;
     HAL_IMP_ConfigLayer(pIMP, &layerCfg, 1);
 
     memset(&scaleCfg, 0, sizeof(IMP_ScaleCfg_T));
     scaleCfg.enable = FALSE;
-    scaleCfg.oriWidth = pixel_num;
-    scaleCfg.oriHeight = 1;
-    HAL_IMP_BlendingStart(pIMP, (uint32_t)fg_addr, (uint32_t)bg_addr, (uint32_t)dst, &scaleCfg);
+    scaleCfg.oriWidth = mixcolorbulk->xsize;
+    scaleCfg.oriHeight = mixcolorbulk->ysize;
+    HAL_IMP_BlendingStart(pIMP, (uint32_t)mixcolorbulk->fg_addr, (uint32_t)mixcolorbulk->bg_addr, (uint32_t)mixcolorbulk->dst_addr, &scaleCfg);
 
     while (__HAL_IMP_GET_FLAG(pIMP, IMP_FLAG_TC) == 0)
     {
@@ -489,30 +489,67 @@ static inline int vout_gm6721x_draw_bitmapl8(struct device *dev, void *src, void
     return 0;
 }
 
-static int asm inline fast_floorf_in(float x)
+#ifdef __USE_KEIL_
+static int asm fast_floorf_in(float x)
 {
     VCVT.S32.F32 S2, S0
     VMOV  R0, S2
     BX LR
 }
 
-static int inline fast_floorf(float x)
+static int fast_floorf(float x)
 {
     return fast_floorf_in(x);
 }
-static int asm inline fast_roundf_in(float x)
+
+static int asm fast_roundf_in(float x)
 {
     VCVTR.S32.F32 S2, S0
     VMOV  R0, S2
     BX LR
 }
 
-static int inline fast_roundf(float x)
+static int fast_roundf(float x)
 {
     return fast_roundf_in(x);
 }
+#else
+static int inline fast_floorf_in(float x)
+{
+    int i;
 
-static inline int vout_gm6721x_scaler(struct device *dev, const struct fb_scalerinfo *param)
+    __asm__ volatile(
+                    "vcvt.S32.f32  %[r], %[x]\n"
+                    : [r] "=t"(i)
+                    : [x] "t"(x));
+
+    return i;
+}
+
+static int fast_floorf(float x)
+{
+    return fast_floorf_in(x);
+}
+
+static int inline fast_roundf_in(float x)
+{
+    int i;
+
+    __asm__ volatile(
+                    "vcvtr.s32.f32  %[r], %[x]\n"
+                    : [r] "=t"(i)
+                    : [x] "t"(x));
+
+    return i;
+}
+
+static int fast_roundf(float x)
+{
+    return fast_roundf_in(x);
+}
+#endif
+
+static int vout_gm6721x_scaler(struct device *dev, const struct fb_scalerinfo *param)
 {
     struct vout_gm6721x_data *data = DEV_DATA(dev);
     IMP_Device_T *pIMP = IMP_STRUCT(dev);
@@ -582,7 +619,7 @@ static inline int vout_gm6721x_scaler(struct device *dev, const struct fb_scaler
  * @retval 0 If successful.
  * @retval Negative errno code if failure.
  */
-static inline int vout_gm6721x_ioctl(struct device *dev, uint8_t layer_index, uint32_t cmd, void *arg)
+static int vout_gm6721x_ioctl(struct device *dev, uint8_t layer_index, uint32_t cmd, void *arg)
 {
     const struct vout_gm6721x_config *cfg = DEV_CFG(dev);
     VOUT_Device_T *pVOUT = VOUT_STRUCT(dev);

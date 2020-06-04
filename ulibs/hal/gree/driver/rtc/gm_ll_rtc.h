@@ -54,16 +54,16 @@ typedef struct
     __IO uint32_t WAKEUPT1;         /**< RTC Wakeup Timer Register1,                offset: 0x4C        */
     __IO uint32_t PES;              /**< RTC Event System Control Register,         offset: 0x50        */
     __IO uint32_t SPECIAL;          /**< RTC Special Register,                      offset: 0x54        */
-	__IO uint32_t RTCIOCTRL;		/**< RTC Special_IO_CONTROL_REGISTER,			offset: 0x58		*/
+    __IO uint32_t RTCIOCTRL;        /**< RTC Special_IO_CONTROL_REGISTER,           offset: 0x58        */
     __IO uint32_t RESV3[9];         /**< RTC Reserved Space,                                0x5A~0x7C   */
-	__IO uint32_t BACKUP[20];    	/**< RTC Backup Register0~19,                   0x80~0xCC           */
-	__IO uint32_t RESV4[11];        /**< RTC Reserved Space,                                0xD0~0xF8   */
+    __IO uint32_t BACKUP[20];       /**< RTC Backup Register0~19,                   0x80~0xCC           */
+    __IO uint32_t RESV4[11];        /**< RTC Reserved Space,                                0xD0~0xF8   */
     __IO uint32_t VER;              /**< RTC Version Register,                      offset: 0xFC        */
 } RTC_Device_T;
 
-#define RTC							((RTC_Device_T *)RTC_TOP_BASE)
+#define RTC                         ((RTC_Device_T *)RTC_TOP_BASE)
 
-#define LL_RTC_MASK_ALL				(0xFFFFFFFF)
+#define LL_RTC_MASK_ALL             (0xFFFFFFFF)
 
 typedef enum
 {
@@ -112,7 +112,7 @@ typedef enum
 #define LL_RTC_BCD_DAY(day)                (((LL_RTC_BCD_H(day))<<4)|((LL_RTC_BCD_L(day))<<0))
 #define LL_RTC_BCD_WEEK(week)              ((LL_RTC_BCD_L(week))<<0)
 #define LL_RTC_BCD_TIME(h,m,s,ampm)        (((LL_RTC_BCD_L(ampm))<<22)|((LL_RTC_BCD_H(h))<<20)|((LL_RTC_BCD_L(h))<<16)|((LL_RTC_BCD_H(m))<<12)|((LL_RTC_BCD_L(m))<<8)|\
-                                    		((LL_RTC_BCD_H(s))<<4)|((LL_RTC_BCD_L(s))<<0))
+        ((LL_RTC_BCD_H(s))<<4)|((LL_RTC_BCD_L(s))<<0))
 #define LL_RTC_BCD_DATE(y,m,d,w)           ((y<<LL_RTC_BIN_YEAR_POS)|(m<<LL_RTC_BIN_MONTH_POS)|(d<<LL_RTC_BIN_DAY_POS)|(w<<LL_RTC_BIN_WEEK_POS))
 #define LL_RTC_BCD_YEAR_HIGH_GET_VALUE(v)  ((((v)&(0x3<<28))>>24)|(((v)&(0xF<<24))>>24))
 #define LL_RTC_BCD_YEAR_LOW_GET_VALUE(v)   ((((v)&(0xF<<20))>>16)|(((v)&(0xF<<16))>>16))
@@ -215,11 +215,11 @@ typedef enum
 
 /**< Bin Mode */
 #define LL_RTC_ALARM_BIN_TIME(wd, day, h, m, s, ampm) (((wd)<<LL_RTC_ALARM_WD_POS)|((day)<<LL_RTC_ALARM_DAY_POS)|((ampm)<<LL_RTC_ALARM_AMPM_POS)|\
-                                                ((h)<<LL_RTC_ALARM_HOUR_POS)|((m)<<LL_RTC_ALARM_MIN_POS)|((s)<<LL_RTC_ALARM_SEC_POS))
+        ((h)<<LL_RTC_ALARM_HOUR_POS)|((m)<<LL_RTC_ALARM_MIN_POS)|((s)<<LL_RTC_ALARM_SEC_POS))
 /**< Bcd Mode */
 #define LL_RTC_ALARM_BCD_TIME(wd, day, h, m, s, ampm) (((LL_RTC_BCD_L(ampm))<<22)|((LL_RTC_BCD_H(h))<<20)|((LL_RTC_BCD_L(h))<<16)|\
-                                                ((LL_RTC_BCD_H(m))<<12)|((LL_RTC_BCD_L(m))<<8)|((LL_RTC_BCD_H(s))<<4)|\
-                                                ((LL_RTC_BCD_L(s))<<0)|((LL_RTC_BCD_H(day))<<28)|((LL_RTC_BCD_L(day))<<24)|((LL_RTC_BCD_L(wd))<<30))
+        ((LL_RTC_BCD_H(m))<<12)|((LL_RTC_BCD_L(m))<<8)|((LL_RTC_BCD_H(s))<<4)|\
+        ((LL_RTC_BCD_L(s))<<0)|((LL_RTC_BCD_H(day))<<28)|((LL_RTC_BCD_L(day))<<24)|((LL_RTC_BCD_L(wd))<<30))
 
 /*************** RTC Timestamp Bitfiled ******************/
 #define LL_RTC_TIMESTAMP_SUBSECOND_POS     (16)
@@ -263,15 +263,15 @@ typedef enum
 #define LL_RTC_SOFT_TST2           (0x1<<3)
 #define LL_RTC_SOFT_TST            (0x1<<2)
 
-#define LL_RTC_ACMP_SEL_WAKEUP4		(0x5<<17)
-#define LL_RTC_EV_SEL_WAKEUP4		(0xF<<13)
-#define LL_RTC_EV_SEL_ALARM			(0x4<<13)
-#define LL_RTC_EV_SEL_TAMPER1		(0x1<<13)
-#define LL_RTC_EV_SEL_TAMPER2		(0x2<<13)
+#define LL_RTC_ACMP_SEL_WAKEUP4     (0x5<<17)
+#define LL_RTC_EV_SEL_WAKEUP4       (0xF<<13)
+#define LL_RTC_EV_SEL_ALARM         (0x4<<13)
+#define LL_RTC_EV_SEL_TAMPER1       (0x1<<13)
+#define LL_RTC_EV_SEL_TAMPER2       (0x2<<13)
 
 
 /*************** RTC Special IO CONTROL Bitfiled ******************/
-
+#if defined(CHIP_GM6721)
 #define LL_RTC_RTCIOCTRL_XPA7_WKEN_POS          (0)
 #define LL_RTC_RTCIOCTRL_XPA7_WKEN_MASK         ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPA7_WKEN_POS))
 #define LL_RTC_RTCIOCTRL_XPA7_EDGE_SEL_POS      (1)
@@ -292,18 +292,53 @@ typedef enum
 
 
 #define LL_RTC_XPA7_WAKEUP_EN(pDev, val)        IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPA7_WKEN_MASK,\
-																		 (val)<< LL_RTC_RTCIOCTRL_XPA7_WKEN_POS)
+        (val)<< LL_RTC_RTCIOCTRL_XPA7_WKEN_POS)
 #define LL_RTC_XPA8_WAKEUP_EN(pDev, val)        IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPA8_WKEN_MASK,\
-																		 (val)<< LL_RTC_RTCIOCTRL_XPA8_WKEN_POS)
+        (val)<< LL_RTC_RTCIOCTRL_XPA8_WKEN_POS)
 #define LL_RTC_XPA7_SEL_EDGE_VAILD(pDev, val)   IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPA7_EDGE_SEL_MASK,\
-																		 (val)<< LL_RTC_RTCIOCTRL_XPA7_EDGE_SEL_POS)
+        (val)<< LL_RTC_RTCIOCTRL_XPA7_EDGE_SEL_POS)
 #define LL_RTC_XPA8_SEL_EDGE_VAILD(pDev, val)   IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPA8_EDGE_SEL_MASK,\
-																		 (val)<< LL_RTC_RTCIOCTRL_XPA8_EDGE_SEL_POS)
+        (val)<< LL_RTC_RTCIOCTRL_XPA8_EDGE_SEL_POS)
 
 #define LL_RTC_XPA7_CLEAR_WAKEUP_PENDING(pDev)  IO_BIT_SET(pDev->RTCIOCTRL ,LL_RTC_RTCIOCTRL_XPA7_WKPEND_MASK)
 #define LL_RTC_XPA8_CLEAR_WAKEUP_PENDING(pDev)  IO_BIT_SET(pDev->RTCIOCTRL ,LL_RTC_RTCIOCTRL_XPA8_WKPEND_MASK)
 #define LL_RTC_IS_XPA7_WAKEUP_PENGING(pDev)     (!!(pDev->RTCIOCTRL & LL_RTC_RTCIOCTRL_XPA7_WKPEND_MASK))
 #define LL_RTC_IS_XPA8_WAKEUP_PENGING(pDev)     (!!(pDev->RTCIOCTRL & LL_RTC_RTCIOCTRL_XPA8_WKPEND_MASK))
+
+#elif defined(CHIP_F6721B)
+#define LL_RTC_RTCIOCTRL_XPB12_WKEN_POS          (0)
+#define LL_RTC_RTCIOCTRL_XPB12_WKEN_MASK         ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB12_WKEN_POS))
+#define LL_RTC_RTCIOCTRL_XPB12_EDGE_SEL_POS      (1)
+#define LL_RTC_RTCIOCTRL_XPB12_EDGE_SEL_MASK     ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB12_EDGE_SEL_POS))
+#define LL_RTC_RTCIOCTRL_XPB12_PEND_CLEAR_POS    (2)
+#define LL_RTC_RTCIOCTRL_XPB12_PEND_CLEAR_MASK   ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB12_PEND_CLEAR_POS))
+#define LL_RTC_RTCIOCTRL_XPB13_WKEN_POS          (3)
+#define LL_RTC_RTCIOCTRL_XPB13_WKEN_MASK         ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB13_WKEN_POS))
+#define LL_RTC_RTCIOCTRL_XPB13_EDGE_SEL_POS      (4)
+#define LL_RTC_RTCIOCTRL_XPB13_EDGE_SEL_MASK     ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB13_EDGE_SEL_POS))
+#define LL_RTC_RTCIOCTRL_XPB13_PEND_CLEAR_POS    (5)
+#define LL_RTC_RTCIOCTRL_XPB13_PEND_CLEAR_MASK   ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB13_PEND_CLEAR_POS))
+
+#define LL_RTC_RTCIOCTRL_XPB12_WKPEND_POS        (8)
+#define LL_RTC_RTCIOCTRL_XPB12_WKPEND_MASK       ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB12_WKPEND_POS))
+#define LL_RTC_RTCIOCTRL_XPB13_WKPEND_POS        (9)
+#define LL_RTC_RTCIOCTRL_XPB13_WKPEND_MASK       ((uint32_t)(0x01<<LL_RTC_RTCIOCTRL_XPB13_WKPEND_POS))
+
+
+#define LL_RTC_XPB12_WAKEUP_EN(pDev, val)        IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPB12_WKEN_MASK,\
+        (val)<< LL_RTC_RTCIOCTRL_XPB12_WKEN_POS)
+#define LL_RTC_XPB13_WAKEUP_EN(pDev, val)        IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPB13_WKEN_MASK,\
+        (val)<< LL_RTC_RTCIOCTRL_XPB13_WKEN_POS)
+#define LL_RTC_XPB12_SEL_EDGE_VAILD(pDev, val)   IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPB12_EDGE_SEL_MASK,\
+        (val)<< LL_RTC_RTCIOCTRL_XPB12_EDGE_SEL_POS)
+#define LL_RTC_XPB13_SEL_EDGE_VAILD(pDev, val)   IO_BITMASK_SET(pDev->RTCIOCTRL,LL_RTC_RTCIOCTRL_XPB13_EDGE_SEL_MASK,\
+        (val)<< LL_RTC_RTCIOCTRL_XPB13_EDGE_SEL_POS)
+
+#define LL_RTC_XPB12_CLEAR_WAKEUP_PENDING(pDev)  IO_BIT_SET(pDev->RTCIOCTRL ,LL_RTC_RTCIOCTRL_XPB12_WKPEND_MASK)
+#define LL_RTC_XPB13_CLEAR_WAKEUP_PENDING(pDev)  IO_BIT_SET(pDev->RTCIOCTRL ,LL_RTC_RTCIOCTRL_XPB13_WKPEND_MASK)
+#define LL_RTC_IS_XPB12_WAKEUP_PENGING(pDev)     (!!(pDev->RTCIOCTRL & LL_RTC_RTCIOCTRL_XPB12_WKPEND_MASK))
+#define LL_RTC_IS_XPB13_WAKEUP_PENGING(pDev)     (!!(pDev->RTCIOCTRL & LL_RTC_RTCIOCTRL_XPB13_WKPEND_MASK))
+#endif
 
 #define SYS_PWR_MODE_REG                        (*(volatile uint32_t *)(0x40000018))
 #define BKP_WR_UNLOCK()                         (SYS_PWR_MODE_REG |= (uint32_t)(1<<12))
@@ -315,7 +350,7 @@ typedef enum
  * @brief Open RTC register protection.
  *
  * @param               None.
- * @retval				None.
+ * @retval              None.
  */
 void HAL_RTC_Unlock(void);
 
@@ -323,7 +358,7 @@ void HAL_RTC_Unlock(void);
  * @brief Close RTC register protection.
  *
  * @param               None.
- * @retval				None.
+ * @retval              None.
  */
 void HAL_RTC_Lock(void);
 
@@ -333,7 +368,7 @@ uint32_t HAL_RTC_CanReadSafely(void);
  * @brief Waiting for the finish of RTC initialization.
  *
  * @param               None.
- * @retval				None.
+ * @retval              None.
  */
 void HAL_RTC_WaitClockReady(void);
 

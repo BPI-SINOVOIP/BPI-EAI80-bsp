@@ -46,15 +46,16 @@ extern "C" {
 #undef CHIP_GM6721
 #define CHIP_F6721B                         1
 
-#define SDRAM_8M_PM
+//#define SDRAM_8M_PM
 //#define SDRAM_16M_PM
 //#define SDRAM_32M_PM
 //#define SDRAM_64M_PM
 
 //#define SDRAM_HASH_TEST
 
-#ifdef SDRAM_HASH_TEST
+#define HASH_ADDR_START    (0xc0000400)
 
+#if 0
 #ifdef SDRAM_8M_PM
 #define HASH_ADDR_START    (0xc0000400)
 #define HASH_SIZE       (1024*1024*8-1024)
@@ -74,7 +75,6 @@ extern "C" {
 #define HASH_ADDR_START    (0xc0000400)
 #define HASH_SIZE       (1024*1024*64-1024)
 #endif
-
 #endif
 
 

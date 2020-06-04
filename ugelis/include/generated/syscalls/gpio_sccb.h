@@ -10,11 +10,11 @@
 extern "C" {
 #endif
 
-K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_START, gpio_sccb_start, int, struct device *, dev);
-K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_STOP, gpio_sccb_stop, int, struct device *, dev);
-K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_NACK, gpio_sccb_nack, int, struct device *, dev);
-K_SYSCALL_DECLARE2(K_SYSCALL_SCCB_SENDBYTE, gpio_sccb_sendbyte, uint8_t, struct device *, dev, uint8_t, data);
-K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_READBYTE, gpio_sccb_readbyte, uint8_t, struct device *, dev);
+K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_START, sccb_start, int, struct device *, dev);
+K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_STOP, sccb_stop, int, struct device *, dev);
+K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_NACK, sccb_nack, int, struct device *, dev);
+K_SYSCALL_DECLARE2(K_SYSCALL_SCCB_SENDBYTE, sccb_sendbyte, uint8_t, struct device *, dev, uint8_t, data);
+K_SYSCALL_DECLARE1(K_SYSCALL_SCCB_READBYTE, sccb_readbyte, uint8_t, struct device *, dev);
 
 #ifdef __cplusplus
 }

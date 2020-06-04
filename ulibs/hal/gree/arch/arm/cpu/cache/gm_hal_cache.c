@@ -22,7 +22,7 @@
 #include <gm_hal_cpu.h>
 #include "gm_ll_cache.h"
 
-
+#define F6721B_OLD_CACHE
 
 RET_CODE HAL_ICACHE_Enable(void)
 {
@@ -87,7 +87,8 @@ RET_CODE HAL_ICACHE_Flush(void)
 RET_CODE HAL_DCACHE_Enable(void)
 {
     RET_CODE ret = RET_OK;
-
+/*enable DCACHE*/
+#ifdef F6721B_OLD_CACHE
     HAL_DisableIrq();
     /*invalid the data line*/
     HAL_DACHE_INVALID_DATA_ALL_LINE();
@@ -95,13 +96,13 @@ RET_CODE HAL_DCACHE_Enable(void)
     /*dcache not by pass*/
     LL_DCACHE_SET_BYPASS(CPU_DEV, FALSE);
     HAL_EnableIrq();
-#ifdef CHIP_F6721B
-    //    HAL_DisableIrq();
+#else
+	HAL_DisableIrq();
     /*invalid the data line*/
-    //    HAL_DBUSACHE_INVALID_DATA_ALL_LINE();
+    HAL_DBUSACHE_INVALID_DATA_ALL_LINE();
     /*dbuscache not by pass*/
-    //    LL_DBUSCACHE_SET_BYPASS(CPU_DEV, FALSE);
-    //   HAL_EnableIrq();
+    LL_DBUSCACHE_SET_BYPASS(CPU_DEV, FALSE);
+    HAL_EnableIrq();
 #endif
 
 
@@ -112,19 +113,18 @@ RET_CODE HAL_DCACHE_Enable(void)
 RET_CODE HAL_DCACHE_Disable(void)
 {
     RET_CODE ret = RET_OK;
-
+#ifdef F6721B_OLD_CACHE
     HAL_DisableIrq();
 
     HAL_DACHE_INVALID_DATA_ALL_LINE();
 
     /*dcache by pass*/
     LL_DCACHE_SET_BYPASS(CPU_DEV, TRUE);
-
-#ifdef CHIP_F6721B
-    //    HAL_DBUSACHE_INVALID_DATA_ALL_LINE();
+#else
+        HAL_DBUSACHE_INVALID_DATA_ALL_LINE();
 
     /*dbuscache by pass*/
-    //   LL_DBUSCACHE_SET_BYPASS(CPU_DEV, TRUE);
+       LL_DBUSCACHE_SET_BYPASS(CPU_DEV, TRUE);
 #endif
     HAL_EnableIrq();
 
@@ -135,9 +135,10 @@ RET_CODE HAL_DCACHE_InvalidAll(void)
 {
     RET_CODE ret = RET_OK;
     HAL_DisableIrq();
+#ifdef F6721B_OLD_CACHE
     HAL_DACHE_INVALID_DATA_ALL_LINE();
-#ifdef CHIP_F6721B
-    //   HAL_DBUSACHE_INVALID_DATA_ALL_LINE();
+#else
+	HAL_DBUSACHE_INVALID_DATA_ALL_LINE();
 #endif
     HAL_EnableIrq();
 
@@ -151,9 +152,10 @@ RET_CODE HAL_DCACHE_InvalidLine(uint32_t lineNum)
 
     register uint32_t i = lineNum;
     HAL_DisableIrq();
+#ifdef F6721B_OLD_CACHE
     HAL_DACHE_INVALID_DATA_LINE(i);
-#ifdef CHIP_F6721B
-    //  HAL_DBUSACHE_INVALID_DATA_LINE(i);
+#else
+	HAL_DBUSACHE_INVALID_DATA_LINE(i);
 #endif
     HAL_EnableIrq();
 

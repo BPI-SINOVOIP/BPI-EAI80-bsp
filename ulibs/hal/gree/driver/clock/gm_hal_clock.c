@@ -708,6 +708,9 @@ void HAL_CLOCK_ClockCmd(CLOCK_Sel_T clockMask, uint8_t newState)
 
 void HAL_CLOCK_SYSCLKConfig(CLOCK_SysClockConfig_T *SysClockConfigStructure)
 {
+    uint32_t dalay_time = 0;
+    /* Delay 10us */
+    dalay_time = HAL_CLOCK_GetSYSCLKFreq() / 100000;
     /* The system clock is drived from HIRC */
     if (SysClockConfigStructure->sysClkSource == SYSCLOCK_SOURCE_HIRC8M)
     {
@@ -765,6 +768,11 @@ void HAL_CLOCK_SYSCLKConfig(CLOCK_SysClockConfig_T *SysClockConfigStructure)
         while (!HAL_CLOCK_WaitForStable(SYS_CMUST_PLLSAI_STABLE));
     }
 #endif
+    while (dalay_time-- > 0)
+    {
+        __asm("nop");
+    }
+
     /*Configure system clock prescaler*/
     LL_SYSCLOCK_DIV_CONFIG(SysClockConfigStructure->sysClkPrescaler);
     /*Configure system clock source*/

@@ -36,7 +36,7 @@ typedef struct
     uint32_t alternate;            /**< Alternate function */
 } Device_Pinmux_T;
 
-#if defined(CONFIG_SFLASH)
+#if (defined(CONFIG_FLASH) || defined(CONFIG_SFLASH))
 /** Configure pinmux for an available UART device */
 static int sqi_flash_pinumx_config()
 {
@@ -450,7 +450,7 @@ static int uart7_pinmux_config(void)
 #endif
 
 
-#if defined(CONFIG_CAN0)
+#if defined(CONFIG_CAN)
 static int can0_pinmux_config()
 {
     int ret = 0;
@@ -1233,7 +1233,8 @@ static int adc_pinmux_config(void)
     int i = 0;
     struct device *portc = device_get_binding(CONFIG_PINMUX_GM_PORTC_NAME);
     struct device *portb = device_get_binding(CONFIG_PINMUX_GM_PORTB_NAME);
-#if 1
+    struct device *portd = device_get_binding(CONFIG_PINMUX_GM_PORTD_NAME);
+#if 0
     static Device_Pinmux_T s_pinmux[] =
     {
 #if defined(CHIP_GM6721)
@@ -1247,7 +1248,7 @@ static int adc_pinmux_config(void)
     };
 
 #else
-    static Device_Pinmux_T s_pinmux[] =
+    static Device_Pinmux_T s_pinmux[16] =
     {
 #if defined(CHIP_GM6721)
         {PINMUX_GPIO_PIN_0,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_0 pinmux config paramter */
@@ -1293,18 +1294,23 @@ static int adc_pinmux_config(void)
 #endif
     Device_Pinmux_T *pADCPinmux = &s_pinmux[0];
 
-    if (portc == NULL || portb == NULL)
+    if (portc == NULL || portb == NULL || portd == NULL)
     {
         return -1;
     }
 
     memset(&pin_cfg, 0, sizeof(pin_cfg));
     pin_cfg.pin = BIT(pADCPinmux->pin);
+#if defined(CHIP_F6721B)
+    pin_cfg.mode = GPIO_MODE_ANALOG_2;
+#endif
+#if defined(CHIP_GM6721)    
     pin_cfg.mode = GPIO_MODE_ANALOG;
+#endif
     pin_cfg.pull = GPIO_NOPULL;
     pin_cfg.alternate = 0;
-
-    for (i = 0; i < sizeof(s_pinmux) / sizeof(Device_Pinmux_T); i++)
+#if defined(CHIP_F6721B)
+    for (i = 0; i < 10; i++)
     {
         pADCPinmux = &s_pinmux[i];
         pin_cfg.pin = BIT(pADCPinmux->pin);
@@ -1314,9 +1320,19 @@ static int adc_pinmux_config(void)
             return ret;
         }
     }
-
-
-#if 0
+    for (i = 0; i < 6; i++)
+    {
+        pADCPinmux = &s_pinmux[10 + i];
+        pin_cfg.pin = BIT(pADCPinmux->pin);
+        ret = pinmux_pin_set(portd, pADCPinmux->pin, (unsigned int)&pin_cfg);
+        if (ret)
+        {
+            return ret;
+        }
+    }
+    
+#endif
+#if defined(CHIP_GM6721)
     for (i = 0; i < 10; i++)
     {
         pADCPinmux = &s_pinmux[i];
@@ -2244,7 +2260,7 @@ static int usb_pinmux_config(struct device *port)
 
 #endif
 
-#if defined(CONFIG_I2C0)
+#if defined(CONFIG_I2C_0)
 static int i2c0_pinmux_config(void)
 {
     int ret = 0;
@@ -2311,7 +2327,7 @@ static int i2c0_pinmux_config(void)
 }
 #endif
 
-#if defined(CONFIG_I2C1)
+#if defined(CONFIG_I2C_1)
 static int i2c1_pinmux_config(void)
 {
     int ret = 0;
@@ -2398,7 +2414,7 @@ static int i2c1_pinmux_config(void)
 }
 #endif
 
-#if defined(CONFIG_I2C2)
+#if defined(CONFIG_I2C_2)
 static int i2c2_pinmux_config(void)
 {
     int ret = 0;
@@ -2425,8 +2441,8 @@ static int i2c2_pinmux_config(void)
         {PINMUX_GPIO_PIN_12, GPIOE, GPIOE12_AF0_SDA},
 #endif
 #ifdef CHIP_F6721B
-        {PINMUX_GPIO_PIN_8, GPIOC, GPIOC8_AF2_I2C2_SCL},
-        {PINMUX_GPIO_PIN_9, GPIOC, GPIOC9_AF2_I2C2_SDA},
+        {PINMUX_GPIO_PIN_8, GPIOC, GPIOC9_AF2_I2C2_SCL},
+        {PINMUX_GPIO_PIN_9, GPIOC, GPIOC8_AF2_I2C2_SDA},
 #endif
     };
 
@@ -2499,15 +2515,15 @@ static int pinmux_gm_initialize(struct device *port)
     uart7_pinmux_config();
 #endif
 
-#if defined(CONFIG_I2C0)
+#if defined(CONFIG_I2C_0)
     i2c0_pinmux_config();
 #endif
 
-#if defined(CONFIG_I2C1)
+#if defined(CONFIG_I2C_1)
     i2c1_pinmux_config();
 #endif
 
-#if defined(CONFIG_I2C2)
+#if defined(CONFIG_I2C_2)
     i2c2_pinmux_config();
 #endif
 #if defined(CONFIG_SAIA)
@@ -2555,7 +2571,7 @@ static int pinmux_gm_initialize(struct device *port)
     }
 #endif
 
-#if defined(CONFIG_SFLASH)
+#if (defined(CONFIG_FLASH) || defined(CONFIG_SFLASH))
     /** Configure pinmux for an available flash device  sqi flash*/
     sqi_flash_pinumx_config();
 #endif
@@ -2617,7 +2633,7 @@ static int pinmux_gm_initialize(struct device *port)
 
 #endif
 
-#if defined(CONFIG_CAN0)
+#if defined(CONFIG_CAN)
     ret = can0_pinmux_config();
     if (ret)
     {

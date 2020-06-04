@@ -1,0 +1,5 @@
+adc ztest
+
+adc_Injectedchannel_sync_demo  only work lonely, can not
+work after adc_InjectedSequence_async_demo /adc_channel_sync_demo
+/adc_sequence_async_demo

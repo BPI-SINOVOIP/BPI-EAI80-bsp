@@ -29,6 +29,8 @@ static void UART_RxInterruptHandler(UART_Device_T *pUART, UART_Handle_T *hUART, 
 
 RET_CODE HAL_UART_Init(UART_Handle_T *hUART, UART_Device_T *pUART, UART_Config_T *pConfig)
 {
+    Peripheral_Config_T periClkConfig;
+
     if ((!hUART) || (!pUART) || (!pConfig))
     {
         return -RET_INVPARAM;
@@ -38,28 +40,51 @@ RET_CODE HAL_UART_Init(UART_Handle_T *hUART, UART_Device_T *pUART, UART_Config_T
     if (pUART == UART0) {
         HAL_Reset_Module(RESET_UART1_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART1);
+        periClkConfig.peripheMask = PERIPHERAL_UART1_MASK;
     } else if (pUART == UART1) {
         HAL_Reset_Module(RESET_UART2_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART2);
+        periClkConfig.peripheMask = PERIPHERAL_UART2_MASK;
     } else if (pUART == UART2) {
         HAL_Reset_Module(RESET_UART3_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART3);
+        periClkConfig.peripheMask = PERIPHERAL_UART3_MASK;
     } else if (pUART == UART3) {
         HAL_Reset_Module(RESET_UART4_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART4);
+        periClkConfig.peripheMask = PERIPHERAL_UART4_MASK;
     } else if (pUART == UART4) {
         HAL_Reset_Module(RESET_UART5_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART5);
+        periClkConfig.peripheMask = PERIPHERAL_UART5_MASK;
     } else if (pUART == UART5) {
         HAL_Reset_Module(RESET_UART6_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART6);
+        periClkConfig.peripheMask = PERIPHERAL_UART6_MASK;
     } else if (pUART == UART6) {
         HAL_Reset_Module(RESET_UART7_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART7);
+        periClkConfig.peripheMask = PERIPHERAL_UART7_MASK;
     } else if (pUART == UART7) {
         HAL_Reset_Module(RESET_UART8_SW_RSTJ);
         HAL_CLOCK_PeripheralClockEnable2(SYS_ENCLK2_UART8);
+        periClkConfig.peripheMask = PERIPHERAL_UART8_MASK;
     }
+
+    /* configure UARTx clock source and prescaler for 115200 baudrate in 48M clock
+     * with default operation without this config, baudrate is 19200 in 8M
+     */
+    if ((pConfig->clockSrc == UART_CLOCK_48M) && (pConfig->baudRate == UART_BAUDRATE_115200))
+    {
+        periClkConfig.peripheClkConfig.uartClkConfig.uartPrescaler = CLOCK_UART_DIV_1;
+        periClkConfig.peripheClkConfig.uartClkConfig.uartSourceClk = CLOCK_UART_SEL_PLLI2S;
+    }
+    else
+    {
+        periClkConfig.peripheClkConfig.uartClkConfig.uartPrescaler = CLOCK_UART_DIV_1;
+        periClkConfig.peripheClkConfig.uartClkConfig.uartSourceClk = CLOCK_UART_SEL_HIRC;
+    }
+    HAL_CLOCK_PeripheralClkSetConfig(&periClkConfig);
 
     /* Disable all the uart interrupts */
     LL_UART_INTERRUPTES_DISABLE(pUART, 0xFFFFFFFF);

@@ -87,7 +87,7 @@ static void sccb_delay(void)
     k_busy_wait(5);
 }
 
-int sccb_start(struct device *dev)
+int sccb_gm_start(struct device *dev)
 {
     int ret;
     sccb_setsda_val(dev, 1);
@@ -101,7 +101,7 @@ int sccb_start(struct device *dev)
     return ret;
 }
 
-int sccb_stop(struct device *dev)
+int sccb_gm_stop(struct device *dev)
 {
     int ret;
     sccb_setsda_val(dev, 0);
@@ -114,7 +114,7 @@ int sccb_stop(struct device *dev)
     return ret;
 }
 
-int sccb_nack(struct device *dev)
+int sccb_gm_nack(struct device *dev)
 {
     int ret;
     sccb_delay();
@@ -129,7 +129,7 @@ int sccb_nack(struct device *dev)
     return ret;
 }
 
-uint8_t sccb_sendbyte(struct device *dev, uint8_t data)
+uint8_t sccb_gm_sendbyte(struct device *dev, uint8_t data)
 {
     uint8_t i, res;
 
@@ -171,7 +171,7 @@ uint8_t sccb_sendbyte(struct device *dev, uint8_t data)
     return res;
 }
 
-uint8_t sccb_readbyte(struct device *dev)
+uint8_t sccb_gm_readbyte(struct device *dev)
 {
     uint8_t i, receive = 0;
 
@@ -197,11 +197,11 @@ uint8_t sccb_readbyte(struct device *dev)
 
 static const struct sccb_driver_api sccb_drv_api_funcs =
 {
-    .start = sccb_start,
-    .stop = sccb_stop,
-    .nack = sccb_nack,
-    .sendbyte = sccb_sendbyte,
-    .readbyte = sccb_readbyte,
+    .start = sccb_gm_start,
+    .stop = sccb_gm_stop,
+    .nack = sccb_gm_nack,
+    .sendbyte = sccb_gm_sendbyte,
+    .readbyte = sccb_gm_readbyte,
 };
 
 static int sccb_init(struct device *dev)

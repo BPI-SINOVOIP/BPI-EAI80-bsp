@@ -48,6 +48,11 @@
     #include <config/board/f6721b_evb_qfn80pin_board.h>      //用户自定义板文件和dts文件 ：用户根据这个板子创建自己的板子
 #endif
 
+#ifdef BANPIBOARD_QFN80PIN
+    #include <config/sys/f6721b_soc.h>                  //具体soc的相关配置，用户不用关心
+    #include <config/board/banpiboard_qfn80pin_board.h>      //用户自定义板文件和dts文件 ：用户根据这个板子创建自己的板子
+#endif
+
 #ifdef F6721B_RINGSCANER
     #include <config/sys/f6721b_soc.h>
     #include <config/board/f6721b_ringscaner_board.h>

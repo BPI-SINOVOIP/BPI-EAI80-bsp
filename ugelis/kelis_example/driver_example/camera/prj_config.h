@@ -33,9 +33,10 @@ extern "C" {
  *########################################
  */
 //#define  F6721B_EVB_144PIN 1
-#define  F6721B_EVB_176PIN 1
+//#define  F6721B_EVB_176PIN 1
 //#define  F6721B_EVB_QFN40PIN 1
 //#define  F6721B_EVB_QFN80PIN 1
+#define BANPIBOARD_QFN80PIN
 
 //#define  GM6721_EVB_QFN40PIN
 //#define  GM6721_EVB_QFN80PIN
@@ -44,7 +45,8 @@ extern "C" {
 
 #define  CHIP_F6721B
 //#define QFN80_SORTING_BOARD //open when use sorting board, default is demo board
-#define  LQFP176_DEMO_BOARD
+//#define QFN80_DEMO_BOARD_V3 //qfn80 demo board v3.0(black board)
+//#define  LQFP176_DEMO_BOARD
 /**
  *feature for your project
  */
@@ -55,7 +57,9 @@ extern "C" {
 //#define CONFIG_OV7725
 //#define CONFIG_GC0308
 //#define CONFIG_BF3007
-/*lcd select*/ //default 4.3' 480x272 lcd
+//#define CONFIG_GC2145
+
+/*lcd select*/ //default 4.3' 480x272 lcd, when select bipaiboard, default is 800x480bipai lCD(only support)
 //#define CONFIG_LCD1024x600
 //#define CONFIG_LCD800x480
 

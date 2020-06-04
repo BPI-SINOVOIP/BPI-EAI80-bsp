@@ -52,15 +52,6 @@ struct qr_finder_line {
   int      eoffs;
 };
 
-typedef struct
-{
-    int finders_detect_only;//whether find qr location quickly
-    int finders_cnt;//finders total cnt
-    int finders_pos[3][2];//x/y in pixel format
-    int finders_w;//finder's width in pixel format
-}qr_finders_info_t;
-
-
 qr_reader *_zbar_qr_create(void);
 void _zbar_qr_destroy(qr_reader *reader);
 void _zbar_qr_reset(qr_reader *reader);

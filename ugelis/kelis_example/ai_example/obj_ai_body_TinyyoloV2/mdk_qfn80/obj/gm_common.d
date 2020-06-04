@@ -1,0 +1,12 @@
+.\obj\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\lib\common\gm_common.c
+.\obj\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\lib\common\gm_common.h
+.\obj\gm_common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\obj\gm_common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\obj\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\lib\common\gm_io.h
+.\obj\gm_common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\lib\common\gm_basic_types.h
+.\obj\gm_common.o: ..\..\..\..\..\ulibs\hal\gree\include\config\gm_config.h
+.\obj\gm_common.o: ..\..\..\..\include\config.h
+.\obj\gm_common.o: ..\mdk_qfn80\prj_config.h
+.\obj\gm_common.o: ..\..\..\..\..\ulibs\hal\cmsis\Include\cmsis_compiler.h
+.\obj\gm_common.o: ..\..\..\..\..\ulibs\hal\cmsis\Include\cmsis_armcc.h

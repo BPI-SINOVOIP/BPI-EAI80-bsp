@@ -34,6 +34,10 @@
 
 #define NUM_CHARS 108           /* total number of character codes */
 
+#ifdef ENABLE_BARCODE_ZOOM
+extern barcode_detected_info_t barcode_detected_info;
+#endif
+
 typedef enum code128_char_e {
     FNC3        = 0x60,
     FNC2        = 0x61,
@@ -470,7 +474,10 @@ zbar_symbol_type_t _zbar_decode_code128 (zbar_decoder_t *dcode)
         }
         else
             dcode128->direction = ZBAR_SPACE;
-        dprintf(2, " dir=%x [valid start]", dcode128->direction);
+        dprintf(2, " dir=%x [valid start]", dcode128->direction);  
+        #ifdef ENABLE_BARCODE_ZOOM
+        barcode_detected_info.barcode_detected = 1;
+        #endif
     }
     else if((c < 0) ||
             ((dcode128->character >= BUFFER_MIN) &&
@@ -492,6 +499,9 @@ zbar_symbol_type_t _zbar_decode_code128 (zbar_decoder_t *dcode)
        ((dcode128->direction)
         ? c >= START_A && c <= START_C
         : c == STOP_FWD)) {
+        #ifdef ENABLE_BARCODE_ZOOM
+        barcode_detected_info.barcode_detected = 1;
+        #endif
         /* FIXME STOP_FWD should check extra bar (and QZ!) */
         zbar_symbol_type_t sym = ZBAR_CODE128;
         if(validate_checksum(dcode) || postprocess(dcode))
@@ -502,8 +512,9 @@ zbar_symbol_type_t _zbar_decode_code128 (zbar_decoder_t *dcode)
             dprintf(2, " [invalid len]\n");
             sym = ZBAR_NONE;
         }
-        else
+        else {
             dprintf(2, " [valid end]\n");
+        }
         dcode128->character = -1;
         if(!sym)
             dcode->lock = 0;

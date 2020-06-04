@@ -592,7 +592,7 @@ bool openmv_jpeg_compress(image_t *src, image_t *dst, int quality, bool realloc)
     }
 
     printf("fp = 0x%x\r\n", fp);
-    while (1);
+    //while (1);
 
     return true;
 

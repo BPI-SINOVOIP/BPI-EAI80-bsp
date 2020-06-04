@@ -46,31 +46,45 @@
 #include <rpc_plugin_qr.h>
 #endif
 
+//#define ARMC4_OPT /* todo: open this macro has crash problem in dual solution */
+
 #define TIME_DEBUG
 #ifdef TIME_DEBUG
 #include <ugelis.h>
 
 
-int32_t time_zbar_scan_prepare = 0;
-int32_t time_zbar_scan_Y = 0;
-int32_t time_zbar_scan_X = 0;
-int32_t time_zbar_scan_XY = 0;
-int32_t time_zbar_scan_decode = 0;
-int32_t time_zbar_scan_remainder = 0;
+volatile int32_t time_zbar_scan_prepare = 0;
+volatile int32_t time_zbar_scan_Y = 0;
+volatile int32_t time_zbar_scan_X = 0;
+volatile int32_t time_zbar_scan_XY = 0;
+volatile int32_t time_zbar_scan_decode = 0;
+volatile int32_t time_zbar_scan_remainder = 0;
 
-int32_t time_zbar_scan_Y_prepare = 0;
-int32_t time_zbar_scan_Y_scan_y_0 = 0;
-int32_t time_zbar_scan_Y_scan_y_1 = 0;
+volatile int32_t time_zbar_scan_Y_prepare = 0;
+volatile int32_t time_zbar_scan_Y_scan_y_0 = 0;
+volatile int32_t time_zbar_scan_Y_scan_y_1 = 0;
 
 #endif
 
+#ifdef ENABLE_BARCODE_ZOOM
+barcode_detected_info_t barcode_detected_info;
+#endif
 
 
-#if 1
+#if 0
 # define ASSERT_POS \
     assert(p == data + x + y * (intptr_t)w)
 #else
-# define ASSERT_POS
+//# define ASSERT_POS
+void assert_test(void *p, void *data, int x, int y, int w)
+{
+    if(p != data + x + y * (intptr_t)w)
+    {
+        printf("ASSERT_POS!!\n");
+    }
+}
+# define ASSERT_POS assert_test(p, data, x, y, w)
+//# define ASSERT_POS
 #endif
 
 /* FIXME cache setting configurability */
@@ -448,19 +462,63 @@ static void symbol_handler (zbar_decoder_t *dcode)
 
     /* FIXME need better symbol matching */
     zbar_symbol_t *sym;
+    unsigned char bad_type = 0;
     if(iscn->syms != NULL)/* Evan Fixed: in case iscn->syms is not create for slave(dual core solution) */
 	{
 	    for(sym = iscn->syms->head; sym; sym = sym->next)
-	        if(sym->type == type &&
-	           sym->datalen == datalen &&
-	           !memcmp(sym->data, data, datalen)) {
-	            sym->quality++;
-	            if(TEST_CFG(iscn, ZBAR_CFG_POSITION))
-	                /* add new point to existing set */
-	                /* FIXME should be polygon */
-	                sym_add_point(sym, x, y);
-	            return;
-	        }
+		{
+			//printf("sym=0x%x, sym->type=%d, sym->datalen=%d£¬type=%d, datalen=%d\n", sym, sym->type, sym->datalen, type, datalen);
+			#if 0//Evan add for bad syms crash problem
+            bad_type = 0;
+            switch(sym->type & ZBAR_SYMBOL) 
+            {
+            #ifdef ENABLE_EAN
+                case ZBAR_EAN8:break;
+                case ZBAR_UPCE:break;
+                case ZBAR_ISBN10:break;
+                case ZBAR_UPCA:break;
+                case ZBAR_EAN13:break;
+                case ZBAR_ISBN13:break;
+            #endif
+            #ifdef ENABLE_I25
+                case ZBAR_I25:break;
+            #endif
+            #ifdef ENABLE_CODE39
+                case ZBAR_CODE39:break;
+            #endif
+            #ifdef ENABLE_CODE128
+                case ZBAR_CODE128:break;
+            #endif
+            #ifdef ENABLE_PDF417
+                case ZBAR_PDF417:break;
+            #endif
+            #ifdef ENABLE_QRCODE
+                case ZBAR_QRCODE:break;
+            #endif
+                default: 
+                    bad_type = 1;
+                    break;
+            }
+            if(bad_type)
+            {
+                _zbar_symbol_set_free(iscn->syms);
+                return;
+            }
+            #endif
+    
+	        if(sym->type == type && sym->datalen == datalen) 
+            {   
+                if(!memcmp(sym->data, data, datalen)) 
+    			{
+    	            sym->quality++;
+    	            if(TEST_CFG(iscn, ZBAR_CFG_POSITION))
+    	                /* add new point to existing set */
+    	                /* FIXME should be polygon */
+    	                sym_add_point(sym, x, y);
+    	            return;
+    	        }
+           }
+		}
 	}
 
     sym = _zbar_image_scanner_alloc_sym(iscn, type, datalen + 1);
@@ -649,11 +707,17 @@ void zbar_scan_image_x (zbar_image_scanner_t *iscn, const zbar_image_t *img)
             svg_path_start("vedge", 1. / 32, 0, x + 0.5);
             iscn->dy = iscn->du = 1;
             iscn->umin = 0;
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, w, h);
+            y += h;
+            p += w*h;
+#else
             while(y < h) {
                 uint8_t d = *p;
                 movedelta(0, 1);
                 zbar_scan_y(scn, d);
             }
+#endif
             ASSERT_POS;
             quiet_border(iscn);
             svg_path_end();
@@ -667,11 +731,17 @@ void zbar_scan_image_x (zbar_image_scanner_t *iscn, const zbar_image_t *img)
             svg_path_start("vedge", -1. / 32, h, x + 0.5);
             iscn->dy = iscn->du = -1;
             iscn->umin = h;
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, -w, h);
+            y -= h;
+            p -= w*h;
+#else
             while(y >= 0) {
                 uint8_t d = *p;
                 movedelta(0, -1);
                 zbar_scan_y(scn, d);
             }
+#endif
             ASSERT_POS;
             quiet_border(iscn);
             svg_path_end();
@@ -720,11 +790,17 @@ void zbar_scan_image_y (zbar_image_scanner_t *iscn, const zbar_image_t *img)
             iscn->dx = iscn->du = 1;
             iscn->umin = 0;
             //time_zbar_scan_Y_scan_y_0 = k_uptime_get_32();
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, 1, w);
+            x += w;
+            p += w;
+#else
             while(x < w) {
                 uint8_t d = *p;
                 movedelta(1, 0);
                 zbar_scan_y(scn, d);
             }
+#endif
             //time_zbar_scan_Y_scan_y_1 = k_uptime_get_32();
             //printk("-scan_y=%d\n", time_zbar_scan_Y_scan_y_1-time_zbar_scan_Y_scan_y_0);
 
@@ -741,11 +817,17 @@ void zbar_scan_image_y (zbar_image_scanner_t *iscn, const zbar_image_t *img)
             svg_path_start("vedge", -1. / 32, w, y + 0.5);
             iscn->dx = iscn->du = -1;
             iscn->umin = w;
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, -1, w);
+            x -= w;
+            p -= w;
+#else
             while(x >= 0) {
                 uint8_t d = *p;
                 movedelta(-1, 0);
                 zbar_scan_y(scn, d);
             }
+#endif
             ASSERT_POS;
             quiet_border(iscn);
             svg_path_end();
@@ -765,13 +847,13 @@ void zbar_scan_image_y (zbar_image_scanner_t *iscn, const zbar_image_t *img)
 #ifdef CONFIG_GM_HAL_RPC_SLAVE
 /* fix slave compile error */
 int zbar_scan_image (zbar_image_scanner_t *iscn, zbar_image_scanner_t *iscn_slave,
-                     zbar_image_t *img)
+                     zbar_image_t *img, zbar_image_t *img_slave)
 {
     return 0;
 }
 #else
 int zbar_scan_image (zbar_image_scanner_t *iscn, zbar_image_scanner_t *iscn_slave,
-                     zbar_image_t *img)
+                     zbar_image_t *img, zbar_image_t *img_slave)
 {
     /* timestamp image
      * FIXME prefer video timestamp
@@ -796,11 +878,11 @@ int zbar_scan_image (zbar_image_scanner_t *iscn, zbar_image_scanner_t *iscn_slav
        img->format != fourcc('G','R','E','Y'))
         return(-1);
     iscn->img = img;
-    iscn_slave->img = img;
+    iscn_slave->img = img_slave;
 
     /* recycle previous scanner and image results of iscn_slave*/
-    #if 0//no need to free iscn_slave
-    zbar_image_scanner_recycle_image(iscn_slave, img);
+    #if 1
+    zbar_image_scanner_recycle_image(iscn_slave, img_slave);
     zbar_symbol_set_t *syms_slave = iscn_slave->syms;
     if(!syms_slave) {
         syms_slave = iscn_slave->syms = _zbar_symbol_set_create();
@@ -810,7 +892,7 @@ int zbar_scan_image (zbar_image_scanner_t *iscn, zbar_image_scanner_t *iscn_slav
     }
     else
         zbar_symbol_set_ref(syms_slave, 2);
-    //img->syms = syms;
+    img_slave->syms = syms_slave;
     #endif
 
     /* recycle previous scanner and image results */
@@ -847,7 +929,7 @@ int zbar_scan_image (zbar_image_scanner_t *iscn, zbar_image_scanner_t *iscn_slav
     int density = CFG(iscn, ZBAR_CFG_X_DENSITY);
     /* prepare private data */
     qrdata.iscn = (uint8_t *)iscn_slave;
-    qrdata.img = (uint8_t *)img;
+    qrdata.img = (uint8_t *)img_slave;
     /* prepare rpc pack */
     pack.cmd = RPC_CMD_QR;
     pack.privData = &qrdata;
@@ -887,14 +969,15 @@ int zbar_scan_image (zbar_image_scanner_t *iscn, zbar_image_scanner_t *iscn_slav
 #endif
     //time_zbar_scan_XY = k_uptime_get_32();
 
+#ifdef ENABLE_QRCODE
     /* merge X/Y */
     _zbar_qr_copy_lines(iscn->qr, iscn_slave->qr, 1);
 
-#ifdef ENABLE_QRCODE
     _zbar_qr_decode(iscn->qr, iscn, img);
     //time_zbar_scan_decode = k_uptime_get_32();
 #endif
 
+#ifdef ENABLE_EAN
     /* FIXME tmp hack to filter bad EAN results */
     if(syms->nsyms && !iscn->enable_cache &&
        (density == 1 || CFG(iscn, ZBAR_CFG_Y_DENSITY) == 1)) {
@@ -909,9 +992,19 @@ int zbar_scan_image (zbar_image_scanner_t *iscn, zbar_image_scanner_t *iscn_slav
                 _zbar_image_scanner_recycle_syms(iscn, sym);
             }
             else
-                symp = &sym->next;
+			{
+				if(symp == &sym->next)//Evan: fixed deadloop problem
+				{
+					break;
+				}
+				else
+				{
+					symp = &sym->next;
+				}
+			}
         }
     }
+#endif
 
     if(syms->nsyms && iscn->handler)
         iscn->handler(img, iscn->userdata);
@@ -997,11 +1090,20 @@ int zbar_scan_image (zbar_image_scanner_t *iscn,
             iscn->dx = iscn->du = 1;
             iscn->umin = 0;
             //time_zbar_scan_Y_scan_y_0 = k_uptime_get_32();
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, 1, w);
+            x += w;
+            p += w;
+            
+#else					
             while(x < w) {
                 uint8_t d = *p;
+                //printf("(%04d,%04d) @%p\n", x, y, p);
+                cur_x = x; cur_y = y;
                 movedelta(1, 0);
                 zbar_scan_y(scn, d);
             }
+#endif						
             //time_zbar_scan_Y_scan_y_1 = k_uptime_get_32();
             //printk("-scan_y=%d\n", time_zbar_scan_Y_scan_y_1-time_zbar_scan_Y_scan_y_0);
 
@@ -1018,11 +1120,17 @@ int zbar_scan_image (zbar_image_scanner_t *iscn,
             svg_path_start("vedge", -1. / 32, w, y + 0.5);
             iscn->dx = iscn->du = -1;
             iscn->umin = w;
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, -1, w);
+            x -= w;
+            p -= w;
+#else
             while(x >= 0) {
                 uint8_t d = *p;
                 movedelta(-1, 0);
                 zbar_scan_y(scn, d);
             }
+#endif
             ASSERT_POS;
             quiet_border(iscn);
             svg_path_end();
@@ -1052,11 +1160,17 @@ int zbar_scan_image (zbar_image_scanner_t *iscn,
             svg_path_start("vedge", 1. / 32, 0, x + 0.5);
             iscn->dy = iscn->du = 1;
             iscn->umin = 0;
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, w, h);
+            y += h;
+            p += w*h;
+#else
             while(y < h) {
                 uint8_t d = *p;
                 movedelta(0, 1);
                 zbar_scan_y(scn, d);
             }
+#endif
             ASSERT_POS;
             quiet_border(iscn);
             svg_path_end();
@@ -1070,11 +1184,17 @@ int zbar_scan_image (zbar_image_scanner_t *iscn,
             svg_path_start("vedge", -1. / 32, h, x + 0.5);
             iscn->dy = iscn->du = -1;
             iscn->umin = h;
+#ifdef ARMC4_OPT
+            asm_zbar_scan_y(p, scn, -w, h);
+            y -= h;
+            p -= w*h;
+#else
             while(y >= 0) {
                 uint8_t d = *p;
                 movedelta(0, -1);
                 zbar_scan_y(scn, d);
             }
+#endif
             ASSERT_POS;
             quiet_border(iscn);
             svg_path_end();

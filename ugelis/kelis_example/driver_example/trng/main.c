@@ -25,7 +25,7 @@
 /* TRNG of GM6721 series genetate 192bit each time */
 #define BUFFER_LENGTH 5
 
-void main(void)
+int main(void)
 {
     int i = 0;
     int cnt = 0;

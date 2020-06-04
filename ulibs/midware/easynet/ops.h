@@ -24,7 +24,7 @@ struct easynet_dev_cfg
     uint32_t bn_square_sigma_only;  /*< 0(default): Square both sigma and epsilon 1: Square sigma only */
     uint32_t bn_epsilon;            /*< Default(0.001f), Posenet would be 2e-5, yolo v3 shall be .000001f */
     uint32_t optimization;          /*< 0 : No optimization; 1 : Fast; 2 : Special */
-    void *middle_layer_buffer[MAX_LAYER_BUFFER_NUM];
+    float thresh;
 };
 
 /**
@@ -44,11 +44,6 @@ struct easynet_dev
     unsigned char *input;
     struct easynet_dev_cfg *cfg;
     void *predict_out;
-#if 0
-    int  network_type;
-    float *yolo_out_buffer[2];
-    int16_t *shortcut_buf[MAX_SHORTCUT_NUM];
-#endif
 };
 
 

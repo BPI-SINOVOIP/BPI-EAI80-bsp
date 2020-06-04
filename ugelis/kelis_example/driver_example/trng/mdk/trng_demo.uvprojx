@@ -50,9 +50,9 @@
           <OutputName>trng_demo</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
-          <DebugInformation>0</DebugInformation>
-          <BrowseInformation>0</BrowseInformation>
+          <CreateHexFile>1</CreateHexFile>
+          <DebugInformation>1</DebugInformation>
+          <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listing\</ListingPath>
           <HexFormatSelection>0</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -157,7 +157,7 @@
             <ldmm>1</ldmm>
             <ldXref>1</ldXref>
             <BigEnd>0</BigEnd>
-            <AdsALst>0</AdsALst>
+            <AdsALst>1</AdsALst>
             <AdsACrf>1</AdsACrf>
             <AdsANop>0</AdsANop>
             <AdsANot>0</AdsANot>
@@ -619,14 +619,14 @@
           <GroupName>lib</GroupName>
           <Files>
             <File>
-              <FileName>ugelis_core.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\..\lib\ugelis_core.lib</FilePath>
-            </File>
-            <File>
               <FileName>vector_table.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\..\arch\arm\core-armcc\cortex_m\vector_table.S</FilePath>
+            </File>
+            <File>
+              <FileName>ugelis_core_f6721b.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\..\lib\ugelis_core_f6721b.lib</FilePath>
             </File>
           </Files>
         </Group>

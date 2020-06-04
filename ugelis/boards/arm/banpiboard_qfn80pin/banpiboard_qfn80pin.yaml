@@ -1,0 +1,11 @@
+identifier: banpiboard_qfn80pin
+name: BANPIBOARD-QFN80PIN
+type: mcu
+arch: arm
+toolchain:
+  - ugelis
+  - gccarmemb
+supported:
+  - serial
+testing:
+  default: true  

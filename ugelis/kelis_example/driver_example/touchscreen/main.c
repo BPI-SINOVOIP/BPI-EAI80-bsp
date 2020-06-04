@@ -23,7 +23,7 @@
 
 int main(void)
 {
-    struct device *ft5x6 = device_get_binding(GT9147_DEV_NAME);
+    struct device *touch = device_get_binding(GT911_DEV_NAME);
 
     int ret = 0;
     static uint32_t cnt = 0;

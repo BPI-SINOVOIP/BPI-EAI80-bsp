@@ -135,7 +135,7 @@ static const struct regval_list ov7725_init_default_setting[] =
     {LC_RADI,       0x30}, // The radius of the circle where no compensation applies
     {LC_COEF,       0x30}, // RGB Lens correction coefficient
 
-    {COM3,      0xD0/*0x10*/},/*Horizontal mirror image*/
+    {COM3,      0x90/*0x10*/},/*Horizontal mirror image*///[7]:V flip, [6]:H mirror
 
     /*night mode auto frame rate control*/
     {COM5,      0xf5},

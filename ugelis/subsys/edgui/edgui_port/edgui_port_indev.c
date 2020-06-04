@@ -199,7 +199,7 @@ static bool touchpad_read(edgui_indev_drv_t *indev_drv, edgui_indev_data_t *data
     int ret = 0;
     static uint32_t cnt = 0;
     struct ts_input_event event;
-    ret = read_ts_event(&event, K_FOREVER);
+    ret = read_ts_event(&event, 10);
     if (!ret)
     {
         if (event.type == ABS_XY)

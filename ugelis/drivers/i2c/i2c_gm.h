@@ -27,13 +27,13 @@ extern "C"
 #define  I2C1_DEV_NAME     i2c1_dev
 #define  I2C2_DEV_NAME     i2c2_dev
 #ifdef CONFIG_I2C0
-#define  I2C0_DRV_NAME     CONFIG_I2C0
+#define  I2C0_DRV_NAME     "I2C_0"
 #endif
 #ifdef CONFIG_I2C1
-#define  I2C1_DRV_NAME     CONFIG_I2C1
+#define  I2C1_DRV_NAME     "I2C_1"
 #endif
 #ifdef CONFIG_I2C2
-#define  I2C2_DRV_NAME     CONFIG_I2C2
+#define  I2C2_DRV_NAME     "I2C_2"
 #endif
 //typedef void (*i2c_irq_callback_t)(uint8_t event, unsigned long param);
 #if 0

@@ -42,6 +42,7 @@ struct k_mutex mempool_mutex;
 #define MEM_TYPE_1K_NUM   10
 #define MEM_TYPE_10K_NUM  10
 #define MEM_TYPE_100K_NUM 2
+#define MEM_TYPE_300K_NUM 2
 
 typedef enum
 {
@@ -51,6 +52,7 @@ typedef enum
     MEM_TYPE_1K,
     MEM_TYPE_10K,
     MEM_TYPE_100K,
+	MEM_TYPE_300K,
     MEM_TYPE_MAX
 }MemPoolType_T;
 
@@ -225,7 +227,7 @@ static void FreeToMemoryPool(uint8_t *ptr)
     ZBAR_MEMPOOL_DEBUG("[FreeToMemoryPool] ptr=0x%x\n", ptr);
     
     if(!ptr){
-        ZBAR_MEMPOOL_ERROR("[%s(%d)] ptr is NULL\n", __FUNCTION__, __LINE__);
+        //ZBAR_MEMPOOL_ERROR("[%s(%d)] ptr is NULL\n", __FUNCTION__, __LINE__);
         return;
     }
 
@@ -323,6 +325,13 @@ int zbar_mem_init(void)
         ret = -ENOMEM;
         goto out;
     }
+	
+	g_memPool[MEM_TYPE_300K] = CreatMemoryPool(MEM_TYPE_300K_NUM, 1024*300);
+    if(!g_memPool[MEM_TYPE_300K]){
+        ZBAR_MEMPOOL_DEBUG("[%s(%d)] fail\n", __FUNCTION__, __LINE__);
+        ret = -ENOMEM;
+        goto out;
+    }
 
     k_mutex_init(&mempool_mutex);
     
@@ -353,6 +362,9 @@ int zbar_mem_clear(void)
     g_memPool[MEM_TYPE_100K]->freeObjectNum = MEM_TYPE_100K_NUM;
     memset(g_memPool[MEM_TYPE_100K]->memvailtable, MEM_FREE, MEM_TYPE_100K_NUM);
 
+    g_memPool[MEM_TYPE_300K]->freeObjectNum = MEM_TYPE_300K_NUM;
+    memset(g_memPool[MEM_TYPE_300K]->memvailtable, MEM_FREE, MEM_TYPE_300K_NUM);
+
 }
 
 int zbar_mem_deinit(void)
@@ -364,6 +376,7 @@ int zbar_mem_deinit(void)
     DeleteMemoryPool(g_memPool[MEM_TYPE_1K]);
     DeleteMemoryPool(g_memPool[MEM_TYPE_10K]);
     DeleteMemoryPool(g_memPool[MEM_TYPE_100K]);
+	DeleteMemoryPool(g_memPool[MEM_TYPE_300K]);
 	zbar_mempool_init_flat = 0;
     return ret;
 }
@@ -403,6 +416,11 @@ void *zbar_malloc(size_t size)
     {
         //ZBAR_MEMPOOL_DEBUG("[%s(%d)] size=%d\n", __FUNCTION__, __LINE__, size);
         ptr = AllocFromMemoryPool(g_memPool[MEM_TYPE_100K]);
+    }
+	else if((size > 1024*100) && (size <= 1024*300))
+	{
+        //ZBAR_MEMPOOL_DEBUG("[%s(%d)] size=%d\n", __FUNCTION__, __LINE__, size);
+        ptr = AllocFromMemoryPool(g_memPool[MEM_TYPE_300K]);
     }
     else
     {

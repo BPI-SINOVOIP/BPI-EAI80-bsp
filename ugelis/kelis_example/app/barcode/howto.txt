@@ -1,0 +1,34 @@
+
+1. 配置解码格式
+当前支持QR code和Code128格式条码
+1）[master\mdk_xxx\prj_config.h]中打开需要的条码格式
+#define CONFIG_BARCODE
+/* select barcode type(multiple choise) */
+#ifdef CONFIG_BARCODE
+#define ENABLE_CODE128 1
+#define ENABLE_QRCODE  1
+#endif
+2）[slave\mdk_xxx\prj_config.h]中打开需要的条码格式
+#define CONFIG_BARCODE
+/* select barcode type(multiple choise) */
+#ifdef CONFIG_BARCODE
+#define ENABLE_CODE128 1
+#define ENABLE_QRCODE  1
+#endif
+
+2. 编译
+1) 编译master：Keil打开msater\mdk_xxx\master.uvprojx进行编译
+2) 编译slave： Keil打开slave\mdk_xxx\slave.uvprojx进行编译
+
+3. 下载&调试
+1) 下载master：
+    打开master.uvprojx，点击“Download”
+2) 下载slave&slavebl：
+	打开JLink.exe,输入：
+	loadbin xxx\ugelis\kelis_example\app\barcode\slave_bootloader\slavebl.bin,0x20000000
+	loadbin xxx\ugelis\kelis_example\app\barcode\slave\mdk_xxx\slave.bin,0xC0010000
+	例如：
+	loadbin F:\6721\repo_kelis\repo_kelis\ugelis\kelis_example\app\barcode\slave_bootloader\slavebl.bin,0x20000000
+	loadbin F:\6721\repo_kelis\repo_kelis\ugelis\kelis_example\app\barcode\slave\mdk_qfn40_qfn80\slave.bin,0xC0010000
+3) 调试master：
+	在master.uvprojx中，点击“Debug”，开始调试

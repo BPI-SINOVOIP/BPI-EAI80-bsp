@@ -4,11 +4,6 @@
 
 extern int cntt;
 
-typedef enum
-{
-    RELU, LEAKY, LOGISTIC, LINEAR
-} ACTIVATION;
-
 int64_t fix32_round_truncate(int64_t a)
 {
     int64_t result;
@@ -51,14 +46,6 @@ static inline int simu_leaky_activate(int x, int relu_num)
         return fix32_round_truncate(x * relu_num * 2);
 #endif
     }
-}
-
-static void layerNumber(struct easynet_ops_param *param)
-{
-#ifdef DEBUG_KDP_LEVEL_0
-    struct op_layer_param *op_param = (struct op_layer_param *)(((unsigned char *)param) + sizeof(struct easynet_ops_param));
-    printf("Process layer %d\n", op_param->conv);
-#endif
 }
 
 /*****************************************************************************/
@@ -1184,19 +1171,22 @@ __asm void *AsmCopyToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
     CMP    R11, #1                 //Check bank row end
     BLT    exit_copy_to_mem
     LDR    R10, [sp, #0x30]        //Get valid_row_off(0x30)
-    LDR    R8, [sp, #0x2c]        //Get valid_len_row(0x2c)
+    LDR    R8, [sp, #0x2c]        //Get valid_len_row(0x2c)   R8 = 9
     SUB    R8,  R11
     CMP    R8, R10                //Check bank row start
     BLT    exit_col_loop
     MOV    R10, R12
     ANDS   R8,  R0, #3
-    BEQ    dword4_col_loop
+    BEQ    check_unaligned_dword4
     LDR    R4,  [R1], #4          //Read dword from bank addr, then increase addr
     CMP    R11, #0x1              //Check remain valid_len_row > 1
     STRHGT R4,  [R0,  R2, LSL #1] //Store half word at odd row to sdram
     ASR    R5,  R4,   #16
     STRH   R5,  [R0], #2          //Store half word at even row to sdram
     SUB    R10, #0x1              //Have procssed one col
+    check_unaligned_dword4                    // step1
+    ANDS   R8,  R2, #1
+    BNE    unaligned_dword4_col_loop
     dword4_col_loop
     SUBS   R10, #0x4
     BLT    exit_dword4_col_loop
@@ -1211,6 +1201,23 @@ __asm void *AsmCopyToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
     STMIA  R0!, {R4, R6}         //Store even row
     B      dword4_col_loop
     exit_dword4_col_loop
+    ADD    R10, #0x4
+    B      dword1_col_loop
+    unaligned_dword4_col_loop     // step2
+    SUBS   R10, #0x4
+    BLT    unaligned_exit_dword4_col_loop
+    LDMIA  R1!, {R4 - R7}
+    ADD    R9,  R0, R2, LSL #1   //Get address of odd row in sdram(+col_num)
+    CMP    R11, #0x1             //Check remain valid_len_row > 1
+    STRHGT R4,  [R9], #2         //Store half word at odd row to sdram
+    PKHBT  R8,  R5, R6, LSL #16  // richard debug
+    STRGT  R8,  [R9], #4         //Store half word at odd row to sdram
+    STRHGT R7,  [R9], #2         //Store half word at odd row to sdram
+    PKHTB  R4,  R5, R4, ASR #16  //Even row, upper 16bits of R4 and R5
+    PKHTB  R6,  R7, R6, ASR #16  //Even row, upper 16bits of R6 and R7
+    STMIA  R0!, {R4, R6}         //Store even row
+    B      unaligned_dword4_col_loop
+    unaligned_exit_dword4_col_loop
     ADD    R10, #0x4
     dword1_col_loop
     SUBS   R10, #0x1
@@ -1873,6 +1880,8 @@ static void FirstPutData(struct easynet_ops_param *param, struct conv_hw_context
     ch_num    = op_param->ch;
     row_num   = op_param->row;
 
+    HAL_CNN_Bram_hfwd_rw_en(ENABLE);
+
     if (op_param->bank == 0)
     {
         bank_start_addr = cxt->bank_a_addr;
@@ -1937,7 +1946,7 @@ static void FirstPutData(struct easynet_ops_param *param, struct conv_hw_context
             }
         }
     }
-
+    HAL_CNN_Bram_hfwd_rw_en(DISABLE);
 }
 
 static void CrossPutData(struct easynet_ops_param *param, struct conv_hw_context *cxt, unsigned char *first_imginput)
@@ -1954,6 +1963,7 @@ static void CrossPutData(struct easynet_ops_param *param, struct conv_hw_context
         return;
     }
 
+    HAL_CNN_Bram_hfwd_rw_en(ENABLE);
     start_row = op_param->start_row;
     len_row   = op_param->len_row;
     start_col = op_param->start_col;
@@ -2027,7 +2037,7 @@ static void CrossPutData(struct easynet_ops_param *param, struct conv_hw_context
             }
         }
     }
-
+    HAL_CNN_Bram_hfwd_rw_en(DISABLE);
 }
 
 static void CrossGetData(struct easynet_ops_param *param, struct conv_hw_context *cxt)
@@ -3807,11 +3817,8 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
         {
             in_bank_param->op = BANK_CP_FROM_MEM;
             in_bank_param->bank = in_bank;
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             do_bank_op(in_bank_param, cxt);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
+
         }
         else
         {
@@ -3827,12 +3834,7 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
                 in_bank_param->src_channel_off = ch;
                 in_bank_param->dst_channel_off = 0;
             }
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             do_channel_cp(in_bank_param, cxt);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
-
         }
 
         /* I do it for simulation debug */
@@ -3841,22 +3843,21 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
         cxt->simu_start_out_ch = ch;
 
 
-
+        HAL_CNN_Bram_hfwd_rw_en(ENABLE);
+        HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         HAL_DMA_Send(hw_param->weight_len, (unsigned int)(processor->weight_addr_start + hw_param->weight_offset)); // stream fifo  address must 32 byte aliged
         put_cmd(processor->cmd_addr_start, hw_param->cmd_offset, hw_param->cmd_len);
         HAL_CNN_Start();
         HAL_CNN_Wait();
+        HAL_CNN_Bram_hfwd_rw_en(DISABLE);
+        HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
 
         /* Save shortcut buffer if it is not last one of this combined layer, otherwise we do it in after_bank_op */
         if (op_param->referred_index >= 0 && op_param->referred_layer_num ==  op_param->bank_op.before_layer_number)
         {
             bank_param->op  =  BANK_CP_TO_MEM;
             bank_param->buffer =  op_param->referred_index;
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             do_bank_op(bank_param, cxt);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         }
 
         for (op_idx = 0; op_idx < BANK_OP_MAX_STAGE; op_idx++)
@@ -3878,11 +3879,7 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
                     bank_param->pool_pad_left = op_param->bank_op.pool_pad_left;
                     bank_param->pool_out_col  = op_param->bank_op.hardware_out_col;
                     bank_param->pool_out_row  = op_param->bank_op.hardware_out_row;
-                    HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
                     do_bank_op(bank_param, cxt);
-                    HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
                     break;
                 }
                 case BANK_OP_SHORTCUT:
@@ -3891,11 +3888,7 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
                     bank_param->dst_buffer = op_param->output_idx;
                     bank_param->buffer = op_param->shortcut_index;
                     bank_param->activation = op_param->bank_op.activation;
-                    HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
                     do_bank_op(bank_param, cxt);
-                    HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
                     break;
                 }
                 default:
@@ -3907,11 +3900,7 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
             {
                 bank_param->op     =  BANK_CP_TO_MEM;
                 bank_param->buffer =  op_param->referred_index;
-                HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-                HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
                 do_bank_op(bank_param, cxt);
-                HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-                HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
             }
         }
 
@@ -3925,11 +3914,7 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
         if (bank_param->start_col + bank_param->len_col > bank_param->col_num)
         {
             bank_param->op     =  BANK_PADDING;
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             do_bank_op(bank_param, cxt);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         }
 
         /* Copy one channel data from output start */
@@ -3939,19 +3924,13 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
         {
             bank_param->op = BANK_CP_TO_MEM;
             bank_param->bank = out_bank;
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             do_bank_op(bank_param, cxt);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         }
         else
         {
             bank_param->op = BANK_COPY_CHANNEL;
             bank_param->src_channel_off = 0;
             bank_param->dst_channel_off = ch;
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             if (op_param->next_1x1 == 1)
             {
                 do_channel_cp_1x1(bank_param, cxt, 1, ch);
@@ -3960,8 +3939,6 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
             {
                 do_channel_cp(bank_param, cxt);
             }
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         }
 
         /* Do calculation backwards */
@@ -4017,19 +3994,11 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
         bank_param->buffer = op_param->output_idx;
         if (op_param->compress_1x1 == 1)
         {
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             do_channel_demap_compress_1x1(bank_param, &in_bank_param, cxt, 1, op_param->conv_stride);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         }
         else
         {
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
             do_channel_demap(bank_param, &in_bank_param, cxt, 1, op_param->conv_stride);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         }
         /* I do it for simulation debug */
         cxt->start_out_row = bank_param->start_row;
@@ -4048,16 +4017,24 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
             }
 
             memcpy(tmp_t, addr_t, hw_param->weight_len);
+            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
+            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
             HAL_DMA_Send(hw_param->weight_len, (unsigned int)tmp_t);
             free_ext(0, tmp_t);
         }
         else
         {
+            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
+            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
             HAL_DMA_Send(hw_param->weight_len, (unsigned int)(processor->weight_addr_start + hw_param->weight_offset));    // stream fifo  address must 32 byte aliged
+
         }
         put_cmd(processor->cmd_addr_start, hw_param->cmd_offset, hw_param->cmd_len);
         HAL_CNN_Start();
         HAL_CNN_Wait();
+
+        HAL_CNN_Bram_hfwd_rw_en(DISABLE);
+        HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
 
         /* Copy one channel data from output start */
         bank_param->start_channel = ch;
@@ -4069,12 +4046,7 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
             bank_param->op  =  BANK_CP_TO_MEM;
             bank_param->buffer =  op_param->referred_index;
 
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
             do_bank_op(bank_param, cxt);
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
-            //do_bank_op(bank_param, cxt);
         }
 
 
@@ -4097,11 +4069,7 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
                     bank_param->pool_pad_left = op_param->bank_op.pool_pad_left;
                     bank_param->pool_out_col  = op_param->bank_op.hardware_out_col;
                     bank_param->pool_out_row  = op_param->bank_op.hardware_out_row;
-                    HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
                     do_bank_op(bank_param, cxt);
-                    HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
                     break;
                 }
                 case BANK_OP_SHORTCUT:
@@ -4110,11 +4078,7 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
                     bank_param->dst_buffer = op_param->output_idx;
                     bank_param->buffer = op_param->shortcut_index;
                     bank_param->activation = op_param->bank_op.activation;
-                    HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
                     do_bank_op(bank_param, cxt);
-                    HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-                    HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
                     break;
                 }
                 default:
@@ -4126,11 +4090,7 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
             {
                 bank_param->op     =  BANK_CP_TO_MEM;
                 bank_param->buffer =  op_param->referred_index;
-                HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-                HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
                 do_bank_op(bank_param, cxt);
-                HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-                HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
             }
         }
 
@@ -4146,13 +4106,7 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
         {
             bank_param->op = BANK_CP_TO_MEM;
             bank_param->buffer = op_param->output_idx;
-            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
-
             do_bank_op(bank_param, cxt);
-
-            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
         }
 
         /* Do calculation backwards */
@@ -4186,6 +4140,7 @@ int bank_ops_process(struct easynet_dev *dev, struct easynet_ops_param *param, k
             break;
         case OP_BANK_ROUTE:
             bank_route(param, cxt);
+
             break;
         case OP_BANK_GENERAL:
         {
@@ -4194,13 +4149,9 @@ int bank_ops_process(struct easynet_dev *dev, struct easynet_ops_param *param, k
             if (op_param->op == BANK_MAXPOOL)
             {
                 do_bank_maxpool(op_param, cxt);
-                // do_bank_maxpool(op_param, cxt);
             }
             else
             {
-
-                HAL_CNN_Bram_hfwd_rw_en(DISABLE);
-                HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
                 kdp_print_bank_op(op_param->op);
                 if ((op_param->op == BANK_CP_FROM_MEM || op_param->op == BANK_CP_TO_BANK) && op_param->next_1x1 == 1)
                 {
@@ -4209,16 +4160,6 @@ int bank_ops_process(struct easynet_dev *dev, struct easynet_ops_param *param, k
                 else
                 {
                     do_bank_op(op_param, cxt);
-                }
-                HAL_CNN_Bram_hfwd_rw_en(ENABLE);
-                HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
-                if (op_param->buffer == 0)
-                {
-                    //dev->predict_out = processor->network_input;
-                }
-                else
-                {
-                    //dev->predict_out = processor->network_output;
                 }
 
             }
@@ -4242,74 +4183,6 @@ int bank_ops_process(struct easynet_dev *dev, struct easynet_ops_param *param, k
             break;
 
         default:
-            break;
-    }
-
-    return ret;
-}
-
-void get_middle_layer_data(int16_t *dst, int16_t *src, int len)
-{
-    int i = 0;
-
-    if ((dst != NULL) && (((unsigned int)dst & 0xC0000000) == 0xC0000000) && (src != NULL) && (((unsigned int)src & 0xC0000000) == 0xC0000000))
-    {
-        for (i = 0; i < len ; i++)
-        {
-            dst[i] = src[i];
-        }
-    }
-}
-int soft_ops_process(struct easynet_dev *dev, struct easynet_ops_param *param, kdp_processor_t *processor)
-{
-    int ret = TRUE;
-
-    switch (param->op)
-    {
-        case OP_LAYER:
-            struct conv_hw_context *cxt = ((struct conv_hw_context *)dev->context);
-            struct op_layer_param *op_param = (struct op_layer_param *)(((unsigned char *)param) + sizeof(struct easynet_ops_param));
-            static uint32_t curlayer = 0;
-
-            int32_t buffer =  op_param->buffer;
-
-            int len = op_param->total_row_num * op_param->total_col_num * op_param->total_pad_up;
-
-            if ((op_param->conv == (68 + 1)) && (curlayer != op_param->conv))
-            {
-                get_middle_layer_data(dev->cfg->middle_layer_buffer[0], cxt->layer_buffer[buffer], len);
-                curlayer = op_param->conv;
-            }
-            else if ((op_param->conv == (80 + 1)) && (curlayer != op_param->conv))
-            {
-                get_middle_layer_data(dev->cfg->middle_layer_buffer[1], cxt->layer_buffer[buffer], len);
-                curlayer = op_param->conv;
-            }
-            else if ((op_param->conv == (86 + 1)) && (curlayer != op_param->conv))
-            {
-                get_middle_layer_data(dev->cfg->middle_layer_buffer[2], cxt->layer_buffer[buffer], len);
-                curlayer = op_param->conv;
-            }
-            else if ((op_param->conv == (92 + 1)) && (curlayer != op_param->conv))
-            {
-                get_middle_layer_data(dev->cfg->middle_layer_buffer[3], cxt->layer_buffer[buffer], len);
-                curlayer = op_param->conv;
-            }
-            else if ((op_param->conv == (98 + 1)) && (curlayer != op_param->conv))
-            {
-                get_middle_layer_data(dev->cfg->middle_layer_buffer[4], cxt->layer_buffer[buffer], len);
-                curlayer = op_param->conv;
-            }
-            else if ((op_param->conv == (104 + 1)) && (curlayer != op_param->conv))
-            {
-                get_middle_layer_data(dev->cfg->middle_layer_buffer[5], cxt->layer_buffer[buffer], len);
-                curlayer = op_param->conv;
-            }
-            layerNumber(param);
-            break;
-
-        default:
-            bank_ops_process(dev, param, processor);
             break;
     }
 

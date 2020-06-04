@@ -236,12 +236,12 @@ static int i2c_gm_configure(struct device *dev, uint32_t dev_config_raw)
         }
         if ((unsigned int)pI2c == I2C0)
         {
-            i2c_gm_config_func_0(dev);    //connect irq
+            //i2c_gm_config_func_0(dev);    //connect irq
         }
 
         if ((unsigned int)pI2c == I2C2)
         {
-            i2c_gm_config_func_2(dev);    //connect irq
+            //i2c_gm_config_func_2(dev);    //connect irq
         }
     }
     else

@@ -1,0 +1,11 @@
+identifier: f6721b_evb_qfn80pin
+name: F6721B-EVB-QFN80PIN
+type: mcu
+arch: arm
+toolchain:
+  - ugelis
+  - gccarmemb
+supported:
+  - serial
+testing:
+  default: true  

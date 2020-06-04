@@ -29,8 +29,8 @@
 
 
 #define MAX_SHORTCUT_NUM       4
-#define MAX_YOLO_OUT_NUM     2
-#define MAX_LAYER_BUFFER_NUM  6
+#define MAX_YOLO_OUT_NUM     3
+#define MAX_LAYER_BUFFER_NUM  5
 #define INVALID_BUFFER_IDX     0xff
 #define MAX_CROSS_NUM          6
 
@@ -199,6 +199,7 @@ struct op_upsample_param
 {
     int32_t layer_num;    /*< for debug */
     int32_t buffer;       /*< input buffer */
+    int32_t out_buffer;   /*< output buffer */
     int32_t ch_num;       /*< input  channel */
     int32_t row_num;      /*< input  row */
     int32_t col_num;      /*< input  column */

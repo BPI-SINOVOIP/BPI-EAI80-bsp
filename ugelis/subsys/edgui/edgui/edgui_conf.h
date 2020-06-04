@@ -17,16 +17,15 @@
     *====================*/
 
     /* Maximal horizontal and vertical resolution to support by the library.*/
-    #if defined(CONFIG_LCD800x480)
-        #define EDGUI_HOR_RES_MAX          (800)
-        #define EDGUI_VER_RES_MAX          (480)
-    #elif defined(CONFIG_LCD1024x600)
-        #define EDGUI_HOR_RES_MAX          (1024)
-        #define EDGUI_VER_RES_MAX          (600)
-    #else
-        #define EDGUI_HOR_RES_MAX          (480)
-        #define EDGUI_VER_RES_MAX          (272)
-    #endif
+    /* 7'LCD 800x480*/
+    #define EDGUI_HOR_RES_MAX          (800)
+    #define EDGUI_VER_RES_MAX          (480)
+    /* 7'LCD 1024x600*/
+    //  #define EDGUI_HOR_RES_MAX          (1024)
+    //  #define EDGUI_VER_RES_MAX          (600)
+    /* 4.3'LCD 480x272*/
+    //  #define EDGUI_HOR_RES_MAX          (480)
+    //  #define EDGUI_VER_RES_MAX          (272)
 
     /* Color depth:
     * - 1:  1 byte per pixel
@@ -496,4 +495,4 @@
     #include "edgui_conf_checker.h"
 
 #endif /*EDGUI_CONF_H*/
-                                                                                                                                      
+                                                                                                                             

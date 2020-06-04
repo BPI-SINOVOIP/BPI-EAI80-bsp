@@ -10,23 +10,24 @@
 
 static struct _k_object *validate_any_object(void *obj)
 {
-	struct _k_object *ko;
-	int ret;
+    struct _k_object *ko;
+    int ret;
 
-	ko = _k_object_find(obj);
+    ko = _k_object_find(obj);
 
-	/* This can be any kernel object and it doesn't have to be
-	 * initialized
-	 */
-	ret = _k_object_validate(ko, K_OBJ_ANY, _OBJ_INIT_ANY);
-	if (ret) {
+    /* This can be any kernel object and it doesn't have to be
+     * initialized
+     */
+    ret = _k_object_validate(ko, K_OBJ_ANY, _OBJ_INIT_ANY);
+    if (ret)
+    {
 #ifdef CONFIG_PRINTK
-		_dump_object_error(ret, obj, ko, K_OBJ_ANY);
+        _dump_object_error(ret, obj, ko, K_OBJ_ANY);
 #endif
-		return NULL;
-	}
+        return NULL;
+    }
 
-	return ko;
+    return ko;
 }
 
 /* Normally these would be included in userspace.c, but the way
@@ -38,34 +39,34 @@ static struct _k_object *validate_any_object(void *obj)
  */
 Z_SYSCALL_HANDLER(k_object_access_grant, object, thread)
 {
-	struct _k_object *ko;
+    struct _k_object *ko;
 
-	Z_OOPS(Z_SYSCALL_OBJ_INIT(thread, K_OBJ_THREAD));
-	ko = validate_any_object((void *)object);
-	Z_OOPS(Z_SYSCALL_VERIFY_MSG(ko, "object %p access denied",
-				    (void *)object));
-	_thread_perms_set(ko, (struct k_thread *)thread);
+    Z_OOPS(Z_SYSCALL_OBJ_INIT(thread, K_OBJ_THREAD));
+    ko = validate_any_object((void *)object);
+    Z_OOPS(Z_SYSCALL_VERIFY_MSG(ko, "object %p access denied",
+                                (void *)object));
+    _thread_perms_set(ko, (struct k_thread *)thread);
 
-	return 0;
+    return 0;
 }
 
 Z_SYSCALL_HANDLER(k_object_release, object)
 {
-	struct _k_object *ko;
+    struct _k_object *ko;
 
-	ko = validate_any_object((void *)object);
-	Z_OOPS(Z_SYSCALL_VERIFY_MSG(ko, "object %p access denied",
-				    (void *)object));
-	_thread_perms_clear(ko, _current);
+    ko = validate_any_object((void *)object);
+    Z_OOPS(Z_SYSCALL_VERIFY_MSG(ko, "object %p access denied",
+                                (void *)object));
+    _thread_perms_clear(ko, _current);
 
-	return 0;
+    return 0;
 }
 
 Z_SYSCALL_HANDLER(k_object_alloc, otype)
 {
-	Z_OOPS(Z_SYSCALL_VERIFY_MSG(otype > K_OBJ_ANY && otype < K_OBJ_LAST &&
-				    otype != K_OBJ__THREAD_STACK_ELEMENT,
-				    "bad object type %d requested", otype));
+    Z_OOPS(Z_SYSCALL_VERIFY_MSG(otype > K_OBJ_ANY && otype < K_OBJ_LAST &&
+                                otype != K_OBJ__THREAD_STACK_ELEMENT,
+                                "bad object type %d requested", otype));
 
-	return (u32_t)_impl_k_object_alloc(otype);
+    return (u32_t)_impl_k_object_alloc(otype);
 }

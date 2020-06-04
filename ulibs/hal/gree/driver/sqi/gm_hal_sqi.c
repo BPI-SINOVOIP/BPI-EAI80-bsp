@@ -34,6 +34,11 @@
 #endif
 
 
+extern  uint32_t sqi_wb_size[2];
+extern  uint32_t sqi_gd_size[2];
+extern  uint32_t sqi_mx_size[7];
+extern  uint32_t sqi_mt_size[6];
+
 
 
 static uint8_t g_tmpbuf[SFLASH_SECTOR_LEN];

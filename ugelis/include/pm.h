@@ -30,11 +30,58 @@ extern "C" {
 #include <device.h>
 #include <string.h>
 
+enum pm_frame_mode
+{
+    SLEEP_MODE           = 0,
+    STANDBY_MODE,
+    SHUTDOWN_MODE,
+};
 
-#define  STANDBY_MODE   1
-#define  SHUTDOWN_MODE  2
+enum pm_frame_hash_enable_disable
+{
+    HASH_DISABLE         = 0,
+    HASH_ENABLE,
+};
+
+enum pm_frame_wkup_pin_enable_disable
+{
+    WKUP_PIN_DISABLE         = 0,
+    WKUP_PIN_ENABLE,
+};
+
+enum pm_frame_wkup_pin_valid
+{
+    PM_RISING_EDGE      = 0,
+    PM__FALLING_EDGE,
+};
+
+struct pm_frame_wkup_pin_cfg
+{
+    enum pm_frame_wkup_pin_enable_disable  wkup_pin_enable_disable;
+    enum pm_frame_wkup_pin_valid           wkup_pin_valid;
+};
+
+enum pm_frame_sdram_size
+{
+    sdram_8m      = 0,
+    sdram_16m,
+    sdram_32m,
+    sdram_64m,
+};
 
 
+struct pm_frame_cfg
+{
+    enum pm_frame_mode lp_mode;
+    enum pm_frame_hash_enable_disable hash_enable_diable;
+    struct pm_frame_wkup_pin_cfg wkup_pin_xpa0;
+    struct pm_frame_wkup_pin_cfg wkup_pin_xpb12;
+    struct pm_frame_wkup_pin_cfg wkup_pin_xpb13;
+    uint8_t pm_shutdown_status_pin_inv;
+    enum pm_frame_sdram_size sdram_size;
+};
+
+#define PM_CFG  ((struct pm_frame_cfg *)(0xc0000200))
 
 struct platform_pm_ops
 {

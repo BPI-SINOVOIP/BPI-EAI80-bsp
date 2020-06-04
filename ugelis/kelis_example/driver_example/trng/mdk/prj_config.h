@@ -13,8 +13,8 @@ extern "C" {
  *!!!!plafrom marco and close the others
  *########################################
  */
-//#define  F6721B_EVB_144PIN 1
-#define  F6721B_EVB_176PIN 1
+#define  F6721B_EVB_144PIN 1
+//#define  F6721B_EVB_176PIN 1
 //#define  F6721B_EVB_QFN40PIN 1
 //#define  F6721B_EVB_QFN80PIN 1
 

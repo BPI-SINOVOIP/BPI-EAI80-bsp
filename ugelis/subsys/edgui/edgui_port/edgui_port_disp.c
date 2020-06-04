@@ -245,10 +245,21 @@ static void gpu_blend(edgui_disp_drv_t *disp_drv, edgui_color_t *dest, const edg
 {
 #if USE_IMP
     uint32_t i;
+    struct fb_mixcolorbulk mix;
+    mix.fg_addr = src;
+    mix.bg_addr = dest;
+    mix.dst_addr = dest;
+    mix.alpha  = opa;
+    mix.fg_pixfmt = IMP_INPUT_RGB565;
+    mix.bg_pixfmt = IMP_INPUT_RGB565;
+    mix.dst_pixfmt = IMP_OUTPUT_RGB565;
+    mix.xsize = length;
+    mix.ysize = 1;
+
     HAL_DCACHE_InvalidAll();
     if (length > 8)
     {
-        fb_mix_colorsbulk(ltdc, src, dest, dest, opa, length, IMP_INPUT_RGB565, IMP_INPUT_RGB565, IMP_OUTPUT_RGB565);
+        fb_mix_colorsbulk(ltdc, &mix);
     }
     else
     {

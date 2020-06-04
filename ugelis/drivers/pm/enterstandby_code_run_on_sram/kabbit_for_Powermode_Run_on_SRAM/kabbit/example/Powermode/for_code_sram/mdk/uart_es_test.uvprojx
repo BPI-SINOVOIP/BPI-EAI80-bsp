@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>uart_es_test</OutputName>
+          <OutputName>pm_code_onsram</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -80,8 +80,8 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>1</RunUserProg2>
-            <UserProg1Name>fromelf --bin --output=./Objects/uart_es_test.bin  ./Objects/uart_es_test.axf</UserProg1Name>
-            <UserProg2Name>fromelf --text -a -c --output=./Objects/uart_es_test.txt  ./Objects/uart_es_test.axf</UserProg2Name>
+            <UserProg1Name>fromelf --bin --output=./Objects/pm_code_onsram.bin  ./Objects/pm_code_onsram.axf</UserProg1Name>
+            <UserProg2Name>fromelf --text -a -c --output=./Objects/pm_code_onsram.txt  ./Objects/pm_code_onsram.axf</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>

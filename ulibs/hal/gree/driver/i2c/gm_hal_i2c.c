@@ -446,7 +446,7 @@ static RET_CODE I2C_ConfigBaudRate(I2C_Handle_T *hI2C, I2C_Config_T *pConfig)
 
 #if  defined(CHIP_GM6721) || defined(CHIP_F6721B)
         /*actually, it equals to FCLK, PLL bypass feature not exist in GM6611*/
-        //        clkFrq = I2C_CLOCKFREQUENCY_8M;
+        //clkFrq = I2C_CLOCKFREQUENCY_8M;
         clkFrq = I2C_CLOCKFREQUENCY_25M;
 #endif
 #if 1

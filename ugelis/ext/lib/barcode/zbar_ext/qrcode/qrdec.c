@@ -70,7 +70,9 @@ struct qr_reader {
     qr_finder_lines finder_lines[2];
 };
 
-qr_finders_info_t qr_finders_info;
+#ifdef ENABLE_BARCODE_ZOOM
+extern barcode_detected_info_t barcode_detected_info;
+#endif
 
 
 /********************** my_qsort **************************/
@@ -4090,16 +4092,44 @@ int _zbar_qr_decode (qr_reader *reader,
             ncenters);
     qr_svg_centers(centers, ncenters);
 
-    qr_finders_info_t *finders_info = &qr_finders_info;
-    if(finders_info->finders_detect_only)
+    if(ncenters >= 3) 
     {
-        finders_info->finders_cnt = ncenters;
-        if(finders_info->finders_cnt >= 3)
+        //time_start = k_uptime_get_32();
+        #ifdef BINARIZE_BY_WELLNER
+        /* wellner */
+        unsigned char *bin = (unsigned char *)zbar_malloc(img->width*img->height*sizeof(unsigned char));
+        wellner(img->data, img->width, img->height, bin, false);
+        //memcpy(img->data, bin, img->width * img->height);//test
+        #else
+        /* zbar orignal code */
+        void *bin = qr_binarize(img->data, img->width, img->height);
+        #endif
+        //time_end = k_uptime_get_32();
+        //printk("binarize cost: %d\n", time_end-time_start);
+
+        qr_code_data_list qrlist;
+        qr_code_data_list_init(&qrlist);
+
+        //time_start = k_uptime_get_32();
+        qr_reader_match_centers(reader, &qrlist, centers, ncenters,
+                                bin, img->width, img->height);
+
+        if(qrlist.nqrdata > 0)
+            nqrdata = qr_code_data_list_extract_text(&qrlist, iscn, img);
+        //time_end = k_uptime_get_32();
+        //printk("read cost: %d\n", time_end-time_start);
+
+        #ifdef ENABLE_BARCODE_ZOOM
+        if(nqrdata == 0)
         {
+            barcode_detected_info_t *qrcode_detected_info = &barcode_detected_info;
+            qrcode_detected_info->barcode_detected = 1;
+            #if 0
+            qrcode_detected_info->qr_finder_info.finders_cnt = ncenters;
             for(int i=0; i<3; i++)
             {
-                finders_info->finders_pos[i][0] = centers[i].pos[0]>>2;
-                finders_info->finders_pos[i][1] = centers[i].pos[1]>>2;
+                qrcode_detected_info->qr_finder_info.finders_pos[i][0] = centers[i].pos[0]>>2;
+                qrcode_detected_info->qr_finder_info.finders_pos[i][1] = centers[i].pos[1]>>2;
             }
             /**
              * calc average of the finders width: 
@@ -4112,39 +4142,15 @@ int _zbar_qr_decode (qr_reader *reader,
             {
                 width_tmp += reader->finder_lines[0].lines[i].len;
             }
-            finders_info->finders_w = (int)((float)((width_tmp/nlines)>>2)/3.0*7.0);
-        }
-    }
-    else
-    {
-        if(ncenters >= 3) 
-        {
-            //time_start = k_uptime_get_32();
-            #ifdef BINARIZE_BY_WELLNER
-            /* wellner */
-            unsigned char *bin = (unsigned char *)zbar_malloc(img->width*img->height*sizeof(unsigned char));
-            wellner(img->data, img->width, img->height, bin, false);
-            //memcpy(img->data, bin, img->width * img->height);//test
-            #else
-            /* zbar orignal code */
-            void *bin = qr_binarize(img->data, img->width, img->height);
+            qrcode_detected_info->qr_finder_info.finders_w = (int)((float)((width_tmp/nlines)>>2)/3.0*7.0);
             #endif
-            //time_end = k_uptime_get_32();
-            //printk("cost: %d\n", time_end-time_start);
-
-            qr_code_data_list qrlist;
-            qr_code_data_list_init(&qrlist);
-
-            qr_reader_match_centers(reader, &qrlist, centers, ncenters,
-                                    bin, img->width, img->height);
-
-            if(qrlist.nqrdata > 0)
-                nqrdata = qr_code_data_list_extract_text(&qrlist, iscn, img);
-
-            qr_code_data_list_clear(&qrlist);
-            zbar_free(bin);
         }
+        #endif
+
+        qr_code_data_list_clear(&qrlist);
+        zbar_free(bin);
     }
+
     svg_group_end();
 
     if(centers)

@@ -16,12 +16,21 @@ typedef struct
 
 } POWER_PinConfig_T;
 
-POWER_PinConfig_T s_pinCfgTable[]={
-    {GPIOA,GPIO_PIN_0,  GPIO_MODE_INPUT,GPIO_PULLUP,0},
-    {GPIOA,GPIO_PIN_7,  GPIO_MODE_INPUT,GPIO_PULLUP,0},
-    {GPIOA,GPIO_PIN_8,  GPIO_MODE_INPUT,GPIO_PULLUP,0},
+#if defined(CHIP_GM6721)
+POWER_PinConfig_T s_pinCfgTable[] =
+{
+    {GPIOA, GPIO_PIN_0,  GPIO_MODE_INPUT, GPIO_PULLUP, 0},
+    {GPIOA, GPIO_PIN_7,  GPIO_MODE_INPUT, GPIO_PULLUP, 0},
+    {GPIOA, GPIO_PIN_8,  GPIO_MODE_INPUT, GPIO_PULLUP, 0},
 };
-
+#elif defined(CHIP_F6721B)
+POWER_PinConfig_T s_pinCfgTable[] =
+{
+    {GPIOA, GPIO_PIN_0,  GPIO_MODE_INPUT, GPIO_PULLUP, 0},
+    {GPIOB, GPIO_PIN_12,  GPIO_MODE_INPUT, GPIO_PULLUP, 0},
+    {GPIOB, GPIO_PIN_13,  GPIO_MODE_INPUT, GPIO_PULLUP, 0},
+};
+#endif
 
 static void HAL_POWER_IrqConfig(void);
 static RET_CODE HAL_POWER_ConfigWakeUpPinAsGpioInputMode(POWER_Pin_T pin);
@@ -36,15 +45,42 @@ static void HAL_POWER_IrqConfig()
 void HAL_PMU_IRQHandler(void *param)
 {
     UNUSED(param);
-    if(HAL_Reset_CheckRestCause(RESET_STATUS_IO_XPA0_PENDING) == TRUE){
+
+#if defined(CHIP_GM6721)
+    if (HAL_Reset_CheckRestCause(RESET_STATUS_IO_XPA0_PENDING) == TRUE)
+    {
         HAL_Reset_ClearRestCause(RESET_STATUS_IO_XPA0_PENDING);
-    }else if(HAL_Reset_CheckRestCause(RESET_STATUS_PES_WK_PENDING) == TRUE){
+    }
+    else if (HAL_Reset_CheckRestCause(RESET_STATUS_PES_WK_PENDING) == TRUE)
+    {
         HAL_Reset_ClearRestCause(RESET_STATUS_PES_WK_PENDING);
-    }else if(HAL_RTC_CheckWakePinPending(RTC_WAKEUP_PIN_XPA7) == TRUE){
+    }
+    else if (HAL_RTC_CheckWakePinPending(RTC_WAKEUP_PIN_XPA7) == TRUE)
+    {
         HAL_RTC_ClearWakePendingStatus(RTC_WAKEUP_PIN_XPA7);
-    }else if(HAL_RTC_ClearWakePendingStatus(RTC_WAKEUP_PIN_XPA8) == TRUE){
+    }
+    else if (HAL_RTC_ClearWakePendingStatus(RTC_WAKEUP_PIN_XPA8) == TRUE)
+    {
         HAL_RTC_ClearWakePendingStatus(RTC_WAKEUP_PIN_XPA8);
     }
+#elif defined(CHIP_F6721B)
+    if (HAL_Reset_CheckRestCause(RESET_STATUS_IO_XPA0_PENDING) == TRUE)
+    {
+        HAL_Reset_ClearRestCause(RESET_STATUS_IO_XPA0_PENDING);
+    }
+    else if (HAL_Reset_CheckRestCause(RESET_STATUS_PES_WK_PENDING) == TRUE)
+    {
+        HAL_Reset_ClearRestCause(RESET_STATUS_PES_WK_PENDING);
+    }
+    else if (HAL_RTC_CheckWakePinPending(RTC_WAKEUP_PIN_XPB12) == TRUE)
+    {
+        HAL_RTC_ClearWakePendingStatus(RTC_WAKEUP_PIN_XPB12);
+    }
+    else if (HAL_RTC_ClearWakePendingStatus(RTC_WAKEUP_PIN_XPB13) == TRUE)
+    {
+        HAL_RTC_ClearWakePendingStatus(RTC_WAKEUP_PIN_XPB13);
+    }
+#endif
 }
 
 void HAL_POWER_Init()
@@ -60,48 +96,48 @@ RET_CODE HAL_POWER_EnterLowPowerMode(POWER_Mode_T mode)
 
     switch (mode)
     {
-	    case POWER_SLEEP_MODE:
-             LL_CPU_ENTER_DEEP_SLEEP(FALSE);
-             LL_POWER_CONFIG_POWER_PMUENABLE(pDev,FALSE);
-             LL_CPU_WFI();
-	         break;
+        case POWER_SLEEP_MODE:
+            LL_CPU_ENTER_DEEP_SLEEP(FALSE);
+            LL_POWER_CONFIG_POWER_PMUENABLE(pDev, FALSE);
+            LL_CPU_WFI();
+            break;
 
-	    case POWER_STOP1_MODE:
-             LL_POWER_PMU_ENTER_STOP1_MODE(pDev);
-             LL_POWER_CONFIG_POWER_PMUENABLE(pDev,FALSE);
-             LL_CPU_ENTER_DEEP_SLEEP(TRUE);
-             LL_CPU_WFI();
-	         break;
+        case POWER_STOP1_MODE:
+            LL_POWER_PMU_ENTER_STOP1_MODE(pDev);
+            LL_POWER_CONFIG_POWER_PMUENABLE(pDev, FALSE);
+            LL_CPU_ENTER_DEEP_SLEEP(TRUE);
+            LL_CPU_WFI();
+            break;
 
-	    case POWER_STOP2_MODE:
-             LL_POWER_PMU_ENTER_STOP2_MODE(pDev);
-             LL_POWER_CONFIG_POWER_PMUENABLE(pDev,TRUE);
-             LL_CPU_ENTER_DEEP_SLEEP(TRUE);
-             LL_CPU_WFI();
-	         break;
+        case POWER_STOP2_MODE:
+            LL_POWER_PMU_ENTER_STOP2_MODE(pDev);
+            LL_POWER_CONFIG_POWER_PMUENABLE(pDev, TRUE);
+            LL_CPU_ENTER_DEEP_SLEEP(TRUE);
+            LL_CPU_WFI();
+            break;
 
-	    case POWER_STADDBY_MODE:
+        case POWER_STADDBY_MODE:
             LL_POWER_PMU_ENTER_STANDBY_MODE(pDev);
-            LL_POWER_CONFIG_POWER_PMUENABLE(pDev,TRUE);
+            LL_POWER_CONFIG_POWER_PMUENABLE(pDev, TRUE);
             LL_CPU_ENTER_DEEP_SLEEP(TRUE);
             LL_CPU_WFI();
-	        break;
+            break;
 
-	    case POWER_SHUTDOWN_MODE:
+        case POWER_SHUTDOWN_MODE:
             LL_POWER_PMU_ENTER_SHUTDOWN_MODE(pDev);
-            LL_POWER_CONFIG_POWER_PMUENABLE(pDev,TRUE);
+            LL_POWER_CONFIG_POWER_PMUENABLE(pDev, TRUE);
             LL_CPU_ENTER_DEEP_SLEEP(TRUE);
             LL_CPU_WFI();
-	        break;
+            break;
 
-	    default:
+        default:
             ret = RET_INVPARAM ;
     }
 
     return ret;
 }
 
-RET_CODE HAL_POWER_ConfigWakeUpPinVaildEdge(POWER_WakeUpPinConfig_T* powerPinConfig)
+RET_CODE HAL_POWER_ConfigWakeUpPinVaildEdge(POWER_WakeUpPinConfig_T *powerPinConfig)
 {
     RET_CODE ret = RET_OK;
     Sys_Device_T *pDev = SYS_DEV;
@@ -109,26 +145,54 @@ RET_CODE HAL_POWER_ConfigWakeUpPinVaildEdge(POWER_WakeUpPinConfig_T* powerPinCon
     POWER_PinVaildTpye_T vaildType = powerPinConfig->vaildType;
     RTC_WakeUpPinConfig_T rtcPinCfg;
 
-    if(powerPin == POWER_WK_XPA0){
-        LL_POWER_CONFIG_XPA0_WKEDG(pDev,vaildType);
-    }else {
+    if (powerPin == POWER_WK_XPA0)
+    {
+        LL_POWER_CONFIG_XPA0_WKEDG(pDev, vaildType);
+    }
+    else
+    {
         /*config for rtc power pin edge*/
-        if(vaildType == POWER_FALLING_EDGE){
+        if (vaildType == POWER_FALLING_EDGE)
+        {
             rtcPinCfg.vaildType = RTC_WKPIN_FALLING_EDGE;
-        }else if(vaildType == POWER_RISING_EDGE){
+        }
+        else if (vaildType == POWER_RISING_EDGE)
+        {
             rtcPinCfg.vaildType = RTC_WKPIN_RISING_EDGE;
-        }else{
+        }
+        else
+        {
             return RET_INVPARAM;
         }
-         /*config for rtc power pin */
-        if(powerPin == POWER_WK_XPA7){
+#if defined(CHIP_GM6721)
+        /*config for rtc power pin */
+        if (powerPin == POWER_WK_XPA7)
+        {
             rtcPinCfg.pin = RTC_WAKEUP_PIN_XPA7;
-        }else if(powerPin == POWER_WK_XPA8){
-            rtcPinCfg.pin = RTC_WAKEUP_PIN_XPA8;
-        }else{
-           return RET_INVPARAM;
         }
-
+        else if (powerPin == POWER_WK_XPA8)
+        {
+            rtcPinCfg.pin = RTC_WAKEUP_PIN_XPA8;
+        }
+        else
+        {
+            return RET_INVPARAM;
+        }
+#elif defined(CHIP_F6721B)
+        /*config for rtc power pin */
+        if (powerPin == POWER_WK_XPB12)
+        {
+            rtcPinCfg.pin = RTC_WAKEUP_PIN_XPB12;
+        }
+        else if (powerPin == POWER_WK_XPB13)
+        {
+            rtcPinCfg.pin = RTC_WAKEUP_PIN_XPB13;
+        }
+        else
+        {
+            return RET_INVPARAM;
+        }
+#endif
         ret = HAL_RTC_ConfigWakeUpPinVaildEdge(&rtcPinCfg);
 
     }
@@ -143,7 +207,7 @@ static RET_CODE HAL_POWER_ConfigWakeUpPinAsGpioInputMode(POWER_Pin_T pin)
 
     GPIO_PinConfig_T pinInpuCfg;
 
-    memset(&pinInpuCfg,0,sizeof(GPIO_PinConfig_T));
+    memset(&pinInpuCfg, 0, sizeof(GPIO_PinConfig_T));
 
     pinInpuCfg.pin          = s_pinCfgTable[pin].pin ;
     pinInpuCfg.mode         = s_pinCfgTable[pin].mode;
@@ -165,26 +229,49 @@ RET_CODE HAL_POWER_ConfigWakeUpPinEn(POWER_Pin_T pin, uint8_t en)
     RTC_PowerPin_T rtcPowerPin;
 
 
-    if(pin == POWER_WK_XPA0){
-        LL_POWER_CONFIG_XPA0_WKEN(pDev,en);
-    }else{
-        if(pin == POWER_WK_XPA7){
+    if (pin == POWER_WK_XPA0)
+    {
+        LL_POWER_CONFIG_XPA0_WKEN(pDev, en);
+    }
+    else
+    {
+#if defined(CHIP_GM6721)
+        if (pin == POWER_WK_XPA7)
+        {
             rtcPowerPin = RTC_WAKEUP_PIN_XPA7;
-        }else if(pin == POWER_WK_XPA8){
+        }
+        else if (pin == POWER_WK_XPA8)
+        {
             rtcPowerPin = RTC_WAKEUP_PIN_XPA8;
-        }else{
+        }
+        else
+        {
             return  RET_INVPARAM ;
         }
-
-
+#elif defined(CHIP_F6721B)
+        if (pin == POWER_WK_XPB12)
+        {
+            rtcPowerPin = RTC_WAKEUP_PIN_XPB12;
+        }
+        else if (pin == POWER_WK_XPB13)
+        {
+            rtcPowerPin = RTC_WAKEUP_PIN_XPB13;
+        }
+        else
+        {
+            return  RET_INVPARAM ;
+        }
+#endif
         ret =  HAL_RTC_ConfigWakeUpEn(rtcPowerPin, en);
-        if(ret){
+        if (ret)
+        {
             goto out;
         }
     }
 
     ret = HAL_POWER_ConfigWakeUpPinAsGpioInputMode(pin);
-    if(ret){
+    if (ret)
+    {
         goto out;
     }
 
@@ -198,41 +285,55 @@ RET_CODE HAL_POWER_ConfigWakeUpPin(POWER_WakeUpPinConfig_T *powerPinConfig)
     Sys_Device_T *pDev = SYS_DEV;
     RET_CODE ret = RET_OK;
 
-    if(!powerPinConfig){
+    if (!powerPinConfig)
+    {
         return RET_INVPARAM;
     }
 
-    if  (!((powerPinConfig->powerMode == POWER_WKPIN_STOP2_MODE)     ||\
-         (powerPinConfig->powerMode == POWER_WKPIN_STANDBY_MODE)     ||\
-         (powerPinConfig->powerMode == POWER_WKPIN_SHUTDOWN_MODE))) {
-         return RET_INVPARAM;
-    }
-
-    if(((powerPinConfig->powerMode == POWER_WKPIN_STANDBY_MODE)||(powerPinConfig->powerMode == POWER_WKPIN_STOP2_MODE))
-        &&(powerPinConfig->pin != POWER_WK_XPA0)){
+    if (!((powerPinConfig->powerMode == POWER_WKPIN_STOP2_MODE)     || \
+            (powerPinConfig->powerMode == POWER_WKPIN_STANDBY_MODE)     || \
+            (powerPinConfig->powerMode == POWER_WKPIN_SHUTDOWN_MODE)))
+    {
         return RET_INVPARAM;
     }
 
-    if((powerPinConfig->powerMode == POWER_WKPIN_SHUTDOWN_MODE)&&
-        ((powerPinConfig->pin != POWER_WK_XPA7) &&(powerPinConfig->pin != POWER_WK_XPA8))){
+    if (((powerPinConfig->powerMode == POWER_WKPIN_STANDBY_MODE) || (powerPinConfig->powerMode == POWER_WKPIN_STOP2_MODE))
+            && (powerPinConfig->pin != POWER_WK_XPA0))
+    {
         return RET_INVPARAM;
     }
 
+#if defined(CHIP_GM6721)
+    if ((powerPinConfig->powerMode == POWER_WKPIN_SHUTDOWN_MODE) &&
+            ((powerPinConfig->pin != POWER_WK_XPA7) && (powerPinConfig->pin != POWER_WK_XPA8)))
+    {
+        return RET_INVPARAM;
+    }
+#elif defined(CHIP_F6721B)
+    if ((powerPinConfig->powerMode == POWER_WKPIN_SHUTDOWN_MODE) &&
+            ((powerPinConfig->pin != POWER_WK_XPB12) && (powerPinConfig->pin != POWER_WK_XPB13)))
+    {
+        return RET_INVPARAM;
+    }
+#endif
     LL_POWER_BACKUP_REG_UNLOCK(pDev);
 
     /*config gpio as input*/
     ret = HAL_POWER_ConfigWakeUpPinAsGpioInputMode(powerPinConfig->pin);
-    if(ret){
+    if (ret)
+    {
         goto out;
     }
 
     ret = HAL_POWER_ConfigWakeUpPinEn(powerPinConfig->pin, TRUE);
-    if(ret){
+    if (ret)
+    {
         goto out;
     }
 
     ret = HAL_POWER_ConfigWakeUpPinVaildEdge(powerPinConfig);
-    if(ret){
+    if (ret)
+    {
         goto out;
     }
 

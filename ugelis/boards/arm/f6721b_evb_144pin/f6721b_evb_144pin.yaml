@@ -1,0 +1,11 @@
+identifier: f6721b_evb_144pin
+name: F6721B-EVB-144PIN
+type: mcu
+arch: arm
+toolchain:
+  - ugelis
+  - gccarmemb
+supported:
+  - serial
+testing:
+  default: true  

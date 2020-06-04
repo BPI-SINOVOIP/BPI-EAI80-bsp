@@ -33,6 +33,15 @@
 
 //#define 	PRIx32   "lx"
 
+#if 1//extend funcitons
+/* 
+ * Support zoom function:
+ * first scan normal resolution(320x240), 
+ * if barcode feature found but can not be decoded, scan large resolution(640*480).
+ */
+#define ENABLE_BARCODE_ZOOM 1
+#endif
+
 #if 1
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1

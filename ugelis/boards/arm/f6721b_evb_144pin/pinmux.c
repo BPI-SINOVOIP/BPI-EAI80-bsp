@@ -35,7 +35,7 @@ typedef struct
     uint32_t alternate;            /**< Alternate function */
 } Device_Pinmux_T;
 
-#if defined(CONFIG_SFLASH)
+#if (defined(CONFIG_FLASH) || defined(CONFIG_SFLASH))
 /** Configure pinmux for an available UART device */
 
 static int sqi_flash_pinumx_config()
@@ -185,7 +185,7 @@ static int uart2_pinmux_config(struct device *port)
 }
 #endif
 
-#if defined(CONFIG_CAN0)
+#if defined(CONFIG_CAN)
 static int can0_pinmux_config()
 {
     int ret = 0;
@@ -2033,7 +2033,7 @@ static int pinmux_gm_initialize(struct device *port)
     }
 #endif
 
-#if defined(CONFIG_SFLASH)
+#if (defined(CONFIG_FLASH) || defined(CONFIG_SFLASH))
     /** Configure pinmux for an available flash device  sqi flash*/
     sqi_flash_pinumx_config();
 #endif
@@ -2095,7 +2095,7 @@ static int pinmux_gm_initialize(struct device *port)
 
 #endif
 
-#if defined(CONFIG_CAN0)
+#if defined(CONFIG_CAN)
     ret = can0_pinmux_config();
     if (ret)
     {

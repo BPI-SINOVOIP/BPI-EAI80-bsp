@@ -13,15 +13,15 @@
       <pCCUsed>5060300::V5.06 update 3 (build 300)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
-          <Device>F6721BLQFP176</Device>
+          <Device>F6721BLQFP80</Device>
           <Vendor>Generic</Vendor>
           <PackID>Keil.GM66xx_DFP.1.3.9</PackID>
-          <Cpu>IRAM(0xC0100000,0x20000) IROM(0x00010000,0x400000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000)</Cpu>
+          <Cpu>IRAM(0xC0100000,0x20000) IROM(0x00010000,0x100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000)</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FDC0100000 -FC1000)</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:F6721BLQFP176$Device\Include\F6721B_Generate.h</RegisterFile>
+          <RegisterFile>$$Device:F6721BLQFP80$Device\Include\F6721B_Generate.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -136,7 +136,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -247,7 +247,7 @@
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x10000</StartAddress>
-                <Size>0x400000</Size>
+                <Size>0x100000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -272,7 +272,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x10000</StartAddress>
-                <Size>0x400000</Size>
+                <Size>0x100000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -334,7 +334,7 @@
               <MiscControls>--gnu</MiscControls>
               <Define>__USE_KEIL_</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\..\include;..\..\..\..\include\generated;..\..\..\..\include\config;..\..\..\..\include\drivers;..\..\..\..\arch\arm\include;..\..\..\..\kernel\include;..\..\..\..\arch\arm\soc\gree_gm\gm6721x;..\..\..\..\lib\libc\minimal\include;..\..\..\..\boards\arm\gm6721_evb_144pin;..\..\..\..\..\ulibs\hal\cmsis\Include;..\..\..\..\..\ulibs\hal\gree\include\arch\arm\cpu;..\..\..\..\..\ulibs\hal\gree\include\arch\arm\soc;..\..\..\..\..\ulibs\hal\gree\driver;..\..\..\..\..\ulibs\hal\gree\include\config;..\..\..\..\..\ulibs\hal\gree\include\driver;..\..\..\..\..\ulibs\hal\gree\include\lib\common;..\mdk</IncludePath>
+              <IncludePath>..\;..\..\..\..\include;..\..\..\..\include\generated;..\..\..\..\include\config;..\..\..\..\include\drivers;..\..\..\..\arch\arm\include;..\..\..\..\kernel\include;..\..\..\..\arch\arm\soc\gree_gm\gm6721x;..\..\..\..\lib\libc\minimal\include;..\..\..\..\..\ulibs\hal\cmsis\Include;..\..\..\..\..\ulibs\hal\gree\include\arch\arm\cpu;..\..\..\..\..\ulibs\hal\gree\include\arch\arm\soc;..\..\..\..\..\ulibs\hal\gree\driver;..\..\..\..\..\ulibs\hal\gree\include\config;..\..\..\..\..\ulibs\hal\gree\include\driver;..\..\..\..\..\ulibs\hal\gree\include\lib\common;..\mdk;..\..\..\..\boards\arm</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

@@ -174,9 +174,6 @@ struct easynet_dev *easynet_process_init(struct easynet_dev_cfg *cfg, unsigned c
     struct easynet_dev *dev = &kdp_dev;
     int len;
 
-    processor->network_input = cfg->layer_buffer[0];
-    processor->network_output = cfg->layer_buffer[1];
-
     len = ops_parse(ops_data, (unsigned char **)&dev->param, &processor->cmd_addr_start, &processor->weight_addr_start);
     dev->cur_addr = 0;
     dev->len = len;
@@ -187,6 +184,11 @@ struct easynet_dev *easynet_process_init(struct easynet_dev_cfg *cfg, unsigned c
     {
         kdp_hw_context.layer_buffer[i] = cfg->layer_buffer[i];
     }
+    for (i = 0; i < MAX_YOLO_OUT_NUM; i++)
+    {
+        kdp_hw_context.yolo_out_buffer[i] = cfg->yolo_buffer[i];
+    }
+
     kdp_hw_context.bank_a_addr = (void *)BRAM_OUTPUT_A_BASEARDDR;
     kdp_hw_context.bank_c_addr = (void *)BRAM_OUTPUT_C_BASEARDDR;
 
@@ -207,9 +209,6 @@ struct easynet_dev *easynet_process_update(struct easynet_dev_cfg *cfg, unsigned
     extern int cntt;
     cntt = 0;
 
-    processor->network_input = cfg->layer_buffer[0];
-    processor->network_output = cfg->layer_buffer[1];
-
     len = ops_parse(ops_data, (unsigned char **)&dev->param, &processor->cmd_addr_start, &processor->weight_addr_start);
     dev->cur_addr = 0;
     dev->len = len;
@@ -220,6 +219,10 @@ struct easynet_dev *easynet_process_update(struct easynet_dev_cfg *cfg, unsigned
     for (i = 0; i < MAX_LAYER_BUFFER_NUM; i++)
     {
         kdp_hw_context.layer_buffer[i] = cfg->layer_buffer[i];
+    }
+    for (i = 0; i < MAX_YOLO_OUT_NUM; i++)
+    {
+        kdp_hw_context.yolo_out_buffer[i] = cfg->yolo_buffer[i];
     }
 
     kdp_hw_context.bank_a_addr = (void *)BRAM_OUTPUT_A_BASEARDDR;
@@ -247,6 +250,175 @@ void easynet_process_deinit(struct easynet_dev *dev)
         //free_ext(0, dev->yolo_out_buffer[i]);
         //dev->yolo_out_buffer[i] = NULL;
     }
+}
+
+#if 0
+static float gm_exp(float x)
+{
+    x = 1.0 + x / 256.0;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    return x;
+}
+#else
+typedef union
+{
+    uint32_t l;
+    struct
+    {
+        uint32_t m : 20;
+        uint32_t e : 11;
+        uint32_t s : 1;
+    };
+} fast_exp_t;
+
+static float gm_exp(float x)
+{
+    fast_exp_t e;
+    e.l = (uint32_t)(1512775 * x + 1072632447);
+    // IEEE binary32 format
+    e.e = (e.e - 1023 + 127) & 0xFF; // rebase
+
+    uint32_t packed = (e.s << 31) | (e.e << 23) | e.m << 3;
+    return *((float *)&packed);
+}
+#endif
+
+static inline float logistic_activate(float x)
+{
+    return 1. / (1. + gm_exp(-x));
+}
+
+static const int64_t fix8_one = 0x0100;          /*!< fix8_t value of 1 */
+
+int64_t fix32_extend(int64_t value)
+{
+    return (int16_t)(value);
+}
+
+float fix32_to_float(int64_t a)
+{
+    return (float) fix32_extend(a) / fix8_one;
+}
+
+static int entry_gaussian_index(int w, int h, int classes, int location, int entry)
+{
+    int n =   location / (w * h);
+    int loc = location % (w * h);
+    return n * w * h * (8 + classes + 1) + entry * w * h + loc;
+}
+
+
+void soft_gaussian_yolo(struct easynet_ops_param *param, struct conv_hw_context *cxt, float thresh)
+{
+    struct op_gaussian_yolo_param *op_param = (struct op_gaussian_yolo_param *)(((void *)param) + sizeof(struct easynet_ops_param));
+    int n, obj_index, x_mu_index, x_sigma_index, y_mu_index, y_sigma_index, w_mu_index, w_sigma_index, h_mu_index, h_sigma_index, class_index;
+    int16_t *input;
+    int i = 0;
+    int j = 0;
+    float objectness = 0;
+
+    /* Select input buffer */
+    input      = cxt->layer_buffer[op_param->buffer];
+
+    int w = op_param->col_num;
+    int h = op_param->row_num;
+    int num = op_param->col_num * op_param->row_num;
+    int classes = op_param->classes;
+    int out_ch  = op_param->out_ch;
+
+    for (n = 0; n < out_ch; ++n)
+    {
+        for (i = 0; i < num; ++i)
+        {
+            obj_index  = entry_gaussian_index(w, h, classes, n * num + i, 8);
+            objectness = logistic_activate(fix32_to_float(input[obj_index]));
+            if (objectness > thresh)
+            {
+                // x : mu, sigma
+                x_mu_index = entry_gaussian_index(w, h, classes,  n * num + i, 0);
+                x_sigma_index = entry_gaussian_index(w, h, classes,  n * num + i, 1);
+                // y : mu, sigma
+                y_mu_index = entry_gaussian_index(w, h, classes,  n * num + i, 2);
+                y_sigma_index = entry_gaussian_index(w, h, classes,  n * num + i, 3);
+                // w : sigma
+                w_mu_index = entry_gaussian_index(w, h, classes,  n * num + i, 4);
+                w_sigma_index = entry_gaussian_index(w, h, classes,  n * num + i, 5);
+                // h : sigma
+                h_mu_index = entry_gaussian_index(w, h, classes,  n * num + i, 6);
+                h_sigma_index = entry_gaussian_index(w, h, classes,  n * num + i, 7);
+
+                cxt->yolo_out_buffer[op_param->index][x_mu_index] = logistic_activate(fix32_to_float(input[x_mu_index]));
+                cxt->yolo_out_buffer[op_param->index][x_sigma_index] = logistic_activate(fix32_to_float(input[x_sigma_index]));
+                cxt->yolo_out_buffer[op_param->index][y_mu_index] = logistic_activate(fix32_to_float(input[y_mu_index]));
+                cxt->yolo_out_buffer[op_param->index][y_sigma_index] = logistic_activate(fix32_to_float(input[y_sigma_index]));
+                cxt->yolo_out_buffer[op_param->index][w_mu_index] = fix32_to_float(input[w_mu_index]);
+                cxt->yolo_out_buffer[op_param->index][w_sigma_index] = logistic_activate(fix32_to_float(input[w_sigma_index]));
+                cxt->yolo_out_buffer[op_param->index][h_mu_index] = fix32_to_float(input[h_mu_index]);
+                cxt->yolo_out_buffer[op_param->index][h_sigma_index] = logistic_activate(fix32_to_float(input[h_sigma_index]));
+                cxt->yolo_out_buffer[op_param->index][obj_index] = objectness;
+
+                for (j = 0; j < classes; ++j)
+                {
+                    class_index = entry_gaussian_index(w, h, classes, n * num + i, 9 + j);
+                    cxt->yolo_out_buffer[op_param->index][class_index] = logistic_activate(fix32_to_float(input[class_index]));
+                }
+            }
+            else
+            {
+                cxt->yolo_out_buffer[op_param->index][obj_index] = 0;
+            }
+        }
+    }
+}
+
+void soft_upsample(struct easynet_ops_param *param, struct conv_hw_context *cxt)
+{
+    struct op_upsample_param *op_param = (struct op_upsample_param *)(((void *)param) + sizeof(struct easynet_ops_param));
+    int16_t *input;
+    int16_t *tmp;
+    uint32_t c, h, w, stride, scale, out_cnt;
+    int i, j, k;
+
+    int16_t *output;
+
+    /* Select input buffer */
+    input      = cxt->layer_buffer[op_param->buffer];
+    output     = cxt->layer_buffer[op_param->out_buffer];
+
+    c = op_param->ch_num;
+    h = op_param->row_num;
+    w = op_param->col_num;
+    stride = op_param->stride;
+    out_cnt = op_param->out_col * op_param->out_row * op_param->ch_num;
+
+    for (k = 0; k < c; ++k)
+    {
+        for (j = 0; j < h * stride; ++j)
+        {
+            for (i = 0; i < w * stride; ++i)
+            {
+                int in_index = k * w * h + (j / stride) * w + i / stride;
+                int out_index = k * w * h * stride * stride + j * w * stride + i;
+                output[out_index] = input[in_index];
+            }
+        }
+    }
+
+}
+
+static void layerNumber(struct easynet_ops_param *param)
+{
+#ifdef DEBUG_KDP_LEVEL_0
+    struct op_layer_param *op_param = (struct op_layer_param *)(((unsigned char *)param) + sizeof(struct easynet_ops_param));
+    printf("Process layer %d\n", op_param->conv);
+#endif
 }
 
 static int kdp_ops_process(struct easynet_dev *dev, struct easynet_ops_param *param)
@@ -292,18 +464,31 @@ static int kdp_ops_process(struct easynet_dev *dev, struct easynet_ops_param *pa
     switch (param->op)
     {
         case OP_HW:
+
+            HAL_CNN_Bram_hfwd_rw_en(ENABLE);
+            HAL_CNN_Bram_HL_sel(SEL_LOW_16BIT);
             HAL_DMA_Send(op_param->weight_len, (unsigned int)(cxt->weight_start_addr + op_param->weight_offset)); // stream fifo  address must 32 byte aliged
             put_cmd(cxt->cmd_start_addr, op_param->cmd_offset, op_param->cmd_len);
             HAL_CNN_Start();
             HAL_CNN_Wait();
+            HAL_CNN_Bram_hfwd_rw_en(DISABLE);
+            HAL_CNN_Bram_HL_sel(SEL_HIGT_16BIT);
 #ifdef DEBUG_TIME
             time_now = k_uptime_get_32();
             t_Hw += time_now - time_last;
 #endif
             break;
-
+        case OP_LAYER:
+            layerNumber(param);
+            break;
+        case OP_GAUSSIAN_YOLO:
+            soft_gaussian_yolo(param, cxt, dev->cfg->thresh);
+            break;
+        case OP_UPSAMPLE:
+            soft_upsample(param, cxt);
+            break;
         default:
-            soft_ops_process(dev, param, processor);
+            bank_ops_process(dev, param, processor);
             break;
     }
 

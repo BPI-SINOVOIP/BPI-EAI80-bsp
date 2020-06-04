@@ -74,6 +74,18 @@ struct fb_copyarea
     uint32_t dst_addr;       /* destination buffer address */
 };
 
+struct fb_mixcolorbulk
+{
+    uint32_t fg_addr;       /* foreground address */
+    uint32_t bg_addr;       /* background address */
+    uint32_t dst_addr;      /* destination address */
+    uint32_t fg_pixfmt;     /* foreground pixel format */
+    uint32_t bg_pixfmt;     /* background pixel format */
+    uint32_t dst_pixfmt;    /* destination pixel format */
+    uint32_t xsize;         /* pixel width */
+    uint32_t ysize;         /* pixel height */
+    uint32_t alpha;         /* blending alpha value */
+};
 struct fb_wininfo
 {
     uint16_t x_start;       /* Where to place image */
@@ -147,7 +159,7 @@ struct fb_driver_api
 
     int (*convert_color)(struct device *dev, void *src, void *dst, uint32_t src_pixfmt, uint32_t dst_pixfmt, uint32_t xsize, uint32_t ysize);
 
-    int (*mix_colorsbulk)(struct device *dev, uint32_t *fg_addr, uint32_t *bg_addr, uint32_t *dst, uint8_t alpha, uint32_t pixel_num, uint32_t input_fmt_fg, uint32_t input_fmt_bg, uint32_t output_fmt);
+    int (*mix_colorsbulk)(struct device *dev, const struct fb_mixcolorbulk *mixcolorbulk);
 
     int (*draw_bitmapl8)(struct device *dev, void *src, void *dst, uint32_t offline_src, uint32_t offline_dst, uint32_t pixfmt, uint32_t xsize, uint32_t ysize);
 
@@ -375,9 +387,9 @@ static inline int _impl_fb_convert_color(struct device *dev, void *src, void *ds
  * @retval 0 If successful.
  * @retval Negative errno code if failure.
  */
-__syscall int fb_mix_colorsbulk(struct device *dev, uint32_t *fg_color, uint32_t *bg_color, uint32_t *dst, uint8_t alpha, uint32_t pixel_num, uint32_t input_fmt_fg, uint32_t input_fmt_bg, uint32_t output_fmt);
+__syscall int fb_mix_colorsbulk(struct device *dev, const struct fb_mixcolorbulk *mixcolorbulk);
 
-static inline int _impl_fb_mix_colorsbulk(struct device *dev, uint32_t *fg_color, uint32_t *bg_color, uint32_t *dst, uint8_t alpha, uint32_t pixel_num, uint32_t input_fmt_fg, uint32_t input_fmt_bg, uint32_t output_fmt)
+static inline int _impl_fb_mix_colorsbulk(struct device *dev, const struct fb_mixcolorbulk *mixcolorbulk)
 {
     const struct fb_driver_api *api = dev->driver_api;
 
@@ -386,7 +398,7 @@ static inline int _impl_fb_mix_colorsbulk(struct device *dev, uint32_t *fg_color
         return -ENOTSUP;
     }
 
-    return api->mix_colorsbulk(dev, fg_color, bg_color, dst, alpha, pixel_num, input_fmt_fg, input_fmt_bg, output_fmt);
+    return api->mix_colorsbulk(dev, mixcolorbulk);
 }
 
 /**

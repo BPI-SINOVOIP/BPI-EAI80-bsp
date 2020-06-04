@@ -1225,7 +1225,7 @@ static int HAL_RTC_DayOfMon(int year, int mon)
 RET_CODE HAL_RTC_NextSec(UTCTime_T *pUtcTime, int sec)
 {
     int maxday, added_hour, added_min, added_sec;
-    if (sec > 24*3600)
+    if (sec > 24 * 3600)
     {
         return RET_INVPARAM;
     }
@@ -1254,7 +1254,7 @@ RET_CODE HAL_RTC_NextSec(UTCTime_T *pUtcTime, int sec)
         pUtcTime->wday = pUtcTime->wday % 7;
         pUtcTime->hour = pUtcTime->hour % 24;
     }
-	maxday = HAL_RTC_DayOfMon(pUtcTime->year, pUtcTime->mon);
+    maxday = HAL_RTC_DayOfMon(pUtcTime->year, pUtcTime->mon);
     if (pUtcTime->day > maxday)
     {
         pUtcTime->day = 1;
@@ -1278,6 +1278,7 @@ RET_CODE HAL_RTC_ConfigWakeUpEn(RTC_PowerPin_T pin, uint8_t en)
     RET_CODE ret = RET_OK;
 
     HAL_RTC_Unlock();
+#if defined(CHIP_GM6721)
     if (pin == RTC_WAKEUP_PIN_XPA7)
     {
         LL_RTC_XPA7_WAKEUP_EN(RTC, en);
@@ -1290,6 +1291,21 @@ RET_CODE HAL_RTC_ConfigWakeUpEn(RTC_PowerPin_T pin, uint8_t en)
     {
         ret = RET_INVPARAM;
     }
+#elif defined(CHIP_F6721B)
+    if (pin == RTC_WAKEUP_PIN_XPB12)
+    {
+        LL_RTC_XPB12_WAKEUP_EN(RTC, en);
+    }
+    else if (pin == RTC_WAKEUP_PIN_XPB13)
+    {
+        LL_RTC_XPB13_WAKEUP_EN(RTC, en);
+    }
+    else
+    {
+        ret = RET_INVPARAM;
+    }
+
+#endif
     HAL_RTC_Lock();
 
 
@@ -1313,6 +1329,7 @@ RET_CODE HAL_RTC_ConfigWakeUpPinVaildEdge(RTC_WakeUpPinConfig_T *pinCfg)
         return RET_INVPARAM;
     }
 
+#if defined(CHIP_GM6721)
     if (((pin !=  RTC_WAKEUP_PIN_XPA7) && (pin !=  RTC_WAKEUP_PIN_XPA8)) || \
             ((vaildType !=  RTC_WKPIN_RISING_EDGE) && (vaildType !=  RTC_WKPIN_FALLING_EDGE)))
     {
@@ -1330,6 +1347,25 @@ RET_CODE HAL_RTC_ConfigWakeUpPinVaildEdge(RTC_WakeUpPinConfig_T *pinCfg)
     }
     HAL_RTC_Lock();
 
+#elif defined(CHIP_F6721B)
+    if (((pin !=  RTC_WAKEUP_PIN_XPB12) && (pin !=  RTC_WAKEUP_PIN_XPB13)) || \
+            ((vaildType !=  RTC_WKPIN_RISING_EDGE) && (vaildType !=  RTC_WKPIN_FALLING_EDGE)))
+    {
+        return RET_INVPARAM;
+    }
+
+    HAL_RTC_Unlock();
+    if (pin == RTC_WAKEUP_PIN_XPB12)
+    {
+        LL_RTC_XPB12_SEL_EDGE_VAILD(RTC, vaildType);
+    }
+    else
+    {
+        LL_RTC_XPB13_SEL_EDGE_VAILD(RTC, vaildType);
+    }
+    HAL_RTC_Lock();
+
+#endif
     return ret;
 
 }
@@ -1341,6 +1377,7 @@ RET_CODE HAL_RTC_ClearWakePendingStatus(RTC_PowerPin_T pin)
 
     HAL_RTC_Unlock();
 
+#if defined(CHIP_GM6721)
     if (pin == RTC_WAKEUP_PIN_XPA7)
     {
         LL_RTC_XPA7_CLEAR_WAKEUP_PENDING(RTC);
@@ -1353,7 +1390,21 @@ RET_CODE HAL_RTC_ClearWakePendingStatus(RTC_PowerPin_T pin)
     {
         ret = RET_INVPARAM;
     }
+#elif defined(CHIP_F6721B)
+    if (pin == RTC_WAKEUP_PIN_XPB12)
+    {
+        LL_RTC_XPB12_CLEAR_WAKEUP_PENDING(RTC);
+    }
+    else if (pin == RTC_WAKEUP_PIN_XPB13)
+    {
+        LL_RTC_XPB13_CLEAR_WAKEUP_PENDING(RTC);
+    }
+    else
+    {
+        ret = RET_INVPARAM;
+    }
 
+#endif
     HAL_RTC_Lock();
 
     return ret;
@@ -1366,6 +1417,8 @@ uint8_t HAL_RTC_CheckWakePinPending(RTC_PowerPin_T pin)
     uint8_t status = FALSE;
 
     HAL_RTC_Unlock();
+
+#if defined(CHIP_GM6721)
     if (pin == RTC_WAKEUP_PIN_XPA7)
     {
         status = LL_RTC_IS_XPA7_WAKEUP_PENGING(RTC);
@@ -1374,6 +1427,16 @@ uint8_t HAL_RTC_CheckWakePinPending(RTC_PowerPin_T pin)
     {
         status = LL_RTC_IS_XPA8_WAKEUP_PENGING(RTC);
     }
+#elif defined(CHIP_F6721B)
+    if (pin == RTC_WAKEUP_PIN_XPB12)
+    {
+        status = LL_RTC_IS_XPB12_WAKEUP_PENGING(RTC);
+    }
+    else if (pin == RTC_WAKEUP_PIN_XPB13)
+    {
+        status = LL_RTC_IS_XPB13_WAKEUP_PENGING(RTC);
+    }
+#endif
     HAL_RTC_Lock();
 
     return status;

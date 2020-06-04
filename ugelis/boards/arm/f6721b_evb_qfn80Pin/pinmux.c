@@ -37,7 +37,7 @@ typedef struct
     uint32_t alternate;            /**< Alternate function */
 } Device_Pinmux_T;
 
-#if defined(CONFIG_SFLASH)
+#if (defined(CONFIG_FLASH) || defined(CONFIG_SFLASH))
 /** Configure pinmux for an available UART device */
 
 static int sqi_flash_pinumx_config()
@@ -293,7 +293,7 @@ static int uart3_pinmux_config(void)
 }
 #endif
 
-#if defined(CONFIG_CAN0)
+#if defined(CONFIG_CAN)
 static int can0_pinmux_config()
 {
     int ret = 0;
@@ -1900,57 +1900,7 @@ static int tim8_pinmux_config(void)
 /** Configure pinmux for an available usb device/Host */
 static int usb_pinmux_config(struct device *port)
 {
-    int ret = 0;
-    GPIO_PinConfig_T pin_cfg;
-    Device_Pinmux_T s_timPinMux[4] =
-    {
-        {PINMUX_GPIO_PIN_2,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_3,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_4,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_5,  GPIOH, GPIO_AF_NONE},
-
-    };
-
-    pin_cfg.pin = BIT(s_timPinMux[0].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[0].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[0].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    pin_cfg.pin = BIT(s_timPinMux[1].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[1].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[1].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    pin_cfg.pin = BIT(s_timPinMux[2].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[2].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[2].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    pin_cfg.pin = BIT(s_timPinMux[3].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[3].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[3].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
+    *(volatile uint32_t *)0x400002e0 |= (0xFF << 4);
     return 0;
 }
 #endif
@@ -2243,7 +2193,7 @@ static int pinmux_gm_initialize(struct device *port)
     }
 #endif
 
-#if defined(CONFIG_SFLASH)
+#if (defined(CONFIG_FLASH) || defined(CONFIG_SFLASH))
     /** Configure pinmux for an available flash device  sqi flash*/
     sqi_flash_pinumx_config();
 #endif
@@ -2306,7 +2256,7 @@ static int pinmux_gm_initialize(struct device *port)
 
 #endif
 
-#if defined(CONFIG_CAN0)
+#if defined(CONFIG_CAN)
     ret = can0_pinmux_config();
     if (ret)
     {

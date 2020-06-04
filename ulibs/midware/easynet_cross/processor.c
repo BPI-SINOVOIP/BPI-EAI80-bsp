@@ -485,7 +485,7 @@ void maxPoolOptimizeBank2Bank(struct easynet_ops_param *param)
         for (channel = 0; channel < ch_num; ++channel)
         {
             curBuffer = bank_start_addr + 0x10000 * (channel % 2) + (channel / 2) * 4 * col_num * ((row_num + 7) / 8);
-            FastMaxPool_2X2_S1(curBuffer, 7, 7);
+            //FastMaxPool_2X2_S1(curBuffer, 7, 7); // must fixed
         }
     }
     else
@@ -1127,11 +1127,11 @@ void CrossFirstPutDataCompilerOptimize(struct easynet_ops_param *param, unsigned
                         }
                         else
                         {
-                            //for(col = start_col; col < end_col; ++col, bank_addr += 4)
-                            //{
-                            //  ((uint32_t *)bank_addr)[0] = input[col + row_off] << 16 | input[col + row_offb];
-                            //}
-                            bank_addr = FastFirstPutDataOptimize(bank_addr, len_col, &input[start_col + row_off], &input[start_col + row_offb]);
+                            for(col = start_col; col < end_col; ++col, bank_addr += 4)
+                            {
+                              ((uint32_t *)bank_addr)[0] = input[col + row_off] << 16 | input[col + row_offb];
+                            }
+                           // bank_addr = FastFirstPutDataOptimize(bank_addr, len_col, &input[start_col + row_off], &input[start_col + row_offb]);
 
                         }
                     }
@@ -1367,12 +1367,12 @@ void CrossPutDataCompilerOptimize(struct easynet_ops_param *param, unsigned shor
                         {
                             if ((row + bank_row_idx + start_row + 1) < row_num)
                             {
-                                //  for(col = start_col; col < end_col; ++col, bank_addr += 4)
-                                //  {
-                                //      ((uint32_t *)bank_addr)[0] =(input[col + row_off] << 16) | (input[col + row_offb]);
-                                //    }
+                                  for(col = start_col; col < end_col; ++col, bank_addr += 4)
+                                  {
+                                      ((uint32_t *)bank_addr)[0] =(input[col + row_off] << 16) | (input[col + row_offb]);
+                                    }
 
-                                bank_addr = FastShortPutDataOptimize(bank_addr, len_col, &input[start_col + row_off], &input[start_col + row_offb]);
+                                //bank_addr = FastShortPutDataOptimize(bank_addr, len_col, &input[start_col + row_off], &input[start_col + row_offb]);
                             }
                             else
                             {

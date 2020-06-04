@@ -76,6 +76,22 @@ namespace zbar {
 /** @name Global library interfaces */
 /*@{*/
 
+#if 1//def ENABLE_BARCODE_ZOOM
+typedef struct
+{
+    int finders_cnt;         /**< finders total cnt */
+    int finders_pos[3][2];   /**< x/y in pixel format */
+    int finders_w;           /**< finder's width in pixel format */
+}qr_finders_info_t;
+
+typedef struct
+{
+    int barcode_detected;             /**< whether barcode feature has been detected */
+    qr_finders_info_t qr_finder_info; /**< qr finder info */
+}barcode_detected_info_t;
+#endif
+
+
 /** "color" of element: bar or space. */
 typedef enum zbar_color_e {
     ZBAR_SPACE = 0,    /**< light area or space between bars */
@@ -1098,7 +1114,7 @@ zbar_image_scanner_get_results(const zbar_image_scanner_t *scanner);
 extern void zbar_scan_image_x (zbar_image_scanner_t *iscn, const zbar_image_t *img);
 extern void zbar_scan_image_y (zbar_image_scanner_t *iscn, const zbar_image_t *img);
 extern int zbar_scan_image(zbar_image_scanner_t *scanner, zbar_image_scanner_t *scanner_slave,
-                           zbar_image_t *image);
+                           zbar_image_t *image, zbar_image_t *img_slave);
 #else
 extern int zbar_scan_image(zbar_image_scanner_t *scanner,
                            zbar_image_t *image);

@@ -59,17 +59,22 @@ int ai_flash_read_ops(unsigned int ops_offset, unsigned int ops_len, unsigned in
     RET_CODE    ret;
 
     /*load weight*/
-    ret  = HAL_SQI_Read(&gSQIHandle, ops_offset, (void *)ops_data, ops_len);
-    if (ret != RET_OK)
+    if (ops_data != NULL)
     {
-        return RET_ERROR;
+        ret  = HAL_SQI_Read(&gSQIHandle, ops_offset, (void *)ops_data, ops_len);
+        if (ret != RET_OK)
+        {
+            return RET_ERROR;
+        }
     }
 
-
-    ret  = HAL_SQI_Read(&gSQIHandle, img_offset, (void *)image_pic, img_len);
-    if (ret != RET_OK)
+    if (image_pic != NULL)
     {
-        return RET_ERROR;
+        ret  = HAL_SQI_Read(&gSQIHandle, img_offset, (void *)image_pic, img_len);
+        if (ret != RET_OK)
+        {
+            return RET_ERROR;
+        }
     }
 
     return RET_OK;

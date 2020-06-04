@@ -40,35 +40,23 @@ void main(void)
     edgui_init();
     edgui_port_disp_init();
     edgui_port_indev_init();
-    th[0] = edgui_theme_material_init(20, NULL);
-    th[1] = edgui_theme_night_init(200, NULL);
-    th[2] = edgui_theme_alien_init(210, NULL);
-    th[3] = edgui_theme_zen_init(50, NULL);
-    edgui_test_theme_1(th[1]);
-    edgui_test_theme_2();
-    //edgui_tutorial_animations();
-    //demo_create();
+    //    th[0] = edgui_theme_material_init(20, NULL);
+    //    th[1] = edgui_theme_night_init(200, NULL);
+    //    th[2] = edgui_theme_alien_init(210, NULL);
+    //    th[3] = edgui_theme_zen_init(50, NULL);
+    //    edgui_test_theme_1(th[1]);
+    //    edgui_test_theme_2();
+    //  edgui_tutorial_animations();
+    demo_create();
 
     struct k_thread task_thread;
-    video_demo(&task_thread);
+    //video_demo(&task_thread);
 
     while (1)
     {
         edgui_tick_inc(10);
         edgui_task_handler();
         k_sleep(10);
-        count++;
-        if (count >= 200)
-        {
-            //edgui_theme_set_current(th[index]);
-            index++;
-            if (index > 3)
-            {
-                index = 0;
-            }
-
-            count = 0;
-        }
     }
 }
 
