@@ -1,0 +1,217 @@
+/*
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <gree/f6721b.dtsi>
+
+/ {
+	model = "GREEicroelectronics F6721B-QFN80PIN board";
+	compatible = "gree,f6721b-qfn80pin", "gree,f6721b";
+
+	aliases {
+		uart0 = &uart0;
+		uart1 = &uart1;
+		uart2 = &uart2;
+		mmc0  = &mmc0;
+		can0  = &can0;
+        wwdg  = &wwdg;
+        iwdg  = &iwdg;
+        rtc  = &rtc;
+        lvd  = &lvd;
+        camera0 = &camera0;
+		camera1 = &camera1;
+		camera2 = &camera2;
+		tim1 = &tim1;
+		tim2 = &tim2;
+		tim3 = &tim3;
+		tim4 = &tim4;
+		tim5 = &tim5;
+		tim8 = &tim8;
+		power = &power;
+		sflash = &sflash;
+	};
+
+	chosen {
+		ugelis,console = &uart1;
+        ugelis,sram = &sram0;
+        #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
+        ugelis,sdram = &sdram0;
+        #endif
+		ugelis,flash = &flash0;
+		ugelis,vout = &vout;
+		ugelis,vin = &vin;
+        ugelis,imp = &imp;
+		ugelis,iwdg = &iwdg;
+		ugelis,wwdg = &wwdg;
+		ugelis,rtc = &rtc;
+		ugelis,lvd = &lvd;
+        ugelis,tim1 = &tim1;
+		ugelis,tim2 = &tim2;
+		ugelis,tim3 = &tim3;
+		ugelis,tim4 = &tim4;
+		ugelis,tim5 = &tim5;
+		ugelis,tim8 = &tim8;
+		ugelis,power = &power;
+		ugelis,sflash = &sflash;
+	};
+};
+
+#if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
+    &sdram0{
+	    reg = <0xc0000000 8388608>; /*8M Sdram Size*/
+	};
+#endif
+
+&uart0 {
+	current-speed  = <19200>;
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&uart1 {
+	current-speed  = <19200>;
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&uart2 {
+	current-speed  = <19200>; //19200 for 8M clock
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&vout {
+       vbp = <8>;                        //<20>;
+       vfp = <8>;                        //<12>;
+       hbp = <40>;                       //<140>;
+       hfp = <5>;                        //<160>;
+       vsw = <1>;                        //<3>;
+       hsw = <1>;                        //<20>;
+       pllsain = <16>;                  //<52>;
+       pllsaiq = <8>;                    //<8>;
+       pllsaidivr = <4>;        //<0>;
+       width = <480>;                    //<1024>;
+       height = <272>;                   //<600>;
+       status = "ok";
+};
+
+&camera0 {
+       gpio_rst_port = "GPIOE";
+       gpio_rst_pin  =  <10>;
+       gpio_pwdn_port = "GPIOE";
+       gpio_pwdn_pin  =  <12>;
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <0>;
+       status = "ok";
+};
+
+&camera1 {
+       gpio_rst_port = "GPIOG";
+       gpio_rst_pin  =  <11>;
+       gpio_pwdn_port = "GPIOG";
+       gpio_pwdn_pin  =  <7>;
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <0>;
+       status = "ok";
+};
+
+&camera2 {
+       gpio_scl_port = "GPIOI";
+       gpio_scl_pin  =  <0>;
+       gpio_sda_port = "GPIOI";
+       gpio_sda_pin  =  <1>;
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <0>;
+       status = "ok";
+};
+
+&vin {
+      status = "ok";
+};
+&imp {
+	status = "ok";
+};
+&iwdg {
+	status = "ok";
+};
+&wwdg {
+	status = "ok";
+};
+&mmc0 {
+	type                        =  <0>;              /*0:sdcard*/
+	busWitch                    =  <1>;              /*0:BUS_WIDTH_1 1:BUS_WIDTH_4 2:BUS_WIDTH_8*/
+	removable                   =  <1>;              /*0:can not remove  1:can remove*/
+    poll_detect_card_hotplug     ;                   /*use poll to detect card hotplug*/
+    status                      =  "ok";
+};
+&can0 {
+	workmode                    =  <1>;              /*0:CAN_INIT_MODE 1:CAN_STAND_MODE 2:CAN_LISTEN_MODE 3:CAN_SELFTEST_MODE*/
+	baudrate                    =  <20000>;          /*can work baudrate*/
+	errWarnThreshold            =  <110>;            /*can erroe and waring threshold*/
+    sample                      =  <1>;              /*0:CAN_SAM_1 1:CAN_SAM_3 */
+    sjw                         =  <0>;              /*0:CAN_SJW_1TQ 1:CAN_SJW_2TQ 2:CAN_SJW_3TQ 3:CAN_SJW_4TQ */
+    bs1                         =  <6>;              /*n:CAN_TSEG_(n)TQ*/	
+    bs2                         =  <3>;              /*n:CAN_TSEG_(n)TQ*/
+    status                      =  "ok";
+};
+&rtc {
+    status = "ok";
+};
+
+&lvd {
+    status = "ok";
+};
+
+&tim1 {
+    status = "disabled";
+};
+
+&tim2 {
+    status = "disabled";
+};
+
+&tim3 {
+    status = "disabled";
+};
+
+&tim4 {
+    status = "disabled";
+};
+
+&tim5 {
+    status = "disabled";
+};
+
+&tim8 {
+    status = "disabled";
+};
+
+&power {
+
+       wkpin_xpa0_vaild_edge  =  <0>; // 0: falling edge  1:rasing edge
+       wkpin_xpa7_vaild_edge  =  <0>; // 0: falling edge  1:rasing edge
+       wkpin_xpa8_vaild_edge  =  <0>; // 0: falling edge  1:rasing edge
+       status = "ok";
+};
+
+&sflash {
+	readmode                 =  <0>;              /*0:read by cpu mode 1:read by dma mode*/
+	bitmode                  =  <0>;              /*0:read use 4line 1:read use 1line*/
+	clkdiv                   =  <1>;              /*clock div*/
+    status                    =  "ok";
+};

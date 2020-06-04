@@ -1,0 +1,4 @@
+source ../tools/load_slave.script
+load_slave
+
+在plugin中编译sobel比在openmv中编译sobel运行速度快10ms ？？！！

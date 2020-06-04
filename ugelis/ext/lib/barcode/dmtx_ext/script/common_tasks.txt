@@ -1,0 +1,107 @@
+#!/make/me/a/sandwich
+
+Common Tasks
+-----------------------------------------------------------------
+
+Generate splint warnings
+$ splint -posix-strict-lib dmtx.c
+
+
+Release Checklist
+-----------------------------------------------------------------
+
+1) o Include newly added files in lists below if appropriate
+
+2) o Create copy of this file as living checklist
+
+3) o Test for common style and formatting issues
+
+   o $ script/check_all.sh .
+
+4) o Review and close applicable bugs and feature requests
+
+5) o Write and finalize release documentation
+
+   o ReleaseNotes.txt (not in Git or source distribution)
+
+   o ChangeLog
+   o LICENSE                 o KNOWNBUG
+   o NEWS                    o TODO
+
+   o README
+   o README.freebsd          o README.cygwin
+   o README.mingw            o README.linux
+   o README.unix             o README.osx
+
+   o man/libdmtx.3
+
+6) o Update version number in appropriate files
+
+   o configure.ac
+   o dmtx.h
+   o man/libdmtx.3
+
+7) o Update release date in appropriate files
+
+   o TODO
+   o man/libdmtx.3 (be sure to sync w/ simple_test.c)
+
+8) o Perform final test build
+
+   o $ git status # no staged commits
+   o $ git pull # get any pending updates
+   o # final commit
+   o $ sudo make uninstall && make clean && make distclean
+   o $ ./autogen.sh && ./configure && make && make check && sudo make install
+   o # Run tests and confirm it works. Start step over if changes are needed.
+
+9) o Build and test tarballs
+
+   o $ cd ..
+   o $ git clone git://libdmtx.git.sourceforge.net/gitroot/libdmtx/libdmtx release
+   o $ cd release
+   o $ rm -Rf .git
+   o $ find . -type d -name ".git"
+   o $ ./autogen.sh && ./configure # don't build though
+   o $ make dist-gzip
+   o $ make dist-bzip2
+   o $ make dist-zip
+   o Verify no extraneous files made their way into the
+     distribution (especially in the wrapper directories)
+   o $ md5sum libdmtx-0.8.0.* > MD5SUM.txt
+
+10) o SourceForge release administration
+
+    o Upload files to SourceForge
+    o Publish news item
+
+11) o Tag final release in Git (do this only after uploading to
+      SourceForge in case something changes at the last minute)
+
+    o $ git tag -a -m "Tagged v0.7.4" v0.7.4
+    o $ git push origin --tags
+
+12) o Update minor number in unstable trunk (e.g., 0.8.0 -> 0.8.1)
+
+    o Use file list from step 6 above
+    o $ ./autogen.sh
+    o $ ./configure
+    o $ git commit -a
+    o $ git push
+
+13) o Check out tagged version so dmtx-utils and dmtx-wrapper
+      builds will inherit correct version numbers
+
+    o $ git checkout v0.7.4
+    o $ ./autogen.sh
+    o $ ./configure
+    o $ make clean
+    o $ make
+    o # sudo make install
+
+13) o Update libdmtx.org with news item, download entry, and new
+      project status
+
+14) o Send message to libdmtx-announcements@lists.sourceforge.net
+      with subject "libdmtx: 0.8.0 Released" and ReleaseNotes.txt
+      as message body

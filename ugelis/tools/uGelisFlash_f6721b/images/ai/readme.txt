@@ -1,0 +1,1 @@
+ai.bin : qfn80 board, 480x272

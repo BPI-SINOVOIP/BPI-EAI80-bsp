@@ -1,0 +1,14 @@
+
+#ifndef _CONFIG_VS_H
+#define _CONFIG_VS_H
+
+#define FAST_MATH_TABLE_SIZE  512
+#define SAMP_FREQ 16000
+#define NUM_FBANK_BINS 40
+#define MEL_LOW_FREQ 20
+#define MEL_HIGH_FREQ 4000
+
+#define M_2PI 6.283185307179586476925286766559005
+#define ALIGN4
+
+#endif

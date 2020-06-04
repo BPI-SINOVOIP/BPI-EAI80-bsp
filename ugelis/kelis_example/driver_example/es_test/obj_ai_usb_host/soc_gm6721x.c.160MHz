@@ -1,0 +1,83 @@
+/**
+ *
+ * Copyright (C) 2016 Gree Microelectronics.  All Rights Reserved.
+ *
+ * @file        sysinit.c
+ *
+ * @author      wen.liu
+ *
+ * @version     1.0.0
+ *
+ * @date        2015/08/21
+ *
+ * @brief       System init routine.
+ *
+ * @note
+ *    2016/05/17, wen.liu, V1.0.0
+ *        Initial version.
+ *
+ *
+ */
+
+#include <kernel.h>
+#include <device.h>
+#include <init.h>
+#include <soc.h>
+#include <gm_hal_rpc.h>
+
+
+/**
+ * @brief System initialization function
+ *
+ * @retval None
+ *
+ * it is similar to start function
+ */
+void SystemInit(void)
+{
+#if 1
+	
+	*(volatile uint32_t *)0x4000018c &= ~(0xff << 8);
+	*(volatile uint32_t *)0x4000018c |= (0x5 << 8);   //set 160MHz
+
+	*(volatile uint32_t *)0x40000188 |= 0x01;  //Enable PLLKDP
+	while(!(*(volatile uint32_t *)0x400001a4 & (0x1 << 5))); //Wait PLLKDP stable
+	*(volatile uint32_t *)0x40000090 &= (0x7 << 0);
+	*(volatile uint32_t *)0x40000090 |= (0x2 << 0);
+#endif
+
+#if 0
+#ifdef	CONFIG_SYS_CLOCK_FROM_INTERNAL
+	if(SYS_CLOCK == 8000000)
+	{
+		*(volatile uint32_t *)0x40000170 |= 0x01;  //Enable HIRC
+		while(!(*(volatile uint32_t *)0x400001a4 & (0x1 << 0))); //Wait HIRC stable
+		*(volatile uint32_t *)0x40000090 = 0x0;
+	}
+	else if(SYS_CLOCK == 200000000)
+	{
+		*(volatile uint32_t *)0x40000188 |= 0x01;  //Enable PLLKDP
+		while(!(*(volatile uint32_t *)0x400001a4 & (0x1 << 5))); //Wait PLLKDP stable
+		*(volatile uint32_t *)0x40000090 &= ~(0x7 << 0);
+		*(volatile uint32_t *)0x40000090 |= (0x2 << 0);
+	}
+#endif
+
+#ifdef CONFIG_SYS_CLOCK_FROM_EXTERNAL
+	
+#endif
+#endif
+
+    /*boot slave cpu*/
+#ifdef CONFIG_GM_HAL_RPC_MASTER
+    HAL_RPC_MasterBootSlave();
+#endif
+
+}
+
+
+
+
+
+
+
