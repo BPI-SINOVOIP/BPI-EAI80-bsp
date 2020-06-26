@@ -8,6 +8,11 @@ find_program(
   DTC
   dtc
   )
+
+message(BPI: change from DTC=${DTC})
+set(DTC "/usr/bin/dtc")
+message(BPI: use system default DTC=${DTC})
+
 if(${DTC} STREQUAL DTC-NOTFOUND)
   message(FATAL_ERROR "Unable to find dtc")
 endif()
