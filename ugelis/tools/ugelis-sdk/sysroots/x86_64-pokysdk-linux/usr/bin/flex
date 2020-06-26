@@ -1,0 +1,4 @@
+#!/bin/bash
+realpath=`readlink -fn $0`
+export M4=/opt/ugelis-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/m4
+exec -a `dirname $realpath`/flex `dirname $realpath`/flex.real "$@"

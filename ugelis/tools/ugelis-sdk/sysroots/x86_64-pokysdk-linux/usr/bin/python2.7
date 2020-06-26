@@ -1,0 +1,4 @@
+#!/bin/bash
+realpath=`readlink -fn $0`
+export PYTHONHOME=/opt/ugelis-sdk/sysroots/x86_64-pokysdk-linux/usr TERMINFO_DIRS=/opt/ugelis-sdk/sysroots/x86_64-pokysdk-linux/etc/terminfo:/etc/terminfo:/usr/share/terminfo:/usr/share/misc/terminfo:/lib/terminfo
+exec -a `dirname $realpath`/python2.7 `dirname $realpath`/python2.7.real "$@"

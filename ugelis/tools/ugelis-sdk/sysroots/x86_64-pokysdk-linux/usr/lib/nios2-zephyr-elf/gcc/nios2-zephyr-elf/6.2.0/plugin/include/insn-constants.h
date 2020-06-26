@@ -1,0 +1,75 @@
+/* Generated automatically by the program `genconstants'
+   from the machine description file `md'.  */
+
+#ifndef GCC_INSN_CONSTANTS_H
+#define GCC_INSN_CONSTANTS_H
+
+#define SP_REGNO 27
+#define LAST_GP_REG 31
+#define FIRST_PSEUDO_REGISTER 40
+#define FRAME_POINTER_REGNUM 38
+#define STATIC_CHAIN_REGNUM 12
+#define GP_REGNO 26
+#define FIRST_RETVAL_REGNO 2
+#define HARD_FRAME_POINTER_REGNUM 28
+#define ARG_POINTER_REGNUM 39
+#define FP_REGNO 28
+#define EA_REGNO 29
+#define LAST_ARG_REGNO 7
+#define FIRST_ARG_REGNO 4
+#define STACK_POINTER_REGNUM 27
+#define LAST_RETVAL_REGNO 3
+#define TP_REGNO 23
+#define PC_REGNUM 37
+#define RA_REGNO 31
+
+enum unspec {
+  UNSPEC_FCOS = 0,
+  UNSPEC_FSIN = 1,
+  UNSPEC_FTAN = 2,
+  UNSPEC_FATAN = 3,
+  UNSPEC_FEXP = 4,
+  UNSPEC_FLOG = 5,
+  UNSPEC_ROUND = 6,
+  UNSPEC_LOAD_GOT_REGISTER = 7,
+  UNSPEC_PIC_SYM = 8,
+  UNSPEC_PIC_CALL_SYM = 9,
+  UNSPEC_PIC_GOTOFF_SYM = 10,
+  UNSPEC_LOAD_TLS_IE = 11,
+  UNSPEC_ADD_TLS_LE = 12,
+  UNSPEC_ADD_TLS_GD = 13,
+  UNSPEC_ADD_TLS_LDM = 14,
+  UNSPEC_ADD_TLS_LDO = 15,
+  UNSPEC_EH_RETURN = 16,
+  UNSPEC_SYNC = 17
+};
+#define NUM_UNSPEC_VALUES 18
+extern const char *const unspec_strings[];
+
+enum unspecv {
+  UNSPECV_BLOCKAGE = 0,
+  UNSPECV_WRCTL = 1,
+  UNSPECV_RDCTL = 2,
+  UNSPECV_FWRX = 3,
+  UNSPECV_FWRY = 4,
+  UNSPECV_FRDXLO = 5,
+  UNSPECV_FRDXHI = 6,
+  UNSPECV_FRDY = 7,
+  UNSPECV_CUSTOM_NXX = 8,
+  UNSPECV_CUSTOM_XNXX = 9,
+  UNSPECV_LDXIO = 10,
+  UNSPECV_STXIO = 11,
+  UNSPECV_RDPRS = 12,
+  UNSPECV_FLUSHD = 13,
+  UNSPECV_FLUSHDA = 14,
+  UNSPECV_WRPIE = 15,
+  UNSPECV_ENI = 16,
+  UNSPECV_LDEX = 17,
+  UNSPECV_LDSEX = 18,
+  UNSPECV_STEX = 19,
+  UNSPECV_STSEX = 20
+};
+#define NUM_UNSPECV_VALUES 21
+extern const char *const unspecv_strings[];
+
+#endif /* GCC_INSN_CONSTANTS_H */
