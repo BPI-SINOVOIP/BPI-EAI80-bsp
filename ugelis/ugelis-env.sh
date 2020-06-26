@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2015 Wind River Systems, Inc.
 #
@@ -69,23 +70,28 @@ ugelis_answer_file=~/.ugelisrc
 unset ugelis_answer_file
 	
 export UGELIS_TOOLCHAIN_VARIANT=ugelis
-export UGELIS_SDK_INSTALL_DIR=/opt/ugelis-sdk
+#export UGELIS_SDK_INSTALL_DIR=/opt/ugelis-sdk
+export UGELIS_SDK_INSTALL_DIR=${UGELIS_BASE}/tools/ugelis-sdk
 
 GCC_CORE_SOURCE_DIR=${UGELIS_BASE}/arch/arm/core-gcc
 GCC_CORE_LINK_DIR=${UGELIS_BASE}/arch/arm/core
 
 #script for kelis
 KELIS_DIR=${UGELIS_BASE}/kelis_example
+UGELIS_EXAMPLE=${UGELIS_BASE}/ugelis_example
 ARMCC_CORE_SOURCE_DIR=${UGELIS_BASE}/arch/arm/core-armcc
 
 #for abstract core dir for gcc-core#
-if [ -d "${GCC_CORE_LINK_DIR}" ]; then
-	rm -rf ${GCC_CORE_LINK_DIR};
-fi
-if [ -d "${KELIS_DIR}" ]; then #kelis
+#if [ -d "${GCC_CORE_LINK_DIR}" ]; then
+#	rm -rf ${GCC_CORE_LINK_DIR};
+#fi
+#if [ -d "${KELIS_DIR}" ]; then #kelis
+if [ -d "${UGELIS_EXAMPLE}" ]; then #gcc
+    if [ ! -h ${GCC_CORE_LINK_DIR} ] ; then
+      ln -s ${GCC_CORE_SOURCE_DIR} ${GCC_CORE_LINK_DIR}
+    fi
+else #kelis
     ln -s ${ARMCC_CORE_SOURCE_DIR} ${GCC_CORE_LINK_DIR}
-else
-    ln -s ${GCC_CORE_SOURCE_DIR} ${GCC_CORE_LINK_DIR}
 fi
 
 #link ulibs to ./ext

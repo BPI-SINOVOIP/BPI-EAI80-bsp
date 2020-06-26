@@ -39,6 +39,7 @@ if(MINGW)
   set(TOOLCHAIN_HOME ${UGELIS_SDK_INSTALL_DIR}/sysroots/i686-pokysdk-mingw32)
 else()
   set(TOOLCHAIN_HOME ${UGELIS_SDK_INSTALL_DIR}/sysroots/${TOOLCHAIN_ARCH}-pokysdk-linux)
+
 endif()
 
 # Path used for searching by the find_*() functions, with appropriate
