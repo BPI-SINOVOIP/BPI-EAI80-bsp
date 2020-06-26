@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_BMA280 bma280.c)
+ugelis_library_sources_ifdef(CONFIG_BMA280_TRIGGER bma280_trigger.c)

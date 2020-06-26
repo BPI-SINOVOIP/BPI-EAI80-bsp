@@ -1978,9 +1978,25 @@ static int tim8_pinmux_config(void)
 /** Configure pinmux for an available usb device/Host */
 static int usb_pinmux_config(struct device *port)
 {
-    int ret = 0;
-    *(volatile uint32_t *)0x400002e0 |= (0xFF << 4);
-    return 0;
+    RET_CODE ret = RET_OK;
+    GPIO_PinConfig_T GPIO_InitStruct;
+    GPIO_Device_T *pGPIO = NULL;
+
+    memset(&GPIO_InitStruct, 0, sizeof(GPIO_PinConfig_T));
+
+    /*set digtal pin as input , inorder to not affect analog input*/
+    pGPIO = GPIOH;
+    GPIO_InitStruct.pin  = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5;
+    GPIO_InitStruct.mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.pull = GPIO_NOPULL;
+
+    ret = HAL_GPIO_Init(pGPIO, &GPIO_InitStruct);
+    if (ret != RET_OK)
+    {
+        printf("Err:usb_ConfigPinmux\n");
+    }
+
+    return ret;
 }
 #endif
 

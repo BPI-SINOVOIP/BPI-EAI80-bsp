@@ -1,0 +1,11 @@
+ugelis_library()
+ugelis_library_sources(buf.c)
+ugelis_library_sources(smp.c)
+ugelis_library_sources_ifdef(CONFIG_MCUMGR_SMP_BT smp_bt.c)
+ugelis_library_sources_ifdef(CONFIG_MCUMGR_SMP_SHELL smp_shell.c)
+ugelis_library_sources_ifdef(CONFIG_MCUMGR_SMP_UART smp_uart.c)
+ugelis_library_link_libraries(MCUMGR)
+
+if (CONFIG_MCUMGR_SMP_SHELL OR CONFIG_MCUMGR_SMP_UART)
+    ugelis_library_sources(serial_util.c)
+endif ()

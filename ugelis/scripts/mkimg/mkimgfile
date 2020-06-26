@@ -1,0 +1,33 @@
+SHELL = /bin/sh
+
+mkfile_path := $(shell pwd)
+boot1 = ${UGELIS_BASE}/scripts/mkimg/boot1/boot1.bin
+sys = $(mkfile_path)/ugelis/ugelis.bin
+data = ${UGELIS_BASE}/scripts/mkimg/data/fat16.img
+privatedata = ${UGELIS_BASE}/scripts/mkimg/privatedata/privatedata.txt
+mkimgdir = ${UGELIS_BASE}/scripts/mkimg/mkimg.py
+mkimgconfig = ${UGELIS_BASE}/scripts/mkimg/mkimgconfig.init
+mkfsimgdir = ${UGELIS_BASE}/scripts/mkimg/mkfsimg.py
+mkfsimgconfig = ${UGELIS_BASE}/scripts/mkimg/mkfsimgconfig.init
+res = ${UGELIS_BASE}/scripts/mkimg/data/res
+fatoutput = ${UGELIS_BASE}/scripts/mkimg/data/fat16.img
+imgoutput = $(mkfile_path)/mkimg.img
+AESkeypath = ${UGELIS_BASE}/scripts/mkimg/key.init
+
+#set( ${PYTHON_EXECUTABLE} ${UGELIS_BASE}/scripts/mkfsimg.py
+#	--resource ${UGELIS_BASE})
+#	execute_process
+
+.PHONY : mkfsimg
+mkfsimg:
+	#$(shell python $(mkfsimgdir))
+	@python $(mkfsimgdir) -r $(res) -o $(fatoutput)
+	#.~/workspace/ugelis/scripts/mkfsimg.py	
+.PHONY : mkimg
+
+mkimg:
+	@python $(mkimgdir) -b $(boot1) -s $(sys) -d $(data) -p $(privatedata) -o $(imgoutput) -k $(AESkeypath)
+.PHONY : clean
+clean :
+
+

@@ -1,0 +1,23 @@
+# Kconfig - ST Microelectronics GM6721X MCU series
+#
+# Copyright (c) 2018 Linaro Limited
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config SOC_SERIES_GM6721X
+	bool "GM6721X Series MCU"
+	select CPU_CORTEX_M4
+	select CPU_HAS_FPU
+	select SOC_FAMILY_GM
+	#select SYS_POWER_LOW_POWER_STATE_SUPPORTED
+	select HAS_GM_HAL
+	select CPU_HAS_MPU
+	select CPU_HAS_SYSTICK
+    select FLOAT
+    select FP_SHARING
+
+
+
+	help
+	 Enable support for GM6721X MCU series

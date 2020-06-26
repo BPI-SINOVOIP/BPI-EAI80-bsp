@@ -1,0 +1,60 @@
+# Kconfig - ust test plugin element configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+
+menuconfig UST_TEST_ELEMENT
+	bool
+	prompt "tiny streamer test element plugin"
+	help
+	  Enable options for tiny streamer test element plugin.
+
+if UST_TEST_ELEMENT
+config SRC_ELEMENT
+	bool
+    default n
+	prompt "Enable Src Element For Plugin Test"
+	help
+	  This is an option to be enabled src element for plugin test
+
+
+config SINK_ELEMENT
+	bool
+    default n
+	prompt "Enable Sink Element For Plugin Test"
+	help
+	  This is an option to be enabled sink element for plugin test
+
+config SRC_ELEMENT_QUEUE
+	bool
+    default n
+    depends on SINK_ELEMENT
+	prompt "Enable Sink Element Queue"
+	help
+	  This is an option to be enabled src element queue for plugin test
+
+config SRC_ELEMENT_QUEUE_BUFMAX_NUM
+	int
+    default 3
+    depends on SRC_ELEMENT_QUEUE
+	prompt "Config Src Element Queue Buf Num"
+	help
+	  This is an option to config src element queue buf num
+
+
+
+
+
+
+config MID_ELEMENT
+	bool
+    default n
+	prompt "Enable Middle Element For Plugin Test"
+	help
+	  This is an option to be enabled middle element for plugin test
+
+endif

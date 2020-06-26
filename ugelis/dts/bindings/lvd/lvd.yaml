@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2018, blik GmbH
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+---
+title: LVD Base Structure
+id: 
+version: 0.1
+
+description: >
+    This binding gives the base structures for all LVD devices
+
+
+properties:
+    clock-frequency:
+      type: int
+      category: optional
+      description: Clock frequency information for LVD operation
+      generation: define
+    label:
+      type: string
+      category: required
+      description: Human readable string describing the device (used by uGelis for API name)
+      generation: define
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+    interrupt-names:
+      type: stringlist
+      category: optional
+      description: names of required interrupts
+      generation: define
+    prescaler:
+      type: int
+      category: required
+      description: Prescaler value 
+      generation: define
+...

@@ -1,0 +1,87 @@
+---
+title: CAMERA_GC2145
+id: gree,camera-gc2145
+version: 0.1
+
+description: >
+      This binding gives a base representation of camera sensor(gc2145)
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,camera-gc2145"
+
+    gpio_rst_port:
+      type: stringlist
+      category: optional
+      description: gc2145 reset gpio port
+      generation: define
+
+    gpio_rst_pin:
+      type: int
+      category: required
+      description: gc2145 reset gpio pin
+      generation: define
+
+    gpio_pwdn_port:
+      type: stringlist
+      category: optional
+      description: gc2145 pwdn gpio port
+      generation: define
+
+    gpio_pwdn_pin:
+      type: int
+      category: required
+      description: gc2145 pwdn gpio pin
+      generation: define
+      
+    gpio_scl_port:
+      type: stringlist
+      category: optional
+      description: gc2145 sccb scl port
+      generation: define
+
+    gpio_scl_pin:
+      type: int
+      category: required
+      description: gc2145 sccb scl pin
+      generation: define
+
+    gpio_sda_port:
+      type: stringlist
+      category: optional
+      description: gc2145 sccb sda port
+      generation: define
+
+    gpio_sda_pin:
+      type: int
+      category: required
+      description: gc2145 sccb sda pin
+      generation: define
+
+    pclk_polarity:
+      type: int
+      category: required
+      description: pixel clock polarity
+      generation: define
+
+    hsync_polarity:
+      type: int
+      category: required
+      description: horizontal synchronization polarity
+      generation: define
+
+    vsync_polarity:
+      type: int
+      category: required
+      description: vertical synchronization polarity
+      generation: define
+
+    label:
+      type: string
+      category: required
+      description: Human readable string describing the device (used by Ugelis for API name)
+      generation: define
+...

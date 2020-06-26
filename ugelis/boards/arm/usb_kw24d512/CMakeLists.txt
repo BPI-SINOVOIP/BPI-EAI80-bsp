@@ -1,0 +1,5 @@
+if(CONFIG_PINMUX_MCUX)
+  ugelis_library()
+  ugelis_library_sources(pinmux.c)
+  ugelis_library_include_directories(${UGELIS_BASE}/drivers)
+endif()

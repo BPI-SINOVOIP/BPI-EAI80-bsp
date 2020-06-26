@@ -1,0 +1,9 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_DMA_QMSI		dma_qmsi.c)
+ugelis_library_sources_ifdef(CONFIG_DMA_SAM_XDMAC	dma_sam_xdmac.c)
+ugelis_library_sources_ifdef(CONFIG_DMA_STM32F4X	dma_stm32f4x.c)
+ugelis_library_sources_ifdef(CONFIG_DMA_CAVS		dma_cavs.c)
+ugelis_library_sources_ifdef(CONFIG_DMA_NIOS2_MSGDMA	dma_nios2_msgdma.c)
+ugelis_library_sources_ifdef(CONFIG_USERSPACE		dma_handlers.c)
+ugelis_library_sources_ifdef(CONFIG_DMA_GM			dma_gm.c)

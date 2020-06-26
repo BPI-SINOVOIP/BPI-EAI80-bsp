@@ -44,7 +44,6 @@
         #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
         ugelis,sdram = &sdram0;
         #endif
-		ugelis,flash = &flash0;
 		ugelis,vout = &vout;
 		ugelis,vin = &vin;
         ugelis,imp = &imp;
@@ -284,4 +283,5 @@
 	bitmode                  =  <0>;              /*0:read use 4line 1:read use 1line*/
 	clkdiv                   =  <1>;              /*clock div*/
     status                    =  "ok";
+    addr_space               =  <0x10000000 0x4000>;/*0x10000000:base address 0x4000:flash size(unit :kb)*/
 };

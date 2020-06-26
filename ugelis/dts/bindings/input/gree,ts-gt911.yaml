@@ -1,0 +1,45 @@
+---
+title: TS_GT911
+id: gree,ts-gt911
+version: 0.1
+
+description: >
+      This binding gives a base representation of touchscreen device(gt911)
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,ts-gt911"
+
+    ts_rst_port:
+      type: stringlist
+      category: optional
+      description: ov5640 reset gpio port
+      generation: define
+      
+    ts_rst_pin:
+      type: stringlist
+      category: optional
+      description: ov5640 reset gpio port
+      generation: define
+      
+    ts_int_port:
+      type: stringlist
+      category: optional
+      description: ov5640 reset gpio port
+      generation: define
+      
+    ts_int_pin:
+      type: stringlist
+      category: optional
+      description: ov5640 reset gpio port
+      generation: define
+      
+    label:
+      type: string
+      category: required
+      description: Human readable string describing the device (used by Ugelis for API name)
+      generation: define
+...

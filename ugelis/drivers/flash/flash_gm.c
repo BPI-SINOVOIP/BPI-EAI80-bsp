@@ -26,7 +26,6 @@ static int flash_gm_write_protection(struct device *dev, bool enable);
 
 
 static SQI_Handle_T   sflash_handle;
-static SQI_Device_T   pSQIDev;
 
 
 
@@ -40,13 +39,6 @@ static const struct flash_driver_api sflash_driver_api_funcs =
     .read = flash_gm_read,
 #ifdef CONFIG_FLASH_PAGE_LAYOUT
     .page_layout = flash_gm_page_layout,
-#endif
-#ifdef FLASH_WRITE_BLOCK_SIZE
-    .write_block_size = FLASH_WRITE_BLOCK_SIZE,
-#else
-#error Flash write block size not available
-    /* Flash Write block size is extracted from device tree */
-    /* as flash node property 'write-block-size' */
 #endif
 };
 
@@ -85,12 +77,12 @@ DEVICE_DEFINE(gm_sflash, DEV_FLASH_NAME, gm_flash_init, NULL, \
 
 static inline void flash_gm_sem_take(struct device *dev)
 {
-    k_sem_take(&DEV_DATA(dev)->sem, K_FOREVER);
+    k_sem_take(DEV_DATA(dev)->sem, K_FOREVER);
 }
 
 static inline void flash_gm_sem_give(struct device *dev)
 {
-    k_sem_give(&DEV_DATA(dev)->sem);
+    k_sem_give(DEV_DATA(dev)->sem);
 }
 
 static int flash_gm_read(struct device *dev, off_t offset, void *buff,
@@ -98,7 +90,7 @@ static int flash_gm_read(struct device *dev, off_t offset, void *buff,
 {
     RET_CODE    ret;
     struct falsh_gm_data_t *hdata = DEV_DATA(dev);
-    if ((NULL == dev) || ((len + offset) > CONFIG_SFLASH_SIZE))
+    if ((NULL == dev) || ((len + offset) > hdata->hSQI->flashsize))
     {
         return -EINVAL;
     }
@@ -121,7 +113,7 @@ static int flash_gm_erase(struct device *dev, off_t offset, size_t len)
 {
     RET_CODE    ret;
     struct falsh_gm_data_t *data = DEV_DATA(dev);
-    if ((NULL == dev) || ((len + offset) > CONFIG_SFLASH_SIZE))
+    if ((NULL == dev) || ((len + offset) > data->hSQI->flashsize))
     {
         return -EINVAL;
     }

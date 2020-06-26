@@ -1,0 +1,28 @@
+# Kconfig - ust configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+
+menuconfig UST
+	bool
+	prompt "tiny stream framework"
+	help
+	  Enable otiny stream framework.
+
+
+if UST
+config UST_CORE
+	bool "tiny stream core"
+	default y
+	help
+	  This is an option to be enabled the core of tiny stream framework.
+
+source "subsys/ust/plugin/Kconfig"
+
+endif
+

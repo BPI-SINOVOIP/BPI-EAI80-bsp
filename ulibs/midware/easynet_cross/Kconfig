@@ -1,0 +1,15 @@
+# Kconfig - the obj_info project
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config EASYNET_CROSS
+	bool
+	prompt "EASYNET_CROSS Support"
+	default n
+	help
+	This option enables the EASYNET_CROSS library.
+

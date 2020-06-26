@@ -1,0 +1,17 @@
+# Kconfig - Gree POWER configuration
+#
+# Copyright (c) 2018 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config POWER_GM
+	bool "POWER Driver for Gree MCU"
+	default n
+	select RTC
+    select RTC_GM
+    select GM_HAL_RTC
+	help
+	  Enable POWER driver for Gree line of MCUs
+
+

@@ -1,0 +1,79 @@
+---
+title: GREE POWER
+id: gree,gm-power
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GREE POWER
+
+inherits:
+    !include power.yaml
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-power"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+
+    wkpin_xpa0_status:
+      type: int
+      category: required
+      description: wkpin_xpa0_enable or disable
+      generation: define
+
+    wkpin_xpa0_valid_edge:
+      type: int
+      category: required
+      description: xpa0 wakeup system level edge
+      generation: define
+
+    wkpin_xpb12_status:
+      type: int
+      category: required
+      description: wkpin_xpb12_enable or disable
+      generation: define
+
+    wkpin_xpb12_valid_edge:
+      type: int
+      category: required
+      description: xpb12 wakeup system level edge
+      generation: define
+ 
+    wkpin_xpb13_status:
+      type: int
+      category: required
+      description: wkpin_xpb13_enable or disable
+      generation: define
+
+    wkpin_xpb13_valid_edge:
+      type: int
+      category: required
+      description: xpb13 wakeup system level edge
+      generation: define
+      
+    pm_shutdown_status_pin_inv:
+      type: int
+      category: required
+      description: pm_shutdown_status_pin_inv
+      generation: define
+      
+    pm_hash_status:
+      type: int
+      category: required
+      description: pm_hash enable or disable
+      generation: define
+
+...

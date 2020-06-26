@@ -1,0 +1,10 @@
+# Kconfig - BANPIBOARD-QFN80PIN board configuration
+#
+# Copyright (c) 2016 Linaro Limited.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config BOARD_BANPIBOARD_QFN80PIN
+	bool "BANPIBOARD-QFN80PIN Development Board"
+	depends on SOC_F6721B

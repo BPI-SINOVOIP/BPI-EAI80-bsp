@@ -1,0 +1,14 @@
+# Kconfig - BANPIBOARD-QFN80PIN board configuration
+#
+# Copyright (c) 2016 Linaro Limited.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if BOARD_BANPIBOARD_QFN80PIN
+
+config BOARD
+	default "banpiboard_qfn80pin"
+
+
+endif # BOARD_BANPIBOARD_QFN80PIN

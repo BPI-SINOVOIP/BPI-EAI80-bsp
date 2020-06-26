@@ -1,0 +1,32 @@
+# Kconfig - MPU6050 Six-Axis Motion Tracking device configuration options
+
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig OV5640
+	bool "OmniVision OV5640 sensor support"
+	depends on CAMERA_HAS_DRIVER
+	default n
+	help
+	  This is a Video4Linux2 sensor-level driver for the Omnivision
+	  OV5640 camera sensor with a MIPI CSI-2 interface.
+
+config OV5640_0
+	bool "Enable OV5640_0"
+	depends on OV5640
+    select DCMI_0
+	default n
+
+config OV5640_1
+	bool "Enable OV5640_1"
+	depends on OV5640
+    select DCMI_1
+	default n
+	
+config OV5640_MIRROR
+	bool "OV5640 get frame by mirror format"
+	depends on OV5640
+	default n

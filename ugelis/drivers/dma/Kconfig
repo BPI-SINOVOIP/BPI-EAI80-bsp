@@ -1,0 +1,24 @@
+# Kconfig - DMA configuration options
+#
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# DMA options
+#
+menuconfig DMA
+	bool
+	prompt "DMA Support"
+	default n
+	help
+	  Include support for dma.
+
+if DMA
+	source "drivers/dma/Kconfig.gm"
+
+	source "drivers/dma/Kconfig.cavs"
+
+endif # DMA

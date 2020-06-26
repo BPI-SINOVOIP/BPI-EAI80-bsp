@@ -1,0 +1,137 @@
+# Kconfig - GM6XXXpresso SDK pinmux
+#
+# Copyright (c) 2016, Freescale Semiconductor, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig PINMUX_GM
+	bool "GREE pinmux driver"
+	default n
+	help
+	  Enable the GREE pinmux driver.
+
+if PINMUX_GM
+
+config PINMUX_GM_PORTA
+	bool "Port A"
+	default n
+	help
+	  Enable Port A.
+
+config PINMUX_GM_PORTA_NAME
+	string "Pinmux Port A driver name"
+	depends on PINMUX_GM_PORTA
+	default "porta"
+
+config PINMUX_GM_PORTB
+	bool "Port B"
+	default n
+	help
+	  Enable Port B.
+
+config PINMUX_GM_PORTB_NAME
+	string "Pinmux Port B driver name"
+	depends on PINMUX_GM_PORTB
+	default "portb"
+
+config PINMUX_GM_PORTC
+	bool "Port C"
+	default n
+	help
+	  Enable Port C.
+
+config PINMUX_GM_PORTC_NAME
+	string "Pinmux Port C driver name"
+	depends on PINMUX_GM_PORTC
+	default "portc"
+
+config PINMUX_GM_PORTD
+	bool "Port D"
+	default n
+	help
+	  Enable Port D.
+
+config PINMUX_GM_PORTD_NAME
+	string "Pinmux Port D driver name"
+	depends on PINMUX_GM_PORTD
+	default "portd"
+
+config PINMUX_GM_PORTE
+	bool "Port E"
+	default n
+	help
+	  Enable Port E.
+
+config PINMUX_GM_PORTE_NAME
+	string "Pinmux Port E driver name"
+	depends on PINMUX_GM_PORTE
+	default "porte"
+ 
+config PINMUX_GM_PORTF
+	bool "Port F"
+	default n
+	help
+	  Enable Port F.
+
+config PINMUX_GM_PORTF_NAME
+	string "Pinmux Port F driver name"
+	depends on PINMUX_GM_PORTF
+	default "portf"
+    
+config PINMUX_GM_PORTG
+	bool "Port G"
+	default n
+	help
+	  Enable Port G.
+
+config PINMUX_GM_PORTG_NAME
+	string "Pinmux Port G driver name"
+	depends on PINMUX_GM_PORTG
+	default "portg"
+
+config PINMUX_GM_PORTH
+	bool "Port H"
+	default n
+	help
+	  Enable Port H.
+
+config PINMUX_GM_PORTH_NAME
+	string "Pinmux Port H driver name"
+	depends on PINMUX_GM_PORTH
+	default "porth"
+
+config PINMUX_GM_PORTI
+	bool "Port I"
+	default n
+	help
+	  Enable Port I.
+
+config PINMUX_GM_PORTI_NAME
+	string "Pinmux Port I driver name"
+	depends on PINMUX_GM_PORTI
+	default "porti"
+
+config PINMUX_GM_PORTJ
+	bool "Port J"
+	default n
+	help
+	  Enable Port J.
+
+config PINMUX_GM_PORTJ_NAME
+	string "Pinmux Port J driver name"
+	depends on PINMUX_GM_PORTJ
+	default "portj"
+
+config PINMUX_GM_PORTK
+	bool "Port K"
+	default n
+	help
+	  Enable Port K.
+
+config PINMUX_GM_PORTK_NAME
+	string "Pinmux Port K driver name"
+	depends on PINMUX_GM_PORTK
+	default "portk"    
+
+endif # PINMUX_GM

@@ -1,0 +1,207 @@
+# Kconfig - TIM configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig TIM
+	bool "TIM Drivers"
+	help
+	  Enable config options for TIM drivers.
+
+if TIM
+
+config SYS_LOG_TIM_LEVEL
+	int "TIM Driver Log level"
+	depends on SYS_LOG
+	default 0
+	range 0 4
+	help
+	  Sets log level for TIM drivers.
+	  Levels are:
+	  - 0 OFF, do not write
+	  - 1 ERROR, only write SYS_LOG_ERR
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+	  
+config TIM_INIT_PRIORITY
+    int 
+    default 11
+    prompt "Init priority"
+    help 
+        TIM Device driver initialization priority
+        
+config TIM_1
+    bool "Enable TIM 1"
+    
+config TIM_1_NAME
+    string "TIM 1 Driver's name"
+    depends on TIM_1
+    default "TIM_1"
+    
+config TIM_1_IRQ_PRI
+    int
+    depends on TIM_1
+    prompt "TIM 1 interrupt priority"
+    default 2
+    
+config TIM_2
+    bool "Enable TIM 2"
+    
+config TIM_2_NAME
+    string "TIM 2 Driver's name"
+    depends on TIM_2
+    default "TIM_2"
+    
+config TIM_2_IRQ_PRI
+    int
+    depends on TIM_2
+    prompt "TIM 2 interrupt priority"
+    default 2    
+    
+config TIM_3
+    bool "Enable TIM 3"
+    
+config TIM_3_NAME
+    string "TIM 3 Driver's name"
+    depends on TIM_3
+    default "TIM_3"
+    
+config TIM_3_IRQ_PRI
+    int
+    depends on TIM_3
+    prompt "TIM 3 interrupt priority"
+    default 2
+    
+config TIM_4
+    bool "Enable TIM 4"
+    
+config TIM_4_NAME
+    string "TIM 4 Driver's name"
+    depends on TIM_4
+    default "TIM_4"
+    
+config TIM_4_IRQ_PRI
+    int
+    depends on TIM_4
+    prompt "TIM 4 interrupt priority"
+    default 2 
+    
+config TIM_5
+    bool "Enable TIM 5"
+    
+config TIM_5_NAME
+    string "TIM 5 Driver's name"
+    depends on TIM_5
+    default "TIM_5"
+    
+config TIM_5_IRQ_PRI
+    int
+    depends on TIM_5
+    prompt "TIM 5 interrupt priority"
+    default 2
+    
+config TIM_8
+    bool "Enable TIM 8"
+    
+config TIM_8_NAME
+    string "TIM 8 Driver's name"
+    depends on TIM_8
+    default "TIM_8"
+    
+config TIM_8_IRQ_PRI
+    int
+    depends on TIM_8
+    prompt "TIM 8 interrupt priority"
+    default 2 
+    
+config TIM_9
+    bool "Enable TIM 9"
+    
+config TIM_9_NAME
+    string "TIM 9 Driver's name"
+    depends on TIM_9
+    default "TIM_9"
+    
+config TIM_9_IRQ_PRI
+    int
+    depends on TIM_9
+    prompt "TIM 9 interrupt priority"
+    default 2 
+    
+config TIM_10
+    bool "Enable TIM 10"
+    
+config TIM_10_NAME
+    string "TIM 10 Driver's name"
+    depends on TIM_10
+    default "TIM_10"
+    
+config TIM_10_IRQ_PRI
+    int
+    depends on TIM_10
+    prompt "TIM 10 interrupt priority"
+    default 2 
+    
+config TIM_11
+    bool "Enable TIM 11"
+    
+config TIM_11_NAME
+    string "TIM 11 Driver's name"
+    depends on TIM_11
+    default "TIM_11"
+    
+config TIM_11_IRQ_PRI
+    int
+    depends on TIM_11
+    prompt "TIM 11 interrupt priority"
+    default 2 
+    
+config TIM_12
+    bool "Enable TIM 12"
+    
+config TIM_12_NAME
+    string "TIM 12 Driver's name"
+    depends on TIM_12
+    default "TIM_12"
+    
+config TIM_12_IRQ_PRI
+    int
+    depends on TIM_12
+    prompt "TIM 12 interrupt priority"
+    default 2 
+    
+config TIM_13
+    bool "Enable TIM 13"
+    
+config TIM_13_NAME
+    string "TIM 13 Driver's name"
+    depends on TIM_13
+    default "TIM_13"
+    
+config TIM_13_IRQ_PRI
+    int
+    depends on TIM_13
+    prompt "TIM 13 interrupt priority"
+    default 2  
+    
+config TIM_14
+    bool "Enable TIM 14"
+    
+config TIM_14_NAME
+    string "TIM 14 Driver's name"
+    depends on TIM_14
+    default "TIM_14"
+    
+config TIM_14_IRQ_PRI
+    int
+    depends on TIM_14
+    prompt "TIM 14 interrupt priority"
+    default 2            
+
+source "drivers/tim/Kconfig.gm"
+
+endif # TIM

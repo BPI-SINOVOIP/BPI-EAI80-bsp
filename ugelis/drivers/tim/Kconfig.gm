@@ -1,0 +1,256 @@
+# Kconfig.gm - GREE TIM configuration options
+#
+
+menuconfig TIM_GM
+	bool "GREE GM TIM driver"
+	depends on TIM && GM_HAL_TIM
+	default n
+	help
+	  Enable the TIM driver on GREE GM6xxx boards.	  
+
+#if TIM_GM
+	  
+config TIM_GM_1
+	bool "TIM block 1"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim1 driver.
+	  
+config TIM_GM_1_NAME
+    string "Driver name"
+	depends on TIM_GM_1
+	default "TIM1"
+	
+config TIM_GM_1_IRQ_PRI
+    int "TIM 1 interrupt priority"
+	depends on TIM_GM_1
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 1 IRQ priority.
+
+config TIM_GM_2
+	bool "TIM block 2"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim2 driver.
+	  
+config TIM_GM_2_NAME
+    string "Driver name"
+	depends on TIM_GM_2
+	default "TIM2"
+	
+config TIM_GM_2_IRQ_PRI
+    int "TIM 2 interrupt priority"
+	depends on TIM_GM_2
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 2 IRQ priority.
+		
+config TIM_GM_3
+	bool "TIM block 3"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim3 driver.
+	  
+config TIM_GM_3_NAME
+    string "Driver name"
+	depends on TIM_GM_3
+	default "TIM3"
+	
+config TIM_GM_3_IRQ_PRI
+    int "TIM 3 interrupt priority"
+	depends on TIM_GM_3
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 3 IRQ priority.
+
+config TIM_GM_4
+	bool "TIM block 4"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim4 driver.
+	  
+config TIM_GM_4_NAME
+    string "Driver name"
+	depends on TIM_GM_4
+	default "TIM4"
+	
+config TIM_GM_4_IRQ_PRI
+    int "TIM 4 interrupt priority"
+	depends on TIM_GM_4
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 4 IRQ priority.		
+		
+config TIM_GM_5
+	bool "TIM block 5"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim5 driver.
+	  
+config TIM_GM_5_NAME
+    string "Driver name"
+	depends on TIM_GM_5
+	default "TIM5"
+	
+config TIM_GM_5_IRQ_PRI
+    int "TIM 5 interrupt priority"
+	depends on TIM_GM_5
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 5 IRQ priority.
+
+config TIM_GM_8
+	bool "TIM block 8"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim8 driver.
+	  
+config TIM_GM_8_NAME
+    string "Driver name"
+	depends on TIM_GM_8
+	default "TIM8"
+	
+config TIM_GM_8_IRQ_PRI
+    int "TIM 8 interrupt priority"
+	depends on TIM_GM_8
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 8 IRQ priority.
+		
+config TIM_GM_9
+	bool "TIM block 9"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim9 driver.
+	  
+config TIM_GM_9_NAME
+    string "Driver name"
+	depends on TIM_GM_9
+	default "TIM9"
+	
+config TIM_GM_9_IRQ_PRI
+    int "TIM 9 interrupt priority"
+	depends on TIM_GM_9
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 9 IRQ priority.
+
+config TIM_GM_10
+	bool "TIM block 10"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim10 driver.
+	  
+config TIM_GM_10_NAME
+    string "Driver name"
+	depends on TIM_GM_10
+	default "TIM10"
+	
+config TIM_GM_10_IRQ_PRI
+    int "TIM 10 interrupt priority"
+	depends on TIM_GM_10
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 10 IRQ priority.		
+		
+config TIM_GM_11
+	bool "TIM block 11"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim11 driver.
+	  
+config TIM_GM_11_NAME
+    string "Driver name"
+	depends on TIM_GM_11
+	default "TIM11"
+	
+config TIM_GM_11_IRQ_PRI
+    int "TIM 11 interrupt priority"
+	depends on TIM_GM_11
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 11 IRQ priority.
+
+config TIM_GM_12
+	bool "TIM block 12"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim12 driver.
+	  
+config TIM_GM_12_NAME
+    string "Driver name"
+	depends on TIM_GM_12
+	default "TIM12"
+	
+config TIM_GM_12_IRQ_PRI
+    int "TIM 12 interrupt priority"
+	depends on TIM_GM_12
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 12 IRQ priority.
+		
+config TIM_GM_13
+	bool "TIM block 13"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim13 driver.
+	  
+config TIM_GM_13_NAME
+    string "Driver name"
+	depends on TIM_GM_13
+	default "TIM13"
+	
+config TIM_GM_13_IRQ_PRI
+    int "TIM 13 interrupt priority"
+	depends on TIM_GM_13
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 13 IRQ priority.
+
+config TIM_GM_14
+	bool "TIM block 14"
+	depends on TIM_GM
+	default n
+	help
+	  Enable support for gm tim14 driver.
+	  
+config TIM_GM_14_NAME
+    string "Driver name"
+	depends on TIM_GM_14
+	default "TIM14"
+	
+config TIM_GM_14_IRQ_PRI
+    int "TIM 14 interrupt priority"
+	depends on TIM_GM_14
+	range 0 5
+	default 1
+	help
+	    GM6XXX TIM 14 IRQ priority.		
+				
+#endif   #TIM_GM	
+
+
+	

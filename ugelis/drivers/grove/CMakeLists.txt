@@ -1,0 +1,3 @@
+ugelis_sources_ifdef(CONFIG_GROVE_LCD_RGB		lcd_rgb.c)
+ugelis_sources_ifdef(CONFIG_GROVE_LIGHT_SENSOR		light_sensor.c)
+ugelis_sources_ifdef(CONFIG_GROVE_TEMPERATURE_SENSOR	temperature_sensor.c)

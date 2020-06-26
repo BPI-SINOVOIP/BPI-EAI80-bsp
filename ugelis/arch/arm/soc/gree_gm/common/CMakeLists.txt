@@ -1,0 +1,2 @@
+ugelis_sources_ifdef(CONFIG_GM_ARM_MPU_ENABLE arm_mpu_regions.c)
+

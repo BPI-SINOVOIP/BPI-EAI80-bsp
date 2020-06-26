@@ -1,0 +1,21 @@
+---
+title: TS_FT5426
+id: gree,ts-ft5426
+version: 0.1
+
+description: >
+      This binding gives a base representation of touchscreen device(ft5426)
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,ts-ft5426"
+
+    label:
+      type: string
+      category: required
+      description: Human readable string describing the device (used by Ugelis for API name)
+      generation: define
+...

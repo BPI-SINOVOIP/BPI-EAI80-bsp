@@ -1906,58 +1906,25 @@ static int tim8_pinmux_config(void)
 /** Configure pinmux for an available usb device/Host */
 static int usb_pinmux_config(struct device *port)
 {
-    int ret = 0;
-    GPIO_PinConfig_T pin_cfg;
-    Device_Pinmux_T s_timPinMux[4] =
-    {
-        {PINMUX_GPIO_PIN_2,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_3,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_4,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_5,  GPIOH, GPIO_AF_NONE},
+    RET_CODE ret = RET_OK;
+    GPIO_PinConfig_T GPIO_InitStruct;
+    GPIO_Device_T *pGPIO = NULL;
 
-    };
+    memset(&GPIO_InitStruct, 0, sizeof(GPIO_PinConfig_T));
 
-    pin_cfg.pin = BIT(s_timPinMux[0].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[0].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[0].pin, (unsigned int)&pin_cfg);
-    if (ret)
+    /*set digtal pin as input , inorder to not affect analog input*/
+    pGPIO = GPIOH;
+    GPIO_InitStruct.pin  = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5;
+    GPIO_InitStruct.mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.pull = GPIO_NOPULL;
+
+    ret = HAL_GPIO_Init(pGPIO, &GPIO_InitStruct);
+    if (ret != RET_OK)
     {
-        return ret;
+        printf("Err:usb_ConfigPinmux\n");
     }
 
-    pin_cfg.pin = BIT(s_timPinMux[1].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[1].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[1].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    pin_cfg.pin = BIT(s_timPinMux[2].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[2].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[2].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    pin_cfg.pin = BIT(s_timPinMux[3].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[3].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[3].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    return 0;
+    return ret;
 }
 #endif
 

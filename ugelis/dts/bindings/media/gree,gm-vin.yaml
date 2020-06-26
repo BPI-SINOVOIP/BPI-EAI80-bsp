@@ -1,0 +1,33 @@
+---
+title: GM6721X VIN
+id: gree,gm-vin
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GM6721X VIN
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-vin"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+
+    label:
+      type: string
+      category: required
+      description: Human readable string describing the device (used by Ugelis for API name)
+      generation: define
+...

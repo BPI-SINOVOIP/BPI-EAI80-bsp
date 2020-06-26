@@ -2,18 +2,18 @@
  *
  * Copyright (C) 2018 Gree Microelectronics.  All Rights Reserved.
  *
- * @file          gm_hal_sflash.h
+ * @file          gm_hal_sqi.h
  *
- * @author        Colin.Yang
+ * @author        Steven.lee
  *
- * @version       1.1.0
+ * @version       1.1.2
  *
- * @date          2018/03/27
+ * @date          2020/5/18
  *
- * @brief         Header file of Sflash driver.
+ * @brief         Header file of SQI driver.
  *
  * @note
- *    2018/03/27, Colin.Yang, V1.0.0
+ *    2019/10/1, Steven.lee, V1.0.0
  *        Initial version.
  */
 #ifndef _GM_HAL_SQI_H_
@@ -60,39 +60,7 @@ struct SQI_Handle;
 
 
 
-static uint32_t sqi_mt_size[6] =
-{
-    SQI_8M_SIZE,
-    SQI_16M_SIZE,
-    SQI_32M_SIZE,
-    SQI_64M_SIZE,
-    SQI_128M_SIZE,
-    SQI_256M_SIZE,
-};
 
-
-static uint32_t sqi_mx_size[7] =
-{
-    SQI_1M_SIZE,
-    SQI_2M_SIZE,
-    SQI_4M_SIZE,
-    SQI_8M_SIZE,
-    SQI_16M_SIZE,
-    SQI_32M_SIZE,
-    SQI_64M_SIZE,
-};
-
-static uint32_t sqi_gd_size[2] =
-{
-    SQI_16M_SIZE,
-    SQI_32M_SIZE,
-};
-
-static uint32_t sqi_wb_size[2] =
-{
-    SQI_16M_SIZE,
-    SQI_32M_SIZE,
-};
 
 
 /**
@@ -151,26 +119,6 @@ typedef enum
     W25Q256JV,
     KH25V8035F
 } SQI_MODEL_T;
-
-static char *model[] =
-{
-    "MX25L1605D",
-    "MX25L3205D",
-    "MX25L6433F",
-    "MX25L12835F",
-    "MX25L25633F ",
-    "MX25L51245G",
-    "MT25QL128ABA",
-    "MT25QL256ABA",
-    "GD25Q127C",
-    "GD25Q257D",
-    "W25Q128JV",
-    "W25Q256JV",
-    "KH25V8035F"
-};
-
-
-
 
 
 /**

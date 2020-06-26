@@ -1,0 +1,8 @@
+add_subdirectory(crypto)
+add_subdirectory(encoding)
+add_subdirectory(ipc)
+add_subdirectory(mgmt)
+add_subdirectory_ifdef(CONFIG_OPENMV openmv)
+add_subdirectory_ifdef(CONFIG_JERRY_LIBM jerry-libm)
+add_subdirectory_ifdef(CONFIG_OBJ_INFO obj_info)
+add_subdirectory_ifdef(CONFIG_BARCODE barcode)

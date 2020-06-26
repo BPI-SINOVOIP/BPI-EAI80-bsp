@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2018, GREE
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+---
+title: GREE IWDG
+id: gree,gm-iwdg
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GREE IWDG
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-iwdg"
+
+    reg:
+      type: int
+      description: mmio register space
+      generation: define
+      category: required
+
+    label:
+      type: string
+      category: required
+      description: string describing the device (used by Ugelis for API name)
+      generation: define
+
+    clocks:
+      type: array
+      category: required
+      description: Clock gate control information
+      generation: structures
+...

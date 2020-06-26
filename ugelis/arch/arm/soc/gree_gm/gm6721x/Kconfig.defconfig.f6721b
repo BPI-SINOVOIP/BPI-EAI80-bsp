@@ -1,0 +1,14 @@
+# Kconfig - GREE Microelectronics F6721B MCU
+#
+# Copyright (c) 2018 Linaro Limited.
+#
+
+if SOC_F6721B
+
+config SOC
+	string
+	default "f6721b"
+
+endif # SOC_F6721B
+
+

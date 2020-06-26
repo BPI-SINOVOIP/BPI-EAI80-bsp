@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2017 Linaro Ltd.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config I2C_GM
+	bool "GM I2C support"
+	depends on I2C
+    select I2C_INTERRUPT_DRIVEN
+	help
+	  Enable hardware GM I2C
+
+config I2C_INTERRUPT_DRIVEN
+	bool "GM I2C interrupt"
+	depends on I2C_GM
+	help
+	  select I2C interrupt driven
+      
+# ---------- Port 0 ----------
+
+config I2C_GM_0
+	bool "Enable GM I2C device 0"
+	depends on I2C_GM
+    select I2C0
+	help
+	  This tells the driver to configure the I2C device at boot, depending
+	  on the additional configuration options below.
+
+config I2C_GM_0_NAME
+	string "hardware GM I2C device 0 device name"
+	default "I2C_0"
+	depends on I2C_GM_0
+	help
+	  This is the device name for the I2C device, and is included in the
+	  device struct.
+
+# ---------- Port 1 ----------
+
+config I2C_GM_1
+	bool "Enable GM I2C device 1"
+	depends on I2C_GM
+    select I2C1
+	help
+	  This tells the driver to configure the I2C device at boot, depending
+	  on the additional configuration options below.
+
+config I2C_GM_1_NAME
+	string "hardware GM I2C device 1 device name"
+	default "I2C_1"
+	depends on I2C_GM_1
+	help
+	  This is the device name for the I2C device, and is included in the
+	  device struct.
+
+# ---------- Port 2 ----------
+
+config I2C_GM_2
+	bool "Enable GM I2C device 2"
+	depends on I2C_GM
+    select I2C2
+	help
+	  This tells the driver to configure the I2C device at boot, depending
+	  on the additional configuration options below.
+
+config I2C_GM_2_NAME
+	string "hardware GM I2C device 2 device name"
+	default "I2C_2"
+	depends on I2C_GM_2
+	help
+	  This is the device name for the I2C device, and is included in the
+	  device struct.

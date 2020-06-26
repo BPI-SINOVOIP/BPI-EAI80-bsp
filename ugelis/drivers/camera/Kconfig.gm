@@ -1,0 +1,24 @@
+# Kconfig - GM6721X CAMERA configuration
+#
+# Copyright (c) 2016 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig CAMERA_GM6721X
+	bool "GM6721X MCU camera driver"
+	default n
+	select CAMERA_HAS_DRIVER
+	depends on SOC_SERIES_GM6721X
+	help
+	  Enable camera driver for GM6721X line of MCUs.
+
+config DCMI_0
+	bool "Enable DCMI_0 pinmux"
+	depends on CAMERA_GM6721X
+	default n
+    
+config DCMI_1
+	bool "Enable DCMI_1 pinmux"
+	depends on CAMERA_GM6721X
+	default n

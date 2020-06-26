@@ -1,0 +1,32 @@
+# Kconfig - MPU6050 Six-Axis Motion Tracking device configuration options
+
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig BF3007
+	bool "OmniVision BF3007 sensor support"
+	depends on CAMERA_HAS_DRIVER
+	default n
+	help
+	  This is a Video4Linux2 sensor-level driver for the Omnivision
+	  BF3007 camera sensor with a MIPI CSI-2 interface.
+
+config BF3007_0
+	bool "Enable BF3007_0"
+	depends on BF3007
+    select DCMI_0
+	default n
+
+config BF3007_1
+	bool "Enable BF3007_1"
+	depends on BF3007
+    select DCMI_1
+	default n
+	
+config BF3007_MIRROR
+	bool "BF3007 get frame by mirror format"
+	depends on BF3007
+	default n

@@ -1,0 +1,18 @@
+# Kconfig - stm32 DMA configuration options
+#
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig DMA_GM
+	bool
+	prompt "DMA Support"
+	default n
+	help
+	  Include support for dma.
+
+
+
+

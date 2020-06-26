@@ -1,0 +1,3 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_TMP112 tmp112.c)

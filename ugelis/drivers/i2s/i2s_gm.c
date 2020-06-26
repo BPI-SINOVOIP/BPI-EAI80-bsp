@@ -286,11 +286,10 @@ static const struct sai_gm_config sai_gm_config_0 =
     //.default_cfg.raw = CONFIG_I2C_0_DEFAULT_CFG,
 };
 
-DEVICE_AND_API_INIT(SAIA_DEV_NAME, SAIA_DRV_NAME, &sai_gm_init,
+DEVICE_AND_API_INIT(SAIA_DEV_NAME, CONFIG_SAIA_NAME, &sai_gm_init,
                     &sai_gm_data_0, &sai_gm_config_0,
                     POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE,
                     &sai_gm_driver_api);
-
 static void sai_gm_config_func_0(struct device *dev)
 {
     ARG_UNUSED(dev);
@@ -310,7 +309,7 @@ static const struct sai_gm_config sai_gm_config_2 =
     //.default_cfg.raw = CONFIG_I2C_2_DEFAULT_CFG,
 };
 
-DEVICE_AND_API_INIT(SAIB_DEV_NAME, SAIB_DRV_NAME, &sai_gm_init,
+DEVICE_AND_API_INIT(SAIB_DEV_NAME, CONFIG_SAIB_NAME, &sai_gm_init,
                     &sai_gm_data_2, &sai_gm_config_2,
                     POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE,
                     &sai_gm_driver_api);

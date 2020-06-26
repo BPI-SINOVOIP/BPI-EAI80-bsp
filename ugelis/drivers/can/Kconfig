@@ -1,0 +1,21 @@
+# Kconfig - CAN configuration options
+
+#
+# Copyright (c) 2018 Alexander Wachter
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# CAN options
+#
+menuconfig CAN
+	bool
+	prompt "CAN Support"
+	default n
+	help
+	  Include support for can.
+
+if CAN
+	source "drivers/can/Kconfig.gm"
+endif

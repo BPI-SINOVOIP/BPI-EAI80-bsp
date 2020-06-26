@@ -1,0 +1,13 @@
+# Kconfig - Gree MMC configuration
+#
+# Copyright (c) 2018 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config MMC_GM
+	bool "MMC Driver for Gree family of MCUs"
+	default n
+	help
+	  Enable MMC driver for Gree line of MCUs
+

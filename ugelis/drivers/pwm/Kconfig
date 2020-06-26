@@ -1,0 +1,51 @@
+# Kconfig - PWM configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig PWM
+	bool "PWM (Pulse Width Modulation) Drivers"
+	help
+	  Enable config options for PWM drivers.
+
+if PWM
+
+config SYS_LOG_PWM_LEVEL
+	int
+	prompt "PWM Driver Log level"
+	depends on SYS_LOG
+	default 0
+	range 0 4
+	help
+	  Sets log level for PWM drivers.
+	  Levels are:
+	  0 OFF, do not write
+	  1 ERROR, only write SYS_LOG_ERR
+	  2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  3 INFO, write SYS_LOG_INF in addition to previous levels
+	  4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+config PWM_0
+	bool "Enable PWM port 0"
+
+config PWM_1
+	bool "Enable PWM port 1"
+
+config PWM_2
+	bool "Enable PWM port 2"
+
+config PWM_3
+	bool "Enable PWM port 3"
+
+config PWM_4
+	bool "Enable PWM port 4"
+
+
+source "drivers/pwm/Kconfig.dw"
+
+source "drivers/pwm/Kconfig.esp32"
+
+endif # PWM

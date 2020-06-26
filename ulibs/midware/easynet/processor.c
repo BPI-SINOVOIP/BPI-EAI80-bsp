@@ -131,6 +131,21 @@ void compute_total_input(unsigned char *addr, unsigned int len)
     count_input++;
 
 }
+
+void compute_total_buf(unsigned char *addr, unsigned int len)
+{
+    unsigned int total = 0;
+    int i = 0;
+
+    while (i < len)
+    {
+        total += addr[i];
+        i++;
+    }
+
+    printf("compute_total_buf3=[%d]\n", total);
+}
+
 #endif
 
 int ops_parse(unsigned char *bin, unsigned char **param, unsigned char **cmd_addr, unsigned char **weight_addr)
@@ -322,6 +337,7 @@ void soft_gaussian_yolo(struct easynet_ops_param *param, struct conv_hw_context 
     int16_t *input;
     int i = 0;
     int j = 0;
+    int index;
     float objectness = 0;
 
     /* Select input buffer */
@@ -333,14 +349,22 @@ void soft_gaussian_yolo(struct easynet_ops_param *param, struct conv_hw_context 
     int classes = op_param->classes;
     int out_ch  = op_param->out_ch;
 
+#ifdef FORCE_COL_NUM_EVEN
+    int in_w = ((w + 1) / 2) * 2;
+#else
+    int in_w = w;
+#endif
     for (n = 0; n < out_ch; ++n)
     {
         for (i = 0; i < num; ++i)
         {
             obj_index  = entry_gaussian_index(w, h, classes, n * num + i, 8);
-            objectness = logistic_activate(fix32_to_float(input[obj_index]));
+            objectness = logistic_activate(fix32_to_float(input[(obj_index / w) * in_w + (obj_index % w)]));
             if (objectness > thresh)
             {
+
+                //printf("n=%d,i=%d, objectness=%f,thresh=%f\n",n,i, objectness,thresh);
+
                 // x : mu, sigma
                 x_mu_index = entry_gaussian_index(w, h, classes,  n * num + i, 0);
                 x_sigma_index = entry_gaussian_index(w, h, classes,  n * num + i, 1);
@@ -354,25 +378,25 @@ void soft_gaussian_yolo(struct easynet_ops_param *param, struct conv_hw_context 
                 h_mu_index = entry_gaussian_index(w, h, classes,  n * num + i, 6);
                 h_sigma_index = entry_gaussian_index(w, h, classes,  n * num + i, 7);
 
-                cxt->yolo_out_buffer[op_param->index][x_mu_index] = logistic_activate(fix32_to_float(input[x_mu_index]));
-                cxt->yolo_out_buffer[op_param->index][x_sigma_index] = logistic_activate(fix32_to_float(input[x_sigma_index]));
-                cxt->yolo_out_buffer[op_param->index][y_mu_index] = logistic_activate(fix32_to_float(input[y_mu_index]));
-                cxt->yolo_out_buffer[op_param->index][y_sigma_index] = logistic_activate(fix32_to_float(input[y_sigma_index]));
+                cxt->yolo_out_buffer[op_param->index][x_mu_index] = logistic_activate(fix32_to_float(input[(x_mu_index / w) * in_w + (x_mu_index % w)]));
+                cxt->yolo_out_buffer[op_param->index][x_sigma_index] = logistic_activate(fix32_to_float(input[(x_sigma_index / w) * in_w + (x_sigma_index % w)]));
+                cxt->yolo_out_buffer[op_param->index][y_mu_index] = logistic_activate(fix32_to_float(input[(y_mu_index / w) * in_w + (y_mu_index % w)]));
+                cxt->yolo_out_buffer[op_param->index][y_sigma_index] = logistic_activate(fix32_to_float(input[(y_sigma_index / w) * in_w + (y_sigma_index % w)]));
                 cxt->yolo_out_buffer[op_param->index][w_mu_index] = fix32_to_float(input[w_mu_index]);
-                cxt->yolo_out_buffer[op_param->index][w_sigma_index] = logistic_activate(fix32_to_float(input[w_sigma_index]));
-                cxt->yolo_out_buffer[op_param->index][h_mu_index] = fix32_to_float(input[h_mu_index]);
-                cxt->yolo_out_buffer[op_param->index][h_sigma_index] = logistic_activate(fix32_to_float(input[h_sigma_index]));
+                cxt->yolo_out_buffer[op_param->index][w_sigma_index] = logistic_activate(fix32_to_float(input[(w_sigma_index / w) * in_w + (w_sigma_index % w)]));
+                cxt->yolo_out_buffer[op_param->index][h_mu_index] = fix32_to_float(input[(h_mu_index / w) * in_w + (h_mu_index % w)]);
+                cxt->yolo_out_buffer[op_param->index][h_sigma_index] = logistic_activate(fix32_to_float(input[(h_sigma_index / w) * in_w + (h_sigma_index % w)]));
                 cxt->yolo_out_buffer[op_param->index][obj_index] = objectness;
 
                 for (j = 0; j < classes; ++j)
                 {
                     class_index = entry_gaussian_index(w, h, classes, n * num + i, 9 + j);
-                    cxt->yolo_out_buffer[op_param->index][class_index] = logistic_activate(fix32_to_float(input[class_index]));
+                    cxt->yolo_out_buffer[op_param->index][class_index] = logistic_activate(fix32_to_float(input[(class_index / w) * in_w + (class_index % w)]));
                 }
             }
             else
             {
-                cxt->yolo_out_buffer[op_param->index][obj_index] = 0;
+                cxt->yolo_out_buffer[op_param->index][(obj_index / w)*in_w + (obj_index % w)] = 0;
             }
         }
     }
@@ -383,7 +407,7 @@ void soft_upsample(struct easynet_ops_param *param, struct conv_hw_context *cxt)
     struct op_upsample_param *op_param = (struct op_upsample_param *)(((void *)param) + sizeof(struct easynet_ops_param));
     int16_t *input;
     int16_t *tmp;
-    uint32_t c, h, w, stride, scale, out_cnt;
+    uint32_t c, h, w, stride, scale, out_cnt, in_w, out_w;
     int i, j, k;
 
     int16_t *output;
@@ -392,20 +416,29 @@ void soft_upsample(struct easynet_ops_param *param, struct conv_hw_context *cxt)
     input      = cxt->layer_buffer[op_param->buffer];
     output     = cxt->layer_buffer[op_param->out_buffer];
 
+
     c = op_param->ch_num;
     h = op_param->row_num;
     w = op_param->col_num;
     stride = op_param->stride;
     out_cnt = op_param->out_col * op_param->out_row * op_param->ch_num;
 
+#ifdef FORCE_COL_NUM_EVEN
+    in_w = ((w + 1) / 2) * 2;
+    out_w = ((w * stride + 1) / 2) * 2;
+#else
+    in_w = w;
+    out_w = w * stride;
+#endif
+
     for (k = 0; k < c; ++k)
     {
         for (j = 0; j < h * stride; ++j)
         {
-            for (i = 0; i < w * stride; ++i)
+            for (i = 0; i < out_w ; ++i)
             {
-                int in_index = k * w * h + (j / stride) * w + i / stride;
-                int out_index = k * w * h * stride * stride + j * w * stride + i;
+                int in_index = k * in_w * h + (j / stride) * in_w + i / stride;
+                int out_index = k * out_w  * h * stride + j * out_w  + i;
                 output[out_index] = input[in_index];
             }
         }
@@ -448,9 +481,11 @@ static int kdp_ops_process(struct easynet_dev *dev, struct easynet_ops_param *pa
         compute_total_input((unsigned char *)cxt->layer_buffer[0], 0x20000);
         compute_total_out((unsigned char *)cxt->layer_buffer[1], 0x20000);
 
+        compute_total_buf((unsigned char *)cxt->layer_buffer[3], 36 * 36 * 64);
+
         HW32_REG(0x46000000) = read_val;
     }
-    if (cntt >= 772)
+    if (cntt >= 180)
     {
         printf("\nwaiter\n");
     }

@@ -1,0 +1,10 @@
+ugelis_library_include_directories(${UGELIS_BASE}/subsys/usb)
+
+ugelis_sources_ifdef(CONFIG_USB_CDC_ACM cdc_acm.c)
+ugelis_sources_ifdef(CONFIG_USB_MASS_STORAGE mass_storage.c)
+ugelis_sources_ifdef(CONFIG_USB_DEVICE_BLUETOOTH bluetooth.c)
+ugelis_sources_ifdef(CONFIG_USB_DFU_CLASS usb_dfu.c)
+ugelis_sources_ifdef(CONFIG_USB_DEVICE_LOOPBACK loopback.c)
+
+add_subdirectory_ifdef(CONFIG_USB_DEVICE_NETWORK netusb)
+add_subdirectory_ifdef(CONFIG_USB_DEVICE_HID hid)

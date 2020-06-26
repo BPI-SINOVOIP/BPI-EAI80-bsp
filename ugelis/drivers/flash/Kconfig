@@ -1,0 +1,56 @@
+# Kconfig - Flash driver configuration options
+
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# Flash driver
+#
+config FLASH_HAS_DRIVER_ENABLED
+	bool
+	help
+	  This option is enabled when any flash driver is enabled.
+
+config FLASH_HAS_PAGE_LAYOUT
+	bool
+	help
+	  This option is enabled when the SoC flash driver supports
+	  retrieving the layout of flash memory pages.
+
+menuconfig FLASH
+	bool
+	prompt "FLASH support"
+	help
+	  Enable support for the flash hardware.
+	  
+menuconfig SFLASH
+	bool
+	prompt "SFLASH support"
+	help
+	  Enable support for the flash hardware.
+
+config FLASH_PAGE_LAYOUT
+	bool "API for retrieving the layout of pages"
+	depends on FLASH && FLASH_HAS_PAGE_LAYOUT
+	help
+	  Enables API for retrieving the layout of flash memory pages.
+
+
+config SOC_FLASH_MCUX
+	bool "MCUX flash shim driver"
+	depends on FLASH && HAS_MCUX
+	select FLASH_HAS_PAGE_LAYOUT
+	select FLASH_HAS_DRIVER_ENABLED
+	help
+	  Enables the MCUX flash shim driver.
+	  WARNING: This driver will disable the system interrupts for
+	  the duration of the flash erase/write operations. This will
+	  have an impact on the overall system performance - whether
+	  this is acceptable or not will depend on the use case.
+
+source "drivers/flash/Kconfig.gm"
+
+source "drivers/flash/Kconfig.w25qxxdv"

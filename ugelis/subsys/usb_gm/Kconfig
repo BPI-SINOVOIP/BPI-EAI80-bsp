@@ -1,0 +1,31 @@
+# Kconfig - USB device stack configuration options
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menu "USB Stack"
+
+config GM_USB_DEVICE_STACK
+	bool "Gree Microcontroller USB Device Stack"
+	default n
+	help
+		This option enables USB Device Stack Option.
+
+config GM_USB_HOST_STACK
+	bool "Gree Microcontroller HOST Device Stack"
+	default n
+	help
+		This option enables USB Host Stack Option.	
+
+config USB_PINMUX
+	bool "Gree Microcontroller USB Pinmux"
+	default n
+	help
+		This option enables USB  pinmux.
+source "subsys/usb_gm/device/class/Kconfig"
+source "subsys/usb_gm/host/class/Kconfig"
+
+endmenu
+

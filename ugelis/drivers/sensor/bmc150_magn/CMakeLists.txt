@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_BMC150_MAGN bmc150_magn.c)
+ugelis_library_sources_ifdef(CONFIG_BMC150_MAGN_TRIGGER bmc150_magn_trigger.c)

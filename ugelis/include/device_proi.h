@@ -43,7 +43,7 @@
 #define DEVICE_PRIORITY_DMA                    5
 #define DEVICE_PRIORITY_GPIO                   6
 #define DEVICE_PRIORITY_UART                   7
-
+#define DEVICE_PRIORITY_TIM                    50
 
 /*add your device priority accoding your driver init sequence logic*/
 

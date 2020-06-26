@@ -1,0 +1,24 @@
+# Kconfig - MPU6050 Six-Axis Motion Tracking device configuration options
+
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig SCCB
+	bool "Sccb Protocal for Camera"
+	depends on CAMERA
+	default n
+	help
+	  This is a Sccb Protocal for some cameras.
+    
+config SCCB_0
+	bool "Enable SCCB_0"
+	depends on SCCB
+	default n
+
+config SCCB_1
+	bool "Enable SCCB_1"
+	depends on SCCB
+	default n

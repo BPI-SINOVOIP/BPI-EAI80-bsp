@@ -1,0 +1,22 @@
+# Kconfig - the OpenMV project
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config BARCODE
+	bool
+	prompt "BarCode Support"
+	default n
+	help
+	This option enables the BarCode library.
+
+if BARCODE
+config QR_DUAL_EN
+	bool "qr dual en"
+	default n
+	help
+	  This is an option to be enabled the dual core for qr code.
+endif

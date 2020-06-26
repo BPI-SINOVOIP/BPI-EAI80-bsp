@@ -1,0 +1,13 @@
+# Kconfig - GM SDK LVD
+#
+# Copyright (C) 2019 Gree Edgeless Microelectronics.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig LVD_GM
+	bool
+	prompt "GM LVD driver"
+	depends on LVD && GM_HAL_LVD
+	help
+	  Enable support for gm lvd driver.

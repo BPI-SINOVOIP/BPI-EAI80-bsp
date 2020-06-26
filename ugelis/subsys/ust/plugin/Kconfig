@@ -1,0 +1,24 @@
+# Kconfig - serial driver configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig UST_PLUGIN
+	bool
+	prompt "tiny streamer plugin"
+	help
+	  Enable options for tiny streamer plugin.
+
+if UST_PLUGIN
+
+source "subsys/ust/plugin/test_element/Kconfig"
+
+source "subsys/ust/plugin/camera/Kconfig"
+source "subsys/ust/plugin/filter/Kconfig"
+source "subsys/ust/plugin/edge/Kconfig"
+source "subsys/ust/plugin/lcd/Kconfig"
+
+endif

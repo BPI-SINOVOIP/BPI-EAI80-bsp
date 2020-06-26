@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_SHT3XD sht3xd.c)
+ugelis_library_sources_ifdef(CONFIG_SHT3XD_TRIGGER sht3xd_trigger.c)

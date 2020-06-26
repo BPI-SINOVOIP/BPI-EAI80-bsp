@@ -1900,8 +1900,25 @@ static int tim8_pinmux_config(void)
 /** Configure pinmux for an available usb device/Host */
 static int usb_pinmux_config(struct device *port)
 {
-    *(volatile uint32_t *)0x400002e0 |= (0xFF << 4);
-    return 0;
+    RET_CODE ret = RET_OK;
+    GPIO_PinConfig_T GPIO_InitStruct;
+    GPIO_Device_T *pGPIO = NULL;
+
+    memset(&GPIO_InitStruct, 0, sizeof(GPIO_PinConfig_T));
+
+    /*set digtal pin as input , inorder to not affect analog input*/
+    pGPIO = GPIOH;
+    GPIO_InitStruct.pin  = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5;
+    GPIO_InitStruct.mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.pull = GPIO_NOPULL;
+
+    ret = HAL_GPIO_Init(pGPIO, &GPIO_InitStruct);
+    if (ret != RET_OK)
+    {
+        printf("Err:usb_ConfigPinmux\n");
+    }
+
+    return ret;
 }
 #endif
 
@@ -2104,6 +2121,97 @@ static int i2c2_pinmux_config(void)
 }
 #endif
 
+#if defined(CONFIG_PDMA)
+static int pdma_pinmux_config(void)
+{
+    int ret = 0;
+
+    struct device *portj = device_get_binding(CONFIG_PINMUX_GM_PORTJ_NAME);
+    if (portj == NULL)
+    {
+        return -1;
+    }
+    GPIO_PinConfig_T pin_cfg;
+    Device_Pinmux_T s_pdmPinMux[2] =
+    {
+        {PINMUX_GPIO_PIN_4, GPIOJ, GPIOJ4_AF4_PDM_SD_A},
+        {PINMUX_GPIO_PIN_3, GPIOJ, GPIOJ3_AF4_PDM_BCK_A},
+    };
+
+    pin_cfg.pin = BIT(s_pdmPinMux[0].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[0].alternate;
+
+    ret = pinmux_pin_set(portj, s_pdmPinMux[0].pin, (unsigned int)&pin_cfg);
+
+    if (ret)
+    {
+        return ret;
+    }
+
+    pin_cfg.pin = BIT(s_pdmPinMux[1].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[1].alternate;
+
+    ret = pinmux_pin_set(portj, s_pdmPinMux[1].pin, (unsigned int)&pin_cfg);
+
+    if (ret)
+    {
+        return ret;
+    }
+
+    return ret;
+}
+#endif
+
+#if defined(CONFIG_PDMB)
+static int pdmb_pinmux_config(void)
+{
+    int ret = 0;
+
+    struct device *portj = device_get_binding(CONFIG_PINMUX_GM_PORTJ_NAME);
+    if (portj == NULL)
+    {
+        return -1;
+    }
+    GPIO_PinConfig_T pin_cfg;
+    Device_Pinmux_T s_pdmPinMux[2] =
+    {
+        {PINMUX_GPIO_PIN_5, GPIOJ, GPIOJ5_AF4_PDM_SD_B},
+        {PINMUX_GPIO_PIN_7, GPIOJ, GPIOJ7_AF4_PDM_BCK_B},
+    };
+
+    pin_cfg.pin = BIT(s_pdmPinMux[0].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[0].alternate;
+
+    ret = pinmux_pin_set(portj, s_pdmPinMux[0].pin, (unsigned int)&pin_cfg);
+
+    if (ret)
+    {
+        return ret;
+    }
+
+    pin_cfg.pin = BIT(s_pdmPinMux[1].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[1].alternate;
+
+    ret = pinmux_pin_set(portj, s_pdmPinMux[1].pin, (unsigned int)&pin_cfg);
+
+    if (ret)
+    {
+        return ret;
+    }
+
+    return ret;
+}
+#endif
+
+
 static int pinmux_gm_initialize(struct device *port)
 {
     int ret = 0;
@@ -2152,6 +2260,14 @@ static int pinmux_gm_initialize(struct device *port)
 
 #if defined(CONFIG_I2C2)
     //i2c2_pinmux_config();
+#endif
+
+#if defined(CONFIG_PDMA)
+    pdma_pinmux_config();
+#endif
+
+#if defined(CONFIG_PDMB)
+    pdmb_pinmux_config();
 #endif
 
 #if defined(CONFIG_DCMI_0)

@@ -1,0 +1,37 @@
+---
+title: GREE SAI
+id: gree,gm-sai
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GREE SAI
+
+inherits:
+    !include sai.yaml
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-sai"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+
+    type:
+      type: int
+      category: required
+      description: the perpheral connnet to sai port
+      generation: define
+
+...

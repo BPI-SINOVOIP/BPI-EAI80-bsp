@@ -1,0 +1,15 @@
+# Kconfig - MPU6050 Six-Axis Motion Tracking device configuration options
+
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig GT911
+	bool "GOODIX GT911 touch sensor support"
+	depends on TOUCHSCREEN_DRIVERS
+	default n
+	help
+	  This is a touchscreen sensor-level driver for the GOODIX
+	  GT911 touch sensor with a i2c protocol interface.

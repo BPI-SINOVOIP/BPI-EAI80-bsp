@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_HTS221 hts221.c)
+ugelis_library_sources_ifdef(CONFIG_HTS221_TRIGGER hts221_trigger.c)

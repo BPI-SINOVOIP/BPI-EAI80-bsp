@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_LIS3MDL lis3mdl.c)
+ugelis_library_sources_ifdef(CONFIG_LIS3MDL_TRIGGER lis3mdl_trigger.c)

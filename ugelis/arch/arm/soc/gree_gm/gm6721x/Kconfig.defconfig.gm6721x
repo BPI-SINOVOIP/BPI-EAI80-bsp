@@ -1,0 +1,14 @@
+# Kconfig - GREE Microelectronics GM6721X MCU
+#
+# Copyright (c) 2018 Linaro Limited.
+#
+
+
+config NUM_IRQS
+	int
+	default 80
+
+gsource "arch/arm/soc/gree_gm/gm6721x/Kconfig.defconfig.f6721b"
+gsource "arch/arm/soc/gree_gm/gm6721x/Kconfig.defconfig.gm6721"
+
+

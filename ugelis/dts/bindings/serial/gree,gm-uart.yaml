@@ -1,0 +1,60 @@
+---
+title: GREE UART
+id: gree,gm-uart
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GREE UART
+
+inherits:
+    !include uart.yaml
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-uart"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+
+    parity:
+      type: int
+      category: required
+      description: uart stop bit count
+      generation: define
+
+    wordLength:
+      type: int
+      category: required
+      description: uart data bit count
+      generation: define
+
+    stopBits:
+      type: int
+      category: required
+      description: uart stop bit count
+      generation: define
+
+    clockSrc:
+      type: int
+      category: required
+      description: uart clock source
+      generation: define
+
+    clocks:
+      type: array
+      category: required
+      description: Clock gate control information
+      generation: define
+...

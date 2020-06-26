@@ -1,12 +1,13 @@
 #ifndef __KDP_H__
 #define __KDP_H__
 
-//#define DEBUG_KDP_LEVEL_0               1
-//#define DEBUG_KDP_LEVEL_1               1
-//#define DEBUG_KDP_LEVEL_2               2
-//#define DEBUG_KDP_LEVEL_3               3
-//#define DEBUG_KDP_ALL                     8
-
+#if 0
+    #define DEBUG_KDP_LEVEL_0               1
+    #define DEBUG_KDP_LEVEL_1               1
+    #define DEBUG_KDP_LEVEL_2               2
+    #define DEBUG_KDP_LEVEL_3               3
+    #define DEBUG_KDP_ALL                     8
+#endif
 
 /* Global R/W tasks */
 #define HW32_REG(ADDRESS)  (*((volatile uint32_t  *)(ADDRESS)))
@@ -26,6 +27,8 @@
 #define KDP_STATUS      0x46000004
 #define SRAM_SIZE          128*1024
 #define SPAD_SIZE          16*1024
+
+#define FORCE_COL_NUM_EVEN
 
 
 #define MAX_SHORTCUT_NUM       4
@@ -67,6 +70,8 @@ typedef enum
     OP_DEPTHWISE_CONV,
     OP_GAUSSIAN_YOLO,
     OP_FINAL_INPUT_CHANNEL_CUT,
+    OP_REORG,
+    OP_CHECK_LAYER,
 } OP_TYPE;
 
 /*
@@ -126,11 +131,12 @@ struct op_shortcut_buffer_param
  */
 struct op_avgpool_param
 {
+    int32_t layer_num; /*< for debug */
+    int32_t buffer;    /*< input buffer */
+    int32_t dst_buffer;/*< output buffer */
     uint32_t col;      /*< input column */
     uint32_t row;      /*< input row */
     uint32_t ch;       /*< input channel */
-    uint32_t valid_col;    /*<  */
-    uint32_t valid_row;    /*< */
 };
 
 /*
@@ -209,6 +215,39 @@ struct op_upsample_param
 };
 
 /*
+ * Operator parameter of reorg
+ */
+struct op_reorg_param
+{
+    int32_t layer_num;    /*< for debug */
+    int32_t buffer;       /*< input buffer */
+    int32_t out_buffer;   /*< output buffer */
+    int32_t col_num;      /*< input  column */
+    int32_t row_num;      /*< input  row */
+    int32_t ch_num;       /*< input  channel */
+    int32_t batch;        /*< reorg  batch */
+    int32_t stride;       /*< reorg  stride */
+    int32_t forward;      /*< reorg forward */
+};
+
+/*
+ * Operator parameter of full connected soft operation
+ */
+struct op_connected_param
+{
+    int32_t layer_num;      /*< for debug */
+    int32_t buffer;         /*< input buffer */
+    int32_t dst_buffer;     /*< output buffer */
+    int32_t in_ch;          /*< Input size */
+    int32_t out_ch;         /*< Output size */
+    uint32_t weight_offset; /*<  Start of weight array */
+    uint32_t weight_len;    /*< weight length */
+    int32_t activation;
+    int32_t batch_normalize;
+    int32_t before_bn_ch;
+};
+
+/*
  * Operator parameter of image input
  */
 struct op_image_input_param
@@ -216,6 +255,7 @@ struct op_image_input_param
     uint32_t ch;       /*< input channel */
     uint32_t row;      /*< input row */
     uint32_t col;      /*< input column */
+    uint32_t fmt;      /*< data format, 0:int16, 1:float */
 };
 
 /*
@@ -240,6 +280,7 @@ struct op_layer_param
     uint32_t bn;          /*< network bn layer */
     uint32_t pool;        /*< network pool layer */
     int32_t  buffer;      /*< Input buffer selection */
+    int32_t  out_buffer;  /*< Output buffer selection */
     uint32_t filter_size;    /*< Kernel size of this convolution layer */
     uint32_t total_ch_num;   /*< Total input channel for this layer */
     uint32_t total_row_num;  /*< Total input row for this layer */
@@ -256,6 +297,19 @@ struct op_layer_param
     uint32_t out_col;        /*< Valid output column of this part */
     uint32_t out_ch;         /*< Valid output channel of this part */
     uint32_t cross_start;    /*<  First unit of multiple layers */
+};
+
+/*
+ * Operator parameter of layer indicator
+ */
+struct op_layer_check_param
+{
+    uint32_t end_layer;
+    uint32_t conv;        /*< network conv layer */
+    int32_t  out_buffer;  /*< Output buffer selection */
+    uint32_t total_out_ch;   /*< Total output channel of this layer */
+    uint32_t total_out_row;  /*< Total output row of this layer */
+    uint32_t total_out_col;  /*< Total output column of this layer */
 };
 
 /*
@@ -292,9 +346,16 @@ struct op_route_param
     int32_t  sizes[MAX_SHORTCUT_NUM];   /*< input  size */
 };
 
+enum
+{
+    FMT_INT16 = 0,
+    FMT_FLOAT = 1,
+};
 
 struct conv_hw_context
 {
+    uint32_t last_layer_out_fmt;    /* 0: int16, 1: float */
+    //struct simu_dumper dumper;
     uint32_t max_len;        /*< Max length of this compiled ops bin */
     void    *ops_start_addr; /*< Start addr of this compiled ops bin */
     void    *cmd_start_addr; /*< Start addr of all commands */
@@ -362,6 +423,10 @@ struct conv_hw_context
     uint32_t total_out_ch;   /*< Total output channel of this layer */
     uint32_t total_out_row;  /*< Total output row of this layer */
     uint32_t total_out_col;  /*< Total output column of this layer */
+    uint32_t last_out_row;   /*< Total output row for last layer */
+    uint32_t last_out_col;   /*< Total output column for last layer */
+    uint32_t last_out_ch;    /*< Total output channel for last layer */
+    uint32_t last_out_buffer;/*< Output buffer index for last layer */
     uint32_t start_out_ch;   /*< Start channel in output bank */
     uint32_t start_out_row;  /*< Start row in output bank */
     uint32_t start_out_col;  /*< Start col in output bank */
@@ -373,13 +438,11 @@ struct conv_hw_context
     int16_t *shortcut_buffer[MAX_SHORTCUT_NUM]; /*< Buffer for shortcut layer */
     uint32_t shortcut[MAX_LAYER_BUFFER_NUM]; /*< Layers of each shorcut buffer, zero if not valid */
     uint32_t out_layer;       /*< Layers of output */
+    uint32_t layer_number;    /*< Start conv layer of one combined layer */
     uint8_t *image_input;     /*< Input of convolution */
     uint8_t *user_output;     /*< Output of convolution */
     int32_t  verified_layer;  /*< Last verified layer for LAYER_BY_LAYER_DEBUG */
     float   *yolo_out_buffer[MAX_YOLO_OUT_NUM]; /*< Buffer for yolo layer */
-    //struct hw_debug_helper debug_helper;    /* helper to check the process of calculating about simulator */
-    int32_t output_flag;
-
 };
 
 #endif

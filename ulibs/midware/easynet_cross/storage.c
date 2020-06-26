@@ -1,5 +1,5 @@
 #include "storage.h"
-#include "ai_common.h"
+//#include "ai_common.h"
 #include <gm_hal_sqi.h>
 #include <ugelis.h>
 #include <device.h>

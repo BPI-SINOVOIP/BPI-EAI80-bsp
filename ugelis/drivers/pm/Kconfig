@@ -1,0 +1,29 @@
+# Kconfig - power configuration options
+#
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# power options
+#
+menuconfig PM
+	bool
+	prompt "Power Framework Support"
+	default y
+    select DEVICE_POWER_MANAGEMENT
+	help
+	  Include support for power.
+
+
+if PM
+	source "drivers/pm/Kconfig.gm"
+
+config PM_DEBUG
+	bool "Debug For PM"
+	default n
+	help
+	  Enable Debug For PM
+endif

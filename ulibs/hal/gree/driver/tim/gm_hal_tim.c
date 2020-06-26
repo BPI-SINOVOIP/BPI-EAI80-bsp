@@ -35,6 +35,7 @@
 * Static variables
 *******************************************************************************/
 /** @brief Pointers to ETM handles for each instance. */
+static uint32_t instance = 0;
 static TIM_Handle_T *s_TIMHandle[MAX_TIM_NUM] = {NULL};
 
 /** @brief Pointers to ETM IRQ number for each instance. */
@@ -53,6 +54,8 @@ const IRQn_Type s_TIMIrqs[] = {TIM1_IRQn, TIM2_IRQn, TIM3_IRQn, TIM4_IRQn,
 
 TIM_Handle_T *g_htim;
 
+
+TIM_IRQCallback_T pTimCallback = NULL;
 
 /*******************************************************************************
 * Reference variables
@@ -422,66 +425,68 @@ RET_CODE HAL_TIM_InitCommon(TIM_Handle_T *htim)
         return HAL_ERROR;
     }
 
-#if defined(RABBIT_NO_OS_SYSTEM) || defined(CONFIG_USE_HAL_TEST)
+#if 1//defined(RABBIT_NO_OS_SYSTEM) || defined(CONFIG_USE_HAL_TEST)
     if (htim->instance == TIM1)
     {
-        s_TIMHandle[0] = htim;
+        instance = 1;
+
     }
     if (htim->instance == TIM2)
     {
-        s_TIMHandle[1] = htim;
+        instance = 2;
     }
     if (htim->instance == TIM3)
     {
-        s_TIMHandle[2] = htim;
+        instance = 3;
     }
     if (htim->instance == TIM4)
     {
-        s_TIMHandle[3] = htim;
+        instance = 4;
     }
     if (htim->instance == TIM5)
     {
-        s_TIMHandle[4] = htim;
+        instance = 5;
     }
     if (htim->instance == TIM8)
     {
-        s_TIMHandle[5] = htim;
+        instance = 8;
     }
 
 #if defined(CHIP_GM6721)
     if (htim->instance == TIM9)
     {
-        s_TIMHandle[6] = htim;
+        instance = 9;
     }
     if (htim->instance == TIM10)
     {
-        s_TIMHandle[7] = htim;
+        instance = 10;
     }
     if (htim->instance == TIM11)
     {
-        s_TIMHandle[8] = htim;
+        instance = 11;
     }
     if (htim->instance == TIM12)
     {
-        s_TIMHandle[9] = htim;
+        instance = 12;
     }
     if (htim->instance == TIM13)
     {
-        s_TIMHandle[10] = htim;
+        instance = 13;
     }
     if (htim->instance == TIM14)
     {
-        s_TIMHandle[11] = htim;
+        instance = 14;
     }
 #endif
 
     g_htim = htim;
 #endif
+    s_TIMHandle[instance] = htim;
 
     HAL_TIM_SW_Reset();
-    HAL_TIM_CLK_ENABLE(0);
+    HAL_TIM_CLK_ENABLE(instance);
 
-    HAL_TIM_RequestIrq(0);
+    HAL_TIM_RequestIrq(instance);
     TIM_InterruptConfig(htim);
 
     return HAL_OK;
@@ -760,7 +765,6 @@ RET_CODE HAL_TIM_InitPWM(TIM_Handle_T *htim)
 
     /* Set the TIM state */
     htim->state = HAL_TIM_STATE_BUSY;
-
     /* Init the base time for the PWM */
     HAL_TIM_TimeBaseConfig(htim->instance, &htim->init);
 
@@ -3390,9 +3394,17 @@ __weak void HAL_TIM_ErrorCallback(TIM_Handle_T *htim)
     UNUSED(htim);
 }
 
+
 __weak void HAL_TIM_ICCaptureCallback(TIM_Handle_T *htim, TIM_Device_T *TIMx)
 {
-    UNUSED(htim);
+    //    UNUSED(htim);
+
+    if (TIMx != NULL && htim != NULL)
+    {
+        pTimCallback =  s_TIMHandle[instance]->init.callback;
+        pTimCallback(TIMx, 0, 0);
+    }
+
 }
 
 __weak void HAL_TIM_PeriodElapsedCallback(TIM_Handle_T *htim, TIM_Device_T *TIMx)
@@ -3560,38 +3572,38 @@ void HAL_TIM5_InterruptHandler(void)
 
 void HAL_TIM8_InterruptHandler(void)
 {
-    HAL_TIM_IRQ_handler(s_TIMHandle[5], TIM8);
+    HAL_TIM_IRQ_handler(s_TIMHandle[8], TIM8);
 }
 
 #if defined(CHIP_GM6721)
 void HAL_TIM9_InterruptHandler(void)
 {
-    HAL_TIM_IRQ_handler(s_TIMHandle[6], TIM9);
+    HAL_TIM_IRQ_handler(s_TIMHandle[9], TIM9);
 }
 
 void HAL_TIM10_InterruptHandler(void)
 {
-    HAL_TIM_IRQ_handler(s_TIMHandle[7], TIM10);
+    HAL_TIM_IRQ_handler(s_TIMHandle[10], TIM10);
 }
 
 void HAL_TIM11_InterruptHandler(void)
 {
-    HAL_TIM_IRQ_handler(s_TIMHandle[8], TIM11);
+    HAL_TIM_IRQ_handler(s_TIMHandle[11], TIM11);
 }
 
 void HAL_TIM12_InterruptHandler(void)
 {
-    HAL_TIM_IRQ_handler(s_TIMHandle[9], TIM12);
+    HAL_TIM_IRQ_handler(s_TIMHandle[12], TIM12);
 }
 
 void HAL_TIM13_InterruptHandler(void)
 {
-    HAL_TIM_IRQ_handler(s_TIMHandle[10], TIM13);
+    HAL_TIM_IRQ_handler(s_TIMHandle[13], TIM13);
 }
 
 void HAL_TIM14_InterruptHandler(void)
 {
-    HAL_TIM_IRQ_handler(s_TIMHandle[11], TIM14);
+    HAL_TIM_IRQ_handler(s_TIMHandle[14], TIM14);
 }
 #endif
 

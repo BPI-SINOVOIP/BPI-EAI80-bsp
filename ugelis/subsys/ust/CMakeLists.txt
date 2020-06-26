@@ -1,0 +1,2 @@
+add_subdirectory(core)
+add_subdirectory_ifdef(CONFIG_UST_PLUGIN plugin)

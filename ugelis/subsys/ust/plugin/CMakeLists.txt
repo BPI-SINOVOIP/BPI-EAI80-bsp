@@ -1,0 +1,5 @@
+add_subdirectory_ifdef(CONFIG_UST_TEST_ELEMENT test_element)
+add_subdirectory_ifdef(CONFIG_UST_PLUGIN_CAMERA camera)
+add_subdirectory_ifdef(CONFIG_UST_PLUGIN_FILTER filter)
+add_subdirectory_ifdef(CONFIG_UST_PLUGIN_EDGE edge)
+add_subdirectory_ifdef(CONFIG_UST_PLUGIN_LCD lcd)

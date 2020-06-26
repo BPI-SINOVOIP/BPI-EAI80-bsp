@@ -1,0 +1,21 @@
+# Kconfig - CAN configuration options
+
+#
+# Copyright (c) 2018 Alexander Wachter
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# PDM options
+#
+menuconfig PDM
+	bool
+	prompt "PDM Support"
+	default n
+	help
+	  Include support for pdm.
+
+if PDM
+	source "drivers/pdm/Kconfig.gm"
+endif

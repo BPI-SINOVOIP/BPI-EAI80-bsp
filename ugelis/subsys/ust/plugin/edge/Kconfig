@@ -1,0 +1,30 @@
+# Kconfig - ust test plugin element configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config UST_PLUGIN_EDGE
+	bool
+    default n
+	prompt "UST Edge Plugin"
+	help
+	  This is an option to be enabled ust edge plugin
+
+config UST_PLUGIN_EDGE_QUEUE
+	bool
+    default n
+    depends on UST_PLUGIN_EDGE
+	prompt "Enable Edge Queue"
+	help
+	  This is an option to be enabled edge queue
+
+config UST_PLUGIN_EDGE_QUEUE_MAX_NUM
+	int
+    default 3
+    depends on UST_PLUGIN_EDGE_QUEUE
+	prompt "Config Queue Buf Num"
+	help
+	  This is an option to config buf num

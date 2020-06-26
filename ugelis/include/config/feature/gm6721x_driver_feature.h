@@ -266,6 +266,21 @@
 #endif
 
 /********************************************/
+/* PDM Configuration */
+/********************************************/
+#ifdef CONFIG_PDMA
+    #define CONFIG_PDM_INTERRUPT_DRIVEN 1
+    #define CONFIG_PDMA                 1
+    #define CONFIG_PDMA_NAME      "PDMA"
+#endif
+
+#ifdef CONFIG_PDMB
+    #define CONFIG_PDM_INTERRUPT_DRIVEN 1
+    #define CONFIG_PDMB                 1
+    #define CONFIG_PDMB_NAME      "PDMB"
+#endif
+
+/********************************************/
 /* I2C Configuration */
 /********************************************/
 #ifdef CONFIG_I2C_0
@@ -285,6 +300,22 @@
     #define CONFIG_I2C2                 1
     #define CONFIG_I2C_2_NAME      "I2C_2"
 #endif
+
+/********************************************/
+/* SAI Configuration */
+/********************************************/
+#ifdef CONFIG_SAIA
+    #define CONFIG_SAI_INTERRUPT_DRIVEN 1
+    #define CONFIG_SAIA                 1
+    #define CONFIG_SAIA_NAME      "SAI_A"
+#endif
+
+#ifdef CONFIG_SAIB
+    #define CONFIG_SAI_INTERRUPT_DRIVEN 1
+    #define CONFIG_SAIB                 1
+    #define CONFIG_SAIB_NAME      "SAI_B"
+#endif
+
 
 /*config TOUCH*/
 #if defined (CONFIG_TOUCH_I2C_GPIO)

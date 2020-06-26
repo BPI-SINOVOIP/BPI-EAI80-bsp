@@ -1,0 +1,371 @@
+# Kconfig - GM721x HAL Drv Configuration
+
+
+
+menuconfig GM_HAL_CPU
+	bool
+	prompt "support hal misc cpu feature driver" if (GM_HAL_BUILTIN && SOC_SERIES_GM6721X)
+	default n
+	help
+	  Include support for GM_HAL_CPU.
+
+if GM_HAL_CPU
+config GM_HAL_CACHE
+       bool "support hal cpu cache driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal cpu cache driver
+
+config GM_ARM_HAL_MPU
+       bool "support hal mpu driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal mpu driver
+
+config GM_ARM_HAL_FLASH_PATCH
+       bool "support hal flash patch driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal flash patch driver
+
+
+config GM_ARM_HAL_BUS_MAPPING
+       bool "support hal bus maping driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal bus maping driver
+endif
+
+
+menuconfig GM_HAL_RPC
+
+	bool
+	prompt "support hal rpc driver" if (GM_HAL_BUILTIN && SOC_SERIES_GM6721X)
+	default n
+	help
+	  support hal cpu rpc driver
+
+if GM_HAL_RPC
+config GM_HAL_RPC_MASTER
+       bool "support hal rpc master"
+       default n
+       help
+       support hal rpc master
+
+config GM_HAL_RPC_SLAVE
+       bool "support hal rpc slave"
+       default n
+       help
+       support hal rpc slave
+
+endif
+
+
+config GM_HAL_WWDG
+       bool "support hal wwdg driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal wwdg driver
+
+config GM_HAL_LVD
+       bool "support hal lvd driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal lvd driver
+
+
+config GM_HAL_RTC
+       bool "support hal rtc driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal rtc driver
+if GM_HAL_RTC
+config GM_HAL_RTC_DISABLE_INNER_ISR
+       bool "disable rtc inner isr"
+       default n
+       depends on GM_HAL_RTC
+       help
+       disable rtc inner isr
+endif
+
+
+config GM_HAL_FLASH
+       bool "support hal flash driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal flash driver
+
+
+
+config GM_HAL_DMA
+       bool "support hal dma driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal dma driver
+
+config GM_HAL_GPIO
+       bool "support hal gpio driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal gpio driver
+
+config GM_HAL_ADC
+       bool "support hal adc driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal adc driver
+
+config GM_HAL_TIM
+       bool "support hal tim driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal tim driver
+
+config GM_HAL_LPETM
+       bool "support hal lpetm adc driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal lpetm driver
+
+config GM_HAL_OTP
+       bool "support hal otp driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal otp driver
+
+config GM_HAL_PES
+       bool "support hal pes system driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal pes system driver
+
+config GM_HAL_I2C
+       bool "support hal i2c driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal i2c driver
+
+config GM_HAL_UART
+       bool "support hal uart driver"
+       default y
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal uart driver
+
+config GM_HAL_SPI
+       bool "support hal spi driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal spi driver
+
+config GM_HAL_CRC
+       bool "support hal crc driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal crc driver
+
+config GM_HAL_USB
+       bool "support hal usb driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal usb driver
+
+config GM_HAL_BASETIME
+       bool "support hal basetime driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal basetime driver
+
+config GM_HAL_KBI
+       bool "support hal kbi driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal kbi driver
+
+
+config GM_HAL_SPIFLASH
+       bool "support hal spiflash driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal spiflash driver
+
+
+config GM_HAL_KDP
+       bool "support hal kdp driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal kdp driver
+
+config GM_HAL_SAI
+       bool "support hal sai driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal sai driver
+
+config GM_HAL_IWDG
+       bool "support hal iwdg driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal iwdg driver
+
+config GM_HAL_TRNG
+       bool "support hal trng driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal trng driver
+
+config GM_HAL_IMP
+       bool "support hal imp driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal imp driver
+
+config GM_HAL_VIN
+       bool "support hal vin driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal vin driver
+
+config GM_HAL_VOUT
+       bool "support hal vout driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal vout driver
+
+config GM_HAL_CAN
+       bool "support hal can driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal can driver
+
+config GM_HAL_FMC
+       bool "support hal fmc driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal fmc driver
+
+config GM_HAL_TRNG
+       bool "support hal TRNG  driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+         If select, it will compile the hal TRNG  driver.
+
+config GM_HAL_CRYPTO
+       bool "support hal Crypto  driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+         If select, it will compile the hal Crypto Engine driver.
+
+config GM_HAL_HASH
+       bool "support hal Hash  driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+         If select, it will compile the  hash driver.
+
+
+config GM_HAL_SQI
+       bool "support hal sqi driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal sqi driver
+
+config GM_HAL_NF
+       bool "support hal nandflash driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal nf driver
+
+config GM_HAL_MMC
+       bool "support hal mmc driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+         If select, it will compile the mmc driver.
+
+config GM_HAL_RTC
+       bool "support hal rtc driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+         If select, it will compile the rtc driver.
+
+config GM_HAL_SDRAM
+       bool "support hal sdram driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+         If select, it will compile the sdram driver.
+config GM_HAL_ACMP
+       bool "support hal acmp driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal acmp driver
+config GM_HAL_CLOCK
+	   bool "support hal clock driver"
+	   default y
+	   depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+	   help
+	     If select, it will compile the clock driver
+
+config GM_HAL_DAC
+       bool "support hal dac driver"
+       default n
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal dac driver
+
+config GM_HAL_RESET
+       bool "support hal reset driver"
+       default y
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal reset driver
+
+config GM_HAL_POWER
+       bool "support hal power driver"
+       default n
+       select GM_HAL_RTC
+
+
+
+       depends on GM_HAL_BUILTIN && SOC_SERIES_GM6721X
+       help
+       support hal power driver
+

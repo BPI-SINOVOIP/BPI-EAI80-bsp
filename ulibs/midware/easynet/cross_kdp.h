@@ -32,7 +32,7 @@
 #define BANK_ADD_BOTH     7
 #define BANK_COPY_CHANNEL 8
 #define BANK_EXCHANGE_CHANNEL 9
-
+#define BANK_DEMAP_CHANNEL 10
 #define BANK_CP_FROM_MEM_WITHBN 11
 #define BANK_ACTIVATION_CHANNEL 12
 #define BANK_BATCHNORM_CHANNEL 13
@@ -47,6 +47,7 @@ struct bank_op_param
     int32_t buffer;                   /*< Memory buffer selection */
     int32_t row_num;                  /*< Total rows of this layer */
     int32_t col_num;                  /*< Total cols of this layer */
+    int32_t ch_num;                   /*< Total channels of this layer */
     int32_t start_row;                /*< Start row on bank */
     int32_t valid_len_row;            /*< Valid row length on bank */
     int32_t len_row;                  /*< Row length on bank */
@@ -132,8 +133,10 @@ struct bank_op_context
     uint32_t pool_stride;     /*< Two or one operation */
     uint32_t total_row_num;   /*< Total input row for bank op */
     uint32_t total_col_num;   /*< Total input column for bank op */
+    uint32_t total_ch_num;    /*< Total input channel for bank op */
     uint32_t row_num;         /*< Valid input row for bank op */
     uint32_t col_num;         /*< Valid input column for bank op */
+    uint32_t ch_num;          /*< Valid input channel for bank op */
     uint32_t start_row_num;   /*< Valid start input row for bank op */
     uint32_t start_col_num;   /*< Valid start input column for bank op */
     uint32_t hardware_out_row;/*< Hardware output height for pool bank op */

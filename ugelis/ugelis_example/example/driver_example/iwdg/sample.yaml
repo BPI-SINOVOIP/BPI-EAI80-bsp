@@ -1,0 +1,7 @@
+sample:
+  name: iwdg
+tests:
+  test:
+    platform_whitelist: gm6721_evb
+    extra_args: CONF_FILE=prj.conf
+    tags: samples

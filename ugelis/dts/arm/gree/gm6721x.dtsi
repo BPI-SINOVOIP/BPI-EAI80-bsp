@@ -1,0 +1,418 @@
+/*
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <arm/armv7-m.dtsi>
+#include <gree/mem.h>
+
+
+/ {
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-m4f";
+			reg = <0>;
+		};
+	};
+
+	sram0: memory@20000000 {
+		device_type = "memory";
+		compatible = "mmio-sram";
+		reg = <0x20000000 DT_SRAM_SIZE>;
+	};
+
+    #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
+    sdram0: sdram@c0000000 {
+		device_type = "memory";
+		compatible = "mmio-sdram";
+	};
+    #endif
+
+	soc {
+
+	    sflash: sflash@40001000 {
+			compatible = "gree,gm-flash-controller";
+			reg = <0x40001000 0x1000>;
+			interrupts = <3 3>;
+			status = "disable";
+			label = "SFLASH";
+	    };
+		uart0: uart@40004000 {
+			compatible = "gree,gm-uart";
+			reg = <0x40004000 0x1000>;
+			interrupts = <18 3>;
+			status = "disabled";
+			label = "UART_0";
+		};
+		uart1: uart@40005000 {
+			compatible = "gree,gm-uart";
+			reg = <0x40005000 0x1000>;
+			interrupts = <19 3>;
+			status = "disabled";
+			label = "UART_1";
+		};
+		uart2: uart@40006000 {
+			compatible = "gree,gm-uart";
+			reg = <0x40006000 0x1000>;
+			interrupts = <20 3>;
+			status = "disabled";
+			label = "UART_2";
+		};
+		uart3: uart@4003D000 {
+			compatible = "gree,gm-uart";
+			reg = <0x4003D000 0x1000>;
+			interrupts = <60 3>;
+			status = "disabled";
+			label = "UART_3";
+		};
+		uart4: uart@40041000 {
+			compatible = "gree,gm-uart";
+			reg = <0x40041000 0x1000>;
+			interrupts = <61 3>;
+			status = "disabled";
+			label = "UART_4";
+		};
+		uart5: uart@40042000 {
+			compatible = "gree,gm-uart";
+			reg = <0x40042000 0x1000>;
+			interrupts = <62 3>;
+			status = "disabled";
+			label = "UART_5";
+		};
+		uart6: uart@40043000 {
+			compatible = "gree,gm-uart";
+			reg = <0x40043000 0x1000>;
+			interrupts = <63 3>;
+			status = "disabled";
+			label = "UART_6";
+		};
+		uart7: uart@40044000 {
+			compatible = "gree,gm-uart";
+			reg = <0x40044000 0x1000>;
+			interrupts = <64 3>;
+			status = "disabled";
+			label = "UART_7";
+		};
+		i2c0: i2c@4000e000 {
+			compatible = "gree,gm-i2c";
+			reg = <0x4000e000 0x1000>;
+			interrupts = <15 3>;
+			status = "disabled";
+			label = "I2C_0";
+		};
+		i2c1: i2c@4000f000 {
+			compatible = "gree,gm-i2c";
+			reg = <0x4000f000 0x1000>;
+			interrupts = <16 3>;
+			status = "disabled";
+			label = "I2C_1";
+		};
+		i2c2: i2c@40002000 {
+			compatible = "gree,gm-i2c";
+			reg = <0x40002000 0x1000>;
+			interrupts = <17 3>;
+			status = "disabled";
+			label = "I2C_2";
+		};
+		saia: sai@40032000 {
+			compatible = "gree,gm-sai";
+			reg = <0x40032000 0x400>;
+			interrupts = <35 3>;
+			status = "disabled";
+			label = "SAI_A";
+		};
+		saib: sai@40032400 {
+			compatible = "gree,gm-sai";
+			reg = <0x40032400 0x400>;
+			interrupts = <36 3>;
+			status = "disabled";
+			label = "SAI_B";
+		};
+		pdma: pdm@4003f000 {
+			compatible = "gree,gm-pdm";
+			reg = <0x4003f000 0x400>;
+			interrupts = <29 3>;
+			status = "disabled";
+			label = "PDMA";
+		};
+		pdmb: pdm@4003f400 {
+			compatible = "gree,gm-pdm";
+			reg = <0x4003f400 0x400>;
+			interrupts = <29 3>;
+			status = "disabled";
+			label = "PDMB";
+		};
+		vout: vout@40026000 {
+			compatible = "gree,gm-vout";
+			reg = <0x40026000 0x148>;
+			interrupts = <48 3>;
+			status = "disabled";
+			label= "VOUT";
+		};
+		iwdg: iwdg@40008000 {
+			compatible = "gree,gm-iwdg";
+			reg = <0x40008000 0x1000>;
+			status = "disabled";
+			label= "IWDG";
+		};
+		wwdg: wwdg@4003E000 {
+			compatible = "gree,gm-wwdg";
+			reg = <0x4003E000 0x1000>;
+			interrupts = <0 3>;
+			status = "disabled";
+			label= "WWDG";
+		};
+		camera0: camera@0 {
+#if defined (CONFIG_OV5640_0)
+			compatible = "gree,camera-ov5640";
+            label = "CAMERA_OV5640_0";
+#elif defined (CONFIG_OV7725_0)
+            compatible = "gree,camera-ov7725";
+            label = "CAMERA_OV7725_0";
+#elif defined (CONFIG_GC0308_0)
+            compatible = "gree,camera-gc0308";
+            label = "CAMERA_GC0308_0";
+#elif defined (CONFIG_BF3007_0)
+            compatible = "gree,camera-bf3007";
+            label = "CAMERA_BF3007_0";
+#elif defined (CONFIG_GC2145_0)
+            compatible = "gree,camera-gc2145";
+            label = "CAMERA_GC2145_0";
+#endif
+			reg = <0x40025000 0x2C>;
+			status = "disabled";
+        };
+        camera1: camera@1 {
+#if defined (CONFIG_OV5640_1)
+			compatible = "gree,camera-ov5640";
+            label = "CAMERA_OV5640_1";
+#elif defined (CONFIG_OV7725_1)
+            compatible = "gree,camera-ov7725";
+            label = "CAMERA_OV7725_1";
+#elif defined (CONFIG_GC0308_1)
+            compatible = "gree,camera-gc0308";
+            label = "CAMERA_GC0308_1";
+#elif defined (CONFIG_BF3007_1)
+            compatible = "gree,camera-bf3007";
+            label = "CAMERA_BF3007_1";
+#elif defined (CONFIG_GC2145_1)
+            compatible = "gree,camera-gc2145";
+            label = "CAMERA_GC2145_1";
+#endif
+			reg = <0x40025000 0x2C>;
+			status = "disabled";
+        };
+        
+        touchscreen: touchscreen@0 {
+#if defined(CONFIG_GT911)
+            compatible = "gree,ts-gt911";
+            label = "TS_GT911";
+#elif defined(CONFIG_GT9147)
+            compatible = "gree,ts-gt9147";
+            label = "TS_GT9147";
+#elif defined(CONFIG_FT5426)
+            compatible = "gree,ts-ft5426";
+            label = "TS_FT5426";
+#endif
+            reg = <0x40026000 0x2C>;
+            status = "ok";
+        };
+        
+        sccb0: sccb@0 {
+            compatible = "gree,gm-sccb";
+            reg = <0x40025000 0x2C>;
+            status = "ok";
+            label = "SCCB_0";
+        };
+        
+        sccb1: sccb@1 {
+            compatible = "gree,gm-sccb";
+            reg = <0x40025000 0x2C>;
+            status = "ok";
+            label = "SCCB_1";
+        };
+        
+        vin: vin@40025000 {
+            compatible = "gree,gm-vin";
+            reg = <0x40025000 0x2C>;
+			interrupts = <47 3>;
+            status = "disabled";
+            label = "VIN";
+        };
+
+        imp: imp@40024000 {
+            compatible = "gree,gm-imp";
+            reg = <0x40024000 0xC00>;
+            interrupts = <46 3>;
+            status = "disabled";
+            label = "IMP";
+        };
+
+		trng: trng@40045000 {
+            compatible = "gree,gm-trng";
+            reg = <0x40045000 0x1000>;
+            interrupts = <38 3>;
+            status = "ok";
+            label = "TRNG";
+        };
+
+        crypto: crypto@50041000 {
+            compatible = "gree,gm-crypto";
+            reg = <0x50041000 0x200>;
+            interrupts = <21 3>;
+            status = "ok";
+            label = "CRYPTO";
+        };
+
+        hash: hash@50041200 {
+            compatible = "gree,gm-hash";
+            reg = <0x50041200 0x100>;
+            interrupts = <21 3>;
+            status = "ok";
+            label = "HASH";
+        };
+
+		tim1: tim@40007000 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007000 0x1000>;
+			interrupts = <11 3>;
+			status = "disable";
+			label = "TIM_1";
+		};
+
+		tim2: tim@40007100 {
+		    compatible = "gree,gm-tim";
+			reg = <0x40007100 0x1000>;
+			interrupts = <12 3>;
+			status = "disable";
+			label = "TIM_2";
+		};
+
+		tim3: tim@40007200 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007200 0x1000>;
+			interrupts = <13 3>;
+			status = "disable";
+			label = "TIM_3";
+		};
+
+		tim4: tim@40007300 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007300 0x1000>;
+			interrupts = <54 3>;
+			status = "disable";
+			label = "TIM_4";
+		};
+
+		tim5: tim@40007400 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007400 0x1000>;
+			interrupts = <66 3>;
+			status = "disable";
+			label = "TIM_5";
+		};
+
+		tim8: tim@40007500 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007500 0x1000>;
+			interrupts = <67 3>;
+			status = "disable";
+			label = "TIM_8";
+		};
+
+		tim9: tim@40007600 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007600 0x1000>;
+			interrupts = <72 3>;
+			status = "disable";
+			label = "TIM_9";
+		};
+
+		tim10: tim@40007700 {
+		    compatible = "gree,gm-tim";
+			reg = <0x40007700 0x1000>;
+			interrupts = <73 3>;
+			status = "disable";
+			label = "TIM_10";
+		};
+
+		tim11: tim@40007800 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007200 0x1000>;
+			interrupts = <74 3>;
+			status = "disable";
+			label = "TIM_11";
+		};
+
+		tim12: tim@40007900 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007900 0x1000>;
+			interrupts = <75 3>;
+			status = "disable";
+			label = "TIM_12";
+		};
+
+		tim13: tim@40007A00 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007A00 0x1000>;
+			interrupts = <76 3>;
+			status = "disable";
+			label = "TIM_13";
+		};
+
+		tim14: tim@40007B00 {
+			compatible = "gree,gm-tim";
+			reg = <0x40007B00 0x1000>;
+			interrupts = <77 3>;
+			status = "disable";
+			label = "TIM_14";
+		};
+
+        mmc0: mmc@4003b000 {
+			compatible = "gree,gm-mmc";
+			reg = <0x4003b000 0x1000>;
+			interrupts = <79 3>;
+			status = "disable";
+			label = "MMC_0";
+		};
+		can0: can@40030000 {
+			compatible = "gree,gm-can";
+			reg = <0x40030000 0x1000>;
+			interrupts = <51 3>;
+			status = "disable";
+			label = "CAN_0";
+		};
+        rtc: rtc@40009000 {
+			compatible = "gree,gm-rtc";
+			reg = <0x40009000 0x100>;
+			interrupts = <2 3>;
+			status = "disable";
+			label = "GMRTC";
+            clk_src = <0>;
+	    };
+	    lvd: lvd@40000138 {
+			compatible = "gree,gm-lvd";
+			reg = <0x40000138 0x100>;
+			interrupts = <1 3>;
+			status = "disable";
+			label = "GMLVD";
+	    };
+        power: power@40000004 {
+			compatible = "gree,gm-power";
+			reg = <40000004 0x04>;
+			interrupts = <53 3>;
+			status = "disable";
+			label = "POWER";
+	    };
+
+	};
+};
+
+&nvic {
+	arm,num-irq-priority-bits = <3>;
+};

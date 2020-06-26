@@ -1,0 +1,10 @@
+# Kconfig - F6721B-EVB-QFN80Pin board configuration
+#
+# Copyright (c) 2016 Linaro Limited.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config BOARD_F6721B_EVB_QFN80PIN
+	bool "F6721B-EVB-QFN80PIN Development Board"
+	depends on SOC_F6721B

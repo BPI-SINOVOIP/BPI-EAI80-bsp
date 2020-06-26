@@ -928,10 +928,11 @@ void HAL_SQI_Clear_SR(SQI_Device_T *pSQIDev)
 uint32_t HAL_SQI_ReadID(SQI_Device_T *pSQIDev)
 {
     uint32_t id = 0;
-    int       i = 0;
+    int       i;
+    i = 0;
     HAL_SQI_Wait_Idle(pSQIDev);
-    HAL_SQI_SET_CFG_REGISTER(pSQIDev, SQI_FAST_RW_CNT_EN | SQI_CONTINUE_READ_EN | SQI_SET_CODE_HIT | SQI_SET_DATA_HIT | NOR_READ_ID_CMD);
     LL_SQI_FAST_RW_CNT_SET(pSQIDev, 4);
+    HAL_SQI_SET_CFG_REGISTER(pSQIDev, SQI_FAST_RW_CNT_EN | SQI_CONTINUE_READ_EN | SQI_SET_CODE_HIT | SQI_SET_DATA_HIT | NOR_READ_ID_CMD);
     for (i = 0; i < 4; i++)
     {
         id  |= HW8_REG(CONFIG_SQI_SFLASH_MMAP_BASE);
@@ -968,12 +969,6 @@ RET_CODE HAL_SQI_Erase_Internal(SQI_Device_T *pSQIDev, uint32_t offset, uint32_t
         {
             case SFLASH_SECTOR_LEN:
                 erase_opcode = NOR_SE_CMD;
-                break;
-            case SFLASH_BLOCK32_LEN:
-                erase_opcode = NOR_BE32K_CMD;
-                break;
-            case SFLASH_BLOCK_LEN:
-                erase_opcode = NOR_BE64K_CMD;
                 break;
             default:
                 erase_opcode = NOR_SE_CMD;

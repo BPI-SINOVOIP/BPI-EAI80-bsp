@@ -1,0 +1,7 @@
+ugelis_link_interface_ifdef(CONFIG_MBEDTLS mbedTLS)
+ugelis_library()
+ugelis_library_sources_ifdef(CONFIG_CRYPTO_TINYCRYPT_SHIM	crypto_tc_shim.c)
+ugelis_library_sources_ifdef(CONFIG_CRYPTO_ATAES132A		crypto_ataes132a.c)
+ugelis_library_sources_ifdef(CONFIG_CRYPTO_MBEDTLS_SHIM		crypto_mtls_shim.c)
+ugelis_library_sources_ifdef(CONFIG_CRYPTO_GM               crypto_gm.c)
+ugelis_library_link_libraries_ifdef(CONFIG_MBEDTLS mbedTLS)

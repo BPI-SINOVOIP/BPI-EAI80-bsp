@@ -41,15 +41,18 @@
 		tim8 = &tim8;
 		power = &power;
 		sflash = &sflash;
+		saia = &saia;
+		saib = &saib;
+		pdma = &pdma;
+		pdmb = &pdmb;
 	};
 
 	chosen {
-		ugelis,console = &uart2;
+		ugelis,console = &uart1;
         ugelis,sram = &sram0;
         #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
         ugelis,sdram = &sdram0;
         #endif
-		ugelis,flash = &flash0;
 		ugelis,vout = &vout;
 		ugelis,vin = &vin;
         ugelis,imp = &imp;
@@ -69,6 +72,10 @@
 		ugelis,i2c0 = &i2c0;
 		ugelis,i2c1 = &i2c1;
 		ugelis,i2c2 = &i2c2;
+		ugelis,saia = &saia;
+		ugelis,saib = &saib;
+		ugelis,pdma = &pdma;
+		ugelis,pdmb = &pdmb;
 	};
 };
 
@@ -270,6 +277,22 @@
 	status = "ok";
 };
 
+&saia {
+	status = "ok";
+};
+
+&saib {
+	status = "ok";
+};
+
+&pdma {
+	status = "ok";
+};
+
+&pdmb {
+	status = "ok";
+};
+
 &iwdg {
 	status = "ok";
 };
@@ -302,27 +325,27 @@
 };
 
 &tim1 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim2 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim3 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim4 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim5 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim8 {
-    status = "disabled";
+    status = "ok";
 };
 
 &power {
@@ -342,4 +365,6 @@
 	bitmode                  =  <0>;              /*0:read use 4line 1:read use 1line*/
 	clkdiv                   =  <1>;              /*clock div*/
     status                   =  "ok";
+    addr_space               =  <0x10000000 0x4000>;/*0x10000000:base address 0x4000:flash size(unit :kb)*/
+
 };

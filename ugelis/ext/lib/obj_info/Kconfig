@@ -1,0 +1,15 @@
+# Kconfig - the obj_info project
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config OBJ_INFO
+	bool
+	prompt "OBJ_INFO Support"
+	default n
+	help
+	This option enables the OBJ_INFO library.
+

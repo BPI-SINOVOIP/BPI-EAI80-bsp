@@ -1,0 +1,233 @@
+# Kconfig.gm- GREE GPIO configuration options
+#
+
+menuconfig GPIO_GM
+	bool "GREE GM GPIO driver"
+	depends on GPIO
+	default n
+	help
+	  Enable the GPIO driver on GREE GM6xxx boards
+
+if GPIO_GM
+
+config GPIO_GM_A
+	bool "GPIO block A"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port A.
+
+config GPIO_GM_A_NAME
+	string "Driver name"
+	depends on GPIO_GM_A
+	default "GPIOA"
+
+config GPIO_GM_A_IRQ_PRI
+	int "GPIO A interrupt priority"
+	depends on GPIO_GM_A
+	range 0 5
+	default 1
+	help
+	  GM6XXX GPIO A IRQ priority.
+
+config GPIO_GM_B
+	bool "GPIO block B"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port B.
+
+config GPIO_GM_B_NAME
+	string "Driver name"
+	depends on GPIO_GM_B
+	default "GPIOB"
+
+config GPIO_GM_B_IRQ_PRI
+	int "GPIO B interrupt priority"
+	depends on GPIO_GM_B
+	range 0 5
+	default 1
+	help
+	  GM6XXX GPIO B IRQ priority.
+
+config GPIO_GM_C
+	bool "GPIO block C"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port C.
+
+config GPIO_GM_C_NAME
+	string "Driver name"
+	depends on GPIO_GM_C
+	default "GPIOC"
+
+config GPIO_GM_C_IRQ_PRI
+	int "GPIO C interrupt priority"
+	depends on GPIO_GM_C
+	range 0 5
+	default 1
+	help
+	  GM6XXX GPIO C IRQ priority.
+
+config GPIO_GM_D
+	bool "GPIO block D"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port D.
+
+config GPIO_GM_D_NAME
+	string "Driver name"
+	depends on GPIO_GM_D
+	default "GPIOD"
+
+config GPIO_GM_D_IRQ_PRI
+	int "GPIO D interrupt priority"
+	depends on GPIO_GM_D
+	range 0 5
+	default 1
+	help
+	  GM6XXX GPIO D IRQ priority.
+	  
+config GPIO_GM_E
+	bool "GPIO block E"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port E.
+
+config GPIO_GM_E_NAME
+	string "Driver name"
+	depends on GPIO_GM_E
+	default "GPIOE"
+
+config GPIO_GM_E_IRQ_PRI
+	int "GPIO E interrupt priority"
+	depends on GPIO_GM_E
+	range 0 5
+	default 1
+	help
+	  GM6XXX GPIO E IRQ priority.
+
+config GPIO_GM_F
+	bool "GPIO block F"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port F.
+
+config GPIO_GM_F_NAME
+	string "Driver name"
+	depends on GPIO_GM_F
+	default "GPIOF"
+
+config GPIO_GM_F_IRQ_PRI
+	int "GPIO F interrupt priority"
+	depends on GPIO_GM_F
+	range 0 5
+	default 1
+	help
+	  GM GPIO F IRQ priority.
+
+config GPIO_GM_G
+	bool "GPIO block G"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port G.
+
+config GPIO_GM_G_NAME
+	string "Driver name"
+	depends on GPIO_GM_G
+	default "GPIOG"
+
+config GPIO_GM_G_IRQ_PRI
+	int "GPIO F interrupt priority"
+	depends on GPIO_GM_G
+	range 0 5
+	default 1
+	help
+	  GM GPIO G IRQ priority.  
+
+config GPIO_GM_H
+	bool "GPIO block H"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port H.
+
+config GPIO_GM_H_NAME
+	string "Driver name"
+	depends on GPIO_GM_H
+	default "GPIOH"
+
+config GPIO_GM_H_IRQ_PRI
+	int "GPIO H interrupt priority"
+	depends on GPIO_GM_H
+	range 0 5
+	default 1
+	help
+	  GM GPIO H IRQ priority
+
+config GPIO_GM_I
+	bool "GPIO block I"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port I.
+
+config GPIO_GM_I_NAME
+	string "Driver name"
+	depends on GPIO_GM_I
+	default "GPIOI"
+
+config GPIO_GM_I_IRQ_PRI
+	int "GPIO I interrupt priority"
+	depends on GPIO_GM_I
+	range 0 5
+	default 1
+	help
+	  GM GPIO I IRQ priority
+
+config GPIO_GM_J
+	bool "GPIO block J"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port J.
+
+config GPIO_GM_J_NAME
+	string "Driver name"
+	depends on GPIO_GM_J
+	default "GPIOJ"
+
+config GPIO_GM_J_IRQ_PRI
+	int "GPIO F interrupt priority"
+	depends on GPIO_GM_J
+	range 0 5
+	default 1
+	help
+	  GM GPIO J IRQ priority
+      
+config GPIO_GM_K
+	bool "GPIO block K"
+	depends on GPIO_GM
+	default n
+	help
+	  Include support for the GPIO port K.
+
+config GPIO_GM_K_NAME
+	string "Driver name"
+	depends on GPIO_GM_K
+	default "GPIOK"
+
+config GPIO_GM_K_IRQ_PRI
+	int "GPIO K interrupt priority"
+	depends on GPIO_GM_K
+	range 0 5
+	default 1
+	help
+	  GM GPIO K IRQ priority
+   
+endif # GPIO_GM

@@ -1,0 +1,19 @@
+# Kconfig - camera driver configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig INPUT
+	bool
+	prompt "Input Drivers"
+	default n
+	help
+	Enable options for input drivers.
+
+source "drivers/input/Kconfig.gm"
+
+
+source "drivers/input/touchscreen/Kconfig"

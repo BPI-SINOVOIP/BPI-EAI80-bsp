@@ -1,0 +1,54 @@
+---
+title: GREE MMC
+id: gree,gm-mmc
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GREE MMC
+
+inherits:
+    !include mmc.yaml
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-mmc"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+
+    busWitch:
+      type: int
+      category: required
+      description: mmc work line mode
+      generation: define
+
+    type:
+      type: int
+      category: required
+      description: the perpheral connnet to mmc port
+      generation: define
+
+    removable:
+      type: int
+      category: required
+      description: the perpheral connnet to mmc port whether to remove
+      generation: define
+
+    poll_detect_card_hotplug:
+      type: string
+      category: required
+      description: detect card hotplug mode
+      generation: define
+...

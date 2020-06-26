@@ -1,0 +1,14 @@
+# Kconfig - GM6721-EVB-144PIN board configuration
+#
+# Copyright (c) 2016 Linaro Limited.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if BOARD_F6721B_EVB_144PIN
+
+config BOARD
+	default "f6721b_evb_144pin"
+
+
+endif # BOARD_F6721B_EVB_144PIN

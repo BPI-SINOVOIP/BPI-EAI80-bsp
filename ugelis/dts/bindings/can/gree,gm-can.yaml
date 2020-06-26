@@ -1,0 +1,73 @@
+---
+title: GREE CAN
+id: gree,gm-can
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GREE CAN
+
+inherits:
+    !include can.yaml
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-can"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+      
+    workmode:
+      type: int
+      category: required
+      description: can work mode
+      generation: define
+      
+    baudrate:
+      type: int
+      category: required
+      description: can work baudrate
+      generation: define
+    
+    errWarnThreshold:
+      type: int
+      category: required
+      description: can erroe and waring threshold
+      generation: define
+      
+    sample:
+      type: int
+      category: required
+      description: can sample times
+      generation: define
+      
+    sjw:
+      type: int
+      category: required
+      description: can tq clock cycle
+      generation: define      
+      
+    bs1:
+      type: int
+      category: required
+      description: can segment point
+      generation: define
+      
+    bs2:
+      type: int
+      category: required
+      description: can segment point
+      generation: define
+
+...

@@ -1,0 +1,22 @@
+# Kconfig - camera driver configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig TOUCHSCREEN
+	bool
+	prompt "Touchscreen Drivers"
+	default n
+	help
+	Enable options for touchscreen drivers.
+
+
+source "drivers/input/touchscreen/Kconfig.gm"
+
+source "drivers/input/touchscreen/core/Kconfig"
+source "drivers/input/touchscreen/ft5426/Kconfig"
+source "drivers/input/touchscreen/gt911/Kconfig"
+source "drivers/input/touchscreen/gt9147/Kconfig"

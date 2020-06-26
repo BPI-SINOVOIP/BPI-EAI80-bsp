@@ -15,6 +15,9 @@
 		uart0 = &uart0;
 		uart1 = &uart1;
 		uart2 = &uart2;
+		uart3 = &uart3;
+		uart4 = &uart4;
+		uart5 = &uart5;
 		mmc0  = &mmc0;
 		can0  = &can0;
         wwdg  = &wwdg;
@@ -45,7 +48,6 @@
         #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
         ugelis,sdram = &sdram0;
         #endif
-		ugelis,flash = &flash0;
 		ugelis,vout = &vout;
 		ugelis,vin = &vin;
         ugelis,imp = &imp;
@@ -96,6 +98,34 @@
 	clockSrc       = <8000000>;
 	status         = "ok";
 };
+
+&uart3 {
+	current-speed  = <19200>; //19200 for 8M clock
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&uart4 {
+	current-speed  = <19200>; //19200 for 8M clock
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&uart5 {
+	current-speed  = <19200>; //19200 for 8M clock
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
 
 &vout {
        vbp = <29>;
@@ -227,27 +257,27 @@
 };
 
 &tim1 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim2 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim3 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim4 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim5 {
-    status = "disabled";
+    status = "ok";
 };
 
 &tim8 {
-    status = "disabled";
+    status = "ok";
 };
 
 &power {
@@ -267,4 +297,5 @@
 	bitmode                  =  <0>;              /*0:read use 4line 1:read use 1line*/
 	clkdiv                   =  <1>;              /*clock div*/
     status                    =  "ok";
+    addr_space               =  <0x10000000 0x4000>;/*0x10000000:base address 0x4000:flash size(unit :kb)*/
 };

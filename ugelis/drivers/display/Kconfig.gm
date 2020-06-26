@@ -1,0 +1,23 @@
+# Kconfig - GM6721X DISPLAY configuration
+#
+# Copyright (c) 2016 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig DISPLAY_GM6721X
+	bool "DISPLAY Driver for GM6721X family of MCUs"
+	depends on SOC_SERIES_GM6721X
+	default n
+	help
+	Enable DISPLAY driver for GM6721X line of MCUs
+
+config LCD1024x600
+	bool "Enable 7' LCD 1024x600"
+	depends on DISPLAY_GM6721X
+	default n
+    
+config LCD800x480
+	bool "Enable 7' LCD 800x480"
+	depends on DISPLAY_GM6721X
+	default n

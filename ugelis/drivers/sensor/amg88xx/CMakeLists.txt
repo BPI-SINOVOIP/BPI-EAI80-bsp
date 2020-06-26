@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_AMG88XX amg88xx.c)
+ugelis_library_sources_ifdef(CONFIG_AMG88XX_TRIGGER amg88xx_trigger.c)

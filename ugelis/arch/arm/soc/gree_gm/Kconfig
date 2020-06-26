@@ -1,0 +1,30 @@
+# Kconfig - GREE Microelectronics GM MCU line
+#
+# Copyright (c) 2016 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config SOC_FAMILY_GM
+	bool
+	# omit prompt to signify a "hidden" option
+	default n
+
+
+if SOC_FAMILY_GM
+
+config SOC_FAMILY
+	string
+    default "gree_gm"
+
+config GM_ARM_MPU_ENABLE
+	bool "Enable MPU on GM"
+	depends on CPU_HAS_MPU
+	select ARM_MPU
+	default n
+	help
+	  Enable MPU support on GM SoCs
+
+gsource "arch/arm/soc/gree_gm/*/Kconfig.soc"
+
+endif # SOC_FAMILY_GM

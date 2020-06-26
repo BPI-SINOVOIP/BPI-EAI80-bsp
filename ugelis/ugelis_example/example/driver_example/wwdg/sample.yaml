@@ -1,0 +1,12 @@
+sample:
+  name: wwdg
+  description:  wwdg sample normal and earlying warning iterrupt mode
+tests:
+  test.normal:
+    platform_whitelist:  gm6721_evb_176pin gm6721_evb_144pin gm6721_evb_qfn80pin gm6721_evb_qfn40pin
+    extra_args: CONF_FILE=prj_normal.conf
+    tags: samples
+  test.normal_ewi:
+    platform_whitelist:  gm6721_evb_176pin gm6721_evb_144pin gm6721_evb_qfn80pin gm6721_evb_qfn40pin
+    extra_args: CONF_FILE=prj_normal_ewi.conf
+    tags: samples

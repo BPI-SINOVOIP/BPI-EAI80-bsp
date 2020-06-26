@@ -1,0 +1,15 @@
+# Kconfig - the OpenMV project
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config OPENMV
+	bool
+	prompt "OpenMV Support"
+	default n
+	help
+	This option enables the OpenMV library.
+

@@ -32,7 +32,7 @@ extern "C" {
 
 /******************************************************************************* * Definitions ******************************************************************************/
 /** * TIM IRQ callback typedef. */
-typedef void (*TIM_IRQCallback_T)(TIM_Device_T *TIMx, uint32_t event, uint32_t param);
+typedef void (*TIM_IRQCallback_T)(void *TIMx, uint32_t event, uint32_t param);
 
 /**
   * TIM Time Base Configuration Structure Definition
@@ -243,8 +243,10 @@ typedef struct
     HAL_Lock_T               lock;         /*!< Locking object */
     __IO HAL_TIMState_T      state;        /*!< TIM operation state */
     uint32_t IRQn;                         /*!<TIM interrupt request number*/
-    TIM_IRQCallback_T        callback;     /*!< Callback pointer to user callback function */
+    //    TIM_IRQCallback_T        callback;     /*!< Callback pointer to user callback function */
 } TIM_Handle_T;
+
+
 
 typedef enum
 {

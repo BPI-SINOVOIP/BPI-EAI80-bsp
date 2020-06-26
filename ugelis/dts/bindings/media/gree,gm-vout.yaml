@@ -1,0 +1,99 @@
+---
+title: GM6721X VOUT
+id: gree,gm-vout
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GM6721X VOUT
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-vout"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+
+    label:
+      type: string
+      category: required
+      description: Human readable string describing the device (used by Ugelis for API name)
+      generation: define
+      
+    vbp:
+      type: int
+      category: required
+      description: vertical back porch
+      generation: define
+
+    vfp:
+      type: int
+      category: required
+      description: vertical front porch
+      generation: define
+
+    hbp:
+      type: int
+      category: required
+      description: horizontal back porch
+      generation: define
+      
+    hfp:
+      type: int
+      category: required
+      description: horizontal front porch
+      generation: define
+
+    vsw:
+      type: int
+      category: required
+      description: vertical sync width
+      generation: define
+
+    hsw:
+      type: int
+      category: required
+      description: horizontal sync width
+      generation: define
+
+    pllsain:
+      type: int
+      category: required
+      description: the multiplication factor for PLLI2S VCO output clock
+      generation: define
+
+    pllsaiq:
+      type: int
+      category: required
+      description: the division factor for LTDC clock
+      generation: define
+
+    pllsaidivr:
+      type: int
+      category: required
+      description: the division factor for LTDC clock
+      generation: define
+      
+    width:
+      type: int
+      category: required
+      description: picture width
+      generation: define
+
+    height:
+      type: int
+      category: required
+      description: picture height
+      generation: define
+...

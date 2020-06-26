@@ -37,11 +37,11 @@ extern "C" {
  * Definitions
  ******************************************************************************/
 #if defined(CHIP_GM6721)
-#define MAX_TIM_NUM       12
+#define MAX_TIM_NUM       14
 #endif
 
 #if defined(CHIP_F6721B)
-#define MAX_TIM_NUM       6
+#define MAX_TIM_NUM       8
 #endif
 
 #define USE_TIM_HAL_TEST

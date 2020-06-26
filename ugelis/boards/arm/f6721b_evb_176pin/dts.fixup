@@ -235,6 +235,42 @@
 
 #define CONFIG_IMP_BASE_ADDRESS	   GREE_GM_IMP_40024000_BASE_ADDRESS
 
+#ifdef GREE_GM_PDM_4003F000_LABEL
+#define CONFIG_PDMA_NAME                   GREE_GM_PDM_4003F000_LABEL
+#define CONFIG_PDMA_BASE                   GREE_GM_PDM_4003F000_BASE_ADDRESS
+#define CONFIG_PDMA_IRQ                    GREE_GM_PDM_4003F000_IRQ_0
+#define CONFIG_PDMA_IRQ_PRIORITY           GREE_GM_PDM_4003F000_IRQ_0_PRIORITY
+#define CONFIG_PDMA_LABEL                  GREE_GM_PDM_4003F000_LABEL
+#endif
+
+#ifdef GREE_GM_PDM_4003F400_LABEL
+#define CONFIG_PDMB_NAME                   GREE_GM_PDM_4003F400_LABEL
+#define CONFIG_PDMB_BASE                   GREE_GM_PDM_4003F400_BASE_ADDRESS
+#define CONFIG_PDMB_IRQ                    GREE_GM_PDM_4003F400_IRQ_0
+#define CONFIG_PDMB_IRQ_PRIORITY           GREE_GM_PDM_4003F400_IRQ_0_PRIORITY
+#define CONFIG_PDMB_LABEL                  GREE_GM_PDM_4003F400_LABEL
+#endif
+
+/*rename some marco about saia modules*/
+#ifdef GREE_GM_SAI_40032000_LABEL
+#define CONFIG_SAIA_NAME                   GREE_GM_SAI_40032000_LABEL
+#define CONFIG_SAIA_BASE                   GREE_GM_SAI_40032000_BASE_ADDRESS
+#define CONFIG_SAIA_IRQ                    GREE_GM_SAI_40032000_IRQ_A
+#define CONFIG_SAIA_IRQ_PRIORITY           GREE_GM_SAI_40032000_IRQ_A_PRIORITY
+#define CONFIG_SAIA_LABEL                  GREE_GM_SAI_40032000_LABEL
+#define CONFIG_SAIA_ENABLEDMA              GREE_GM_SAI_40032000_ENABLEDMA
+#endif
+
+/*rename some marco about saib modules*/
+#ifdef GREE_GM_SAI_40032400_LABEL
+#define CONFIG_SAIB_NAME                   GREE_GM_SAI_40032400_LABEL
+#define CONFIG_SAIB_BASE                   GREE_GM_SAI_40032400_BASE_ADDRESS
+#define CONFIG_SAIB_IRQ                    GREE_GM_SAI_40032400_IRQ_B
+#define CONFIG_SAIB_IRQ_PRIORITY           GREE_GM_SAI_40032400_IRQ_B_PRIORITY
+#define CONFIG_SAIB_LABEL                  GREE_GM_SAI_40032400_LABEL
+#define CONFIG_SAIB_ENABLEDMA              GREE_GM_SAI_40032400_ENABLEDMA
+#endif
+
 /*rename some marco about I2C0 modules*/
 #ifdef GREE_GM_I2C_4000E000_LABEL
 #define CONFIG_I2C0_NAME                   GREE_GM_I2C_4000E000_LABEL
@@ -339,44 +375,56 @@
 #ifdef TIM1_LABEL
 /*rename tim1 dts generate marco*/
 #define	CONFIG_TIM1			  		 TIM1_LABEL
-#define CONFIG_TIM1_BASE_ADDRESS      TIM1_BASE_ADDRESS
+#define CONFIG_TIM1_BASE_ADDRESS     TIM1_BASE_ADDRESS
+#define	CONFIG_TIM1_NAME		  	 TIM1_LABEL
 #endif
 
 #ifdef TIM2_LABEL
 /*rename tim2 dts generate marco*/
 #define	CONFIG_TIM2			  		 TIM2_LABEL
 #define CONFIG_TIM2_BASE_ADDRESS     TIM2_BASE_ADDRESS
+#define	CONFIG_TIM2_NAME		  	 TIM2_LABEL
 #endif
 
 #ifdef TIM3_LABEL
 /*rename tim3 dts generate marco*/
 #define	CONFIG_TIM3			  		 TIM3_LABEL
 #define CONFIG_TIM3_BASE_ADDRESS     TIM3_BASE_ADDRESS
+#define	CONFIG_TIM3_NAME			  		 TIM3_LABEL
 #endif
 
 #ifdef TIM4_LABEL
 /*rename tim4 dts generate marco*/
 #define	CONFIG_TIM4			  		 TIM4_LABEL
 #define CONFIG_TIM4_BASE_ADDRESS     TIM4_BASE_ADDRESS
+#define	CONFIG_TIM4_NAME			  		 TIM4_LABEL
 #endif
 
 #ifdef TIM5_LABEL
 /*rename tim5 dts generate marco*/
 #define	CONFIG_TIM5			  		 TIM5_LABEL
 #define CONFIG_TIM5_BASE_ADDRESS     TIM5_BASE_ADDRESS
+#define	CONFIG_TIM5_NAME			  		 TIM5_LABEL
 #endif
 
 #ifdef TIM8_LABEL
 /*rename tim8 dts generate marco*/
 #define	CONFIG_TIM8			  		 TIM8_LABEL
 #define CONFIG_TIM8_BASE_ADDRESS     TIM8_BASE_ADDRESS
+#define	CONFIG_TIM8_NAME			  		 TIM8_LABEL
 #endif
 
-#ifdef SFLASH_LABLE
+#ifdef SFLASH_LABEL
 /*rename sflash dts generate marco*/
 #define CONFIG_SFLASH_READMODE        SFLASH_READMODE
 #define CONFIG_SFLASH_BITMODE         SFLASH_BITMODE
 #define CONFIG_SFLASH_CLKDIV          SFLASH_CLKDIV
+#ifdef  CONFIG_FLASH_BASE_ADDRESS
+#undef  CONFIG_FLASH_BASE_ADDRESS
+#undef  CONFIG_FLASH_SIZE
+#define CONFIG_FLASH_BASE_ADDRESS     GREE_GM_FLASH_CONTROLLER_40001000_ADDR_SPACE_0
+#define CONFIG_FLASH_SIZE             GREE_GM_FLASH_CONTROLLER_40001000_ADDR_SPACE_1
+#endif
 #endif
 
 /* End of SoC Level DTS fixup file */

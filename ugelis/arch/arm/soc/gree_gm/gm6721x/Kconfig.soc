@@ -1,0 +1,21 @@
+# Kconfig.soc - ST Microelectronics GM6721X MCU line
+#
+# Copyright (c) 2018 Linaro Limited.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+choice
+prompt "GM6721X MCU Selection"
+depends on SOC_SERIES_GM6721X
+
+config SOC_GM6721
+	bool "GM6721"
+
+config SOC_F6721B
+	bool "F6721B"
+
+
+##########add other 6721x serial soc late###########
+    
+endchoice

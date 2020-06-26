@@ -1,0 +1,17 @@
+# Kconfig.defconfig.series - ST Microelectronics STM32F4 MCU line
+#
+# Copyright (c) 2016 Linaro Limited
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if SOC_SERIES_GM6721X
+
+gsource "arch/arm/soc/gree_gm/gm6721x/Kconfig.defconfig.gm6721x"
+
+
+config SOC_SERIES
+        string
+        default "gm6721x"
+
+endif # SOC_SERIES_GM6721X

@@ -1,0 +1,30 @@
+# Kconfig - ust test plugin element configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config UST_PLUGIN_FILTER
+	bool
+    default n
+	prompt "UST Filter Plugin"
+	help
+	  This is an option to be enabled ust filter plugin
+
+config UST_PLUGIN_FILTER_QUEUE
+	bool
+    default n
+    depends on UST_PLUGIN_FILTER
+	prompt "Enable Filter Queue"
+	help
+	  This is an option to be enabled filter queue
+
+config UST_PLUGIN_FILTER_QUEUE_MAX_NUM
+	int
+    default 3
+    depends on UST_PLUGIN_FILTER_QUEUE
+	prompt "Config Queue Buf Num"
+	help
+	  This is an option to config buf num

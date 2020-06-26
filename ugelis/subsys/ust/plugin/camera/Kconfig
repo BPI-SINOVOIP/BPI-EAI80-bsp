@@ -1,0 +1,30 @@
+# Kconfig - ust test plugin element configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config UST_PLUGIN_CAMERA
+	bool
+    default n
+	prompt "UST Plugin Camera"
+	help
+	  This is an option to be enabled ust camera plugin
+
+config UST_PLUGIN_CAMERA_QUEUE
+	bool
+    default n
+    depends on UST_PLUGIN_CAMERA
+	prompt "Enable Camera Queue"
+	help
+	  This is an option to be enabled camera queue
+
+config UST_PLUGIN_CAMERA_QUEUE_MAX_NUM
+	int
+    default 3
+    depends on UST_PLUGIN_CAMERA_QUEUE
+	prompt "Config Queue Buf Num"
+	help
+	  This is an option to config buf num

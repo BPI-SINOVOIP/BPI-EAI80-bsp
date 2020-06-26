@@ -1,0 +1,11 @@
+# Kconfig.gm - GM entropy generator driver configuration
+
+config ENTROPY_GM_RNG
+	bool "GM random number generator driver"
+	depends on ENTROPY_GENERATOR && SOC_FAMILY_GM
+	select ENTROPY_HAS_DRIVER
+	help
+	  This option enables the RNG processor, which is an entropy number
+	  generator, based on a continuous analog noise, that provides
+	  a entropy 32-bit value to the host when read. It is available for
+	  GM67xx series.

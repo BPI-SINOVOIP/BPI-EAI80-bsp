@@ -1,0 +1,21 @@
+# Kconfig - ADC configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+
+
+
+menuconfig ACMP_GM
+	bool
+    prompt   "ACMP Gree Driver"
+	default y
+	select ACMP_0
+	help
+	  Enable the driver implementation of the Designware ACMP IP.
+
+
+

@@ -1,0 +1,33 @@
+---
+title: GM6721X IMP
+id: gree,gm-imp
+version: 0.1
+
+description: >
+    This binding gives a base representation of the GM6721X IMP
+
+properties:
+    compatible:
+      type: string
+      category: required
+      description: compatible strings
+      constraint: "gree,gm-imp"
+
+    reg:
+      type: array
+      description: mmio register space
+      generation: define
+      category: required
+
+    interrupts:
+      type: array
+      category: required
+      description: required interrupts
+      generation: define
+
+    clocks:
+      type: array
+      category: required
+      description: Clock gate control information
+      generation: define
+...

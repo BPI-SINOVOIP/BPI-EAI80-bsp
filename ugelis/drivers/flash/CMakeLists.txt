@@ -1,0 +1,16 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_SPI_FLASH_W25QXXDV spi_flash_w25qxxdv.c)
+ugelis_library_sources_ifdef(CONFIG_SOC_FLASH_QMSI soc_flash_qmsi.c)
+ugelis_library_sources_ifdef(CONFIG_SQI_GM flash_gm.c)
+ugelis_library_sources_ifdef(CONFIG_SOC_FLASH_NRF soc_flash_nrf.c)
+ugelis_library_sources_ifdef(CONFIG_SOC_FLASH_MCUX soc_flash_mcux.c)
+ugelis_library_sources_ifdef(CONFIG_FLASH_PAGE_LAYOUT flash_page_layout.c)
+ugelis_library_sources_ifdef(CONFIG_USERSPACE flash_handlers.c)
+
+if(CONFIG_SOC_SERIES_STM32F4X)
+ugelis_library_sources_ifdef(CONFIG_SOC_FLASH_STM32
+	flash_stm32.c
+	flash_stm32f4x.c
+	)
+endif()

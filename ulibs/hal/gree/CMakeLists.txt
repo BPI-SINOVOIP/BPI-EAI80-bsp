@@ -44,8 +44,10 @@ ugelis_include_directories(
     ugelis_sources_ifdef(CONFIG_GM_HAL_OTP driver/otp/gm_hal_otp.c)
     ugelis_sources_ifdef(CONFIG_GM_HAL_PES driver/pes/gm_hal_pes.c)
     ugelis_sources_ifdef(CONFIG_GM_HAL_SAI driver/sai/gm_hal_sai.c)
+	ugelis_sources_ifdef(CONFIG_GM_HAL_PDM driver/pdm/gm_hal_pdm.c)
     ugelis_sources_ifdef(CONFIG_GM_HAL_HCD driver/usb/gm_hal_hcd.c driver/usb/gm_ll_usb.c)
-    ugelis_sources_ifdef(CONFIG_GM_HAL_SQI driver/sqi/gm_hal_sqi_mx25.c)
+    ugelis_sources_ifdef(CONFIG_GM_HAL_SQI driver/sqi/gm_hal_sqi.c)
+    ugelis_sources_ifdef(CONFIG_GM_HAL_SQI driver/sqi/gm_hal_sqi_host.c)
     ugelis_sources_ifdef(CONFIG_GM_HAL_SPI driver/spi/gm_hal_spi.c)
     ugelis_sources_ifdef(CONFIG_GM_HAL_MMC driver/mmc/block/hal_mmc.c)
     ugelis_sources_ifdef(CONFIG_GM_HAL_MMC driver/mmc/core/hal_mmc_core.c)
@@ -61,6 +63,11 @@ ugelis_include_directories(
     ugelis_sources_ifdef(CONFIG_GM_HAL_RESET driver/reset/gm_hal_reset.c)
     ugelis_sources_ifdef(CONFIG_GM_HAL_POWER driver/power/gm_hal_power.c)
 	ugelis_sources_ifdef(CONFIG_GM_HAL_I2C driver/i2c/gm_hal_i2c.c)
+	
+	ugelis_sources(driver/kdp/gm_hal_kdp.c)
+	ugelis_sources(driver/sqi/gm_hal_sqi.c)
+	ugelis_sources(driver/sqi/gm_hal_sqi_host.c)
+##Add Other Hal Driver Here###
 ##Add Other Hal Driver Here###
 endif()
 

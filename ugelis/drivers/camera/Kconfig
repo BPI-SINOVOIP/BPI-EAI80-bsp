@@ -1,0 +1,38 @@
+# Kconfig - camera driver configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig CAMERA
+	bool
+	prompt "Camera Drivers"
+	default n
+	help
+	Enable options for camera drivers.
+
+if CAMERA
+
+config CAMERA_HAS_DRIVER
+	bool
+	default n
+	help
+	This is an option to be enabled by individual camera driver
+	to signal that there is a camera driver. This is being used
+	by other drivers which are dependent on camera.
+
+comment "Camera interface Drivers"
+
+source "drivers/camera/Kconfig.gm"
+
+comment "Camera sensor devices"
+
+source "drivers/camera/ov5640/Kconfig"
+source "drivers/camera/ov7725/Kconfig"
+source "drivers/camera/gc0308/Kconfig"
+source "drivers/camera/bf3007/Kconfig"
+source "drivers/camera/gc2145/Kconfig"
+source "drivers/camera/sccb/Kconfig"
+endif

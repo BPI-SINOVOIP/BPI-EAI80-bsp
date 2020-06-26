@@ -36,6 +36,10 @@
 		tim8 = &tim8;
 		power = &power;
 		sflash = &sflash;
+		saia = &saia;
+		saib = &saib;
+		pdma = &pdma;
+		pdmb = &pdmb;
 	};
 
 	chosen {
@@ -44,7 +48,6 @@
         #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
         ugelis,sdram = &sdram0;
         #endif
-		ugelis,flash = &flash0;
 		ugelis,vout = &vout;
 		ugelis,vin = &vin;
         ugelis,imp = &imp;
@@ -60,6 +63,10 @@
 		ugelis,tim8 = &tim8;
 		ugelis,power = &power;
 		ugelis,sflash = &sflash;
+		ugelis,saia = &saia;
+		ugelis,saib = &saib;
+		ugelis,pdma = &pdma;
+		ugelis,pdmb = &pdmb;
 	};
 };
 
@@ -213,6 +220,23 @@
 &i2c2 {
 	status = "ok";
 };
+
+&saia {
+	status = "ok";
+};
+
+&saib {
+	status = "ok";
+};
+
+&pdma {
+	status = "ok";
+};
+
+&pdmb {
+	status = "ok";
+};
+
 &iwdg {
 	status = "ok";
 };
@@ -284,4 +308,5 @@
 	bitmode                  =  <0>;              /*0:read use 4line 1:read use 1line*/
 	clkdiv                   =  <1>;              /*clock div*/
     status                    =  "ok";
+    addr_space               =  <0x10000000 0x4000>;/*0x10000000:base address 0x4000:flash size(unit :kb)*/
 };

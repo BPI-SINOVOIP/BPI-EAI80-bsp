@@ -126,7 +126,7 @@ static int sqi_flash_pinumx_config()
 #if defined(CONFIG_UART0)
 /** Configure pinmux for an available UART device */
 
-static int uart0_pinmux_config(struct device *port1, struct device *port2)
+static int uart0_pinmux_config(void)
 {
     int ret = 0;
     struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTI_NAME);
@@ -168,7 +168,7 @@ static int uart0_pinmux_config(struct device *port1, struct device *port2)
 #if defined(CONFIG_UART1)
 /** Configure pinmux for an available UART device */
 
-static int uart1_pinmux_config(struct device *port)
+static int uart1_pinmux_config(void)
 {
     int ret = 0;
     struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTB_NAME);
@@ -213,7 +213,7 @@ static int uart1_pinmux_config(struct device *port)
 #if defined(CONFIG_UART2)
 /** Configure pinmux for an available UART device */
 
-static int uart2_pinmux_config(struct device *port)
+static int uart2_pinmux_config(void)
 {
     int ret = 0;
     struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTF_NAME);
@@ -294,6 +294,89 @@ static int uart3_pinmux_config(void)
 }
 #endif
 
+#if defined(CONFIG_UART4)
+static int uart4_pinmux_config(void)
+{
+    int ret = 0;
+    struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTC_NAME);
+    if (porte == NULL)
+    {
+        return -1;
+    }
+
+    GPIO_PinConfig_T pin_cfg;
+    Device_Pinmux_T s_uartPinMux[2] =
+    {
+        {PINMUX_GPIO_PIN_4, GPIOC, GPIOC4_AF1_UART4_TX},
+        {PINMUX_GPIO_PIN_5, GPIOC, GPIOC5_AF1_UART4_RX},
+    };
+
+    pin_cfg.pin = BIT(s_uartPinMux[0].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_NOPULL;
+    pin_cfg.alternate = s_uartPinMux[0].alternate;
+    ret = pinmux_pin_set(porte, s_uartPinMux[0].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+
+    pin_cfg.pin = BIT(s_uartPinMux[1].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_NOPULL;
+    pin_cfg.alternate = s_uartPinMux[1].alternate;
+    ret = pinmux_pin_set(porte, s_uartPinMux[1].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+
+    return 0;
+}
+#endif
+
+#if defined(CONFIG_UART5)
+static int uart5_pinmux_config(void)
+{
+    int ret = 0;
+    struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTD_NAME);
+    if (porte == NULL)
+    {
+        return -1;
+    }
+
+    GPIO_PinConfig_T pin_cfg;
+    Device_Pinmux_T s_uartPinMux[2] =
+    {
+        {PINMUX_GPIO_PIN_0, GPIOD, GPIOD0_AF1_UART5_TX},
+        {PINMUX_GPIO_PIN_1, GPIOD, GPIOD1_AF1_UART5_RX},
+    };
+
+    pin_cfg.pin = BIT(s_uartPinMux[0].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_NOPULL;
+    pin_cfg.alternate = s_uartPinMux[0].alternate;
+    ret = pinmux_pin_set(porte, s_uartPinMux[0].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+
+    pin_cfg.pin = BIT(s_uartPinMux[1].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_NOPULL;
+    pin_cfg.alternate = s_uartPinMux[1].alternate;
+    ret = pinmux_pin_set(porte, s_uartPinMux[1].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+
+    return 0;
+}
+#endif
+
+
 #if defined(CONFIG_CAN)
 static int can0_pinmux_config()
 {
@@ -337,7 +420,7 @@ static int can0_pinmux_config()
 #endif
 
 #if defined(CONFIG_MMC)
-static int mmc_pinmux_config(struct device *port1, struct device *port2)
+static int mmc_pinmux_config(void)
 {
     int ret = 0;
     GPIO_PinConfig_T pin_cfg;
@@ -471,7 +554,7 @@ static int dcmi0_pinmux_config()
     int ret = 0;
 
     /*camera powerdown and reset pin OD mode*/
-    *(volatile uint32_t *)(0x40000248) |= 0x01400000;
+    //*(volatile uint32_t *)(0x40000248) |= 0x01400000;
 
     GPIO_PinConfig_T pin_cfg;
     Device_Pinmux_T s_VINPinMux[11] =
@@ -1903,60 +1986,27 @@ static int tim8_pinmux_config(void)
 
 #if defined(CONFIG_USB_PINMUX)
 /** Configure pinmux for an available usb device/Host */
-static int usb_pinmux_config(struct device *port)
+static int usb_pinmux_config(void)
 {
-    int ret = 0;
-    GPIO_PinConfig_T pin_cfg;
-    Device_Pinmux_T s_timPinMux[4] =
-    {
-        {PINMUX_GPIO_PIN_2,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_3,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_4,  GPIOH, GPIO_AF_NONE},
-        {PINMUX_GPIO_PIN_5,  GPIOH, GPIO_AF_NONE},
+    RET_CODE ret = RET_OK;
+    GPIO_PinConfig_T GPIO_InitStruct;
+    GPIO_Device_T *pGPIO = NULL;
 
-    };
+    memset(&GPIO_InitStruct, 0, sizeof(GPIO_PinConfig_T));
 
-    pin_cfg.pin = BIT(s_timPinMux[0].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[0].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[0].pin, (unsigned int)&pin_cfg);
-    if (ret)
+    /*set digtal pin as input , inorder to not affect analog input*/
+    pGPIO = GPIOH;
+    GPIO_InitStruct.pin  = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5;
+    GPIO_InitStruct.mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.pull = GPIO_NOPULL;
+
+    ret = HAL_GPIO_Init(pGPIO, &GPIO_InitStruct);
+    if (ret != RET_OK)
     {
-        return ret;
+        printf("Err:usb_ConfigPinmux\n");
     }
 
-    pin_cfg.pin = BIT(s_timPinMux[1].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[1].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[1].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    pin_cfg.pin = BIT(s_timPinMux[2].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[2].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[2].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    pin_cfg.pin = BIT(s_timPinMux[3].pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
-    pin_cfg.pull = GPIO_NOPULL;
-    pin_cfg.alternate = s_timPinMux[3].alternate;
-    ret = pinmux_pin_set(port, s_timPinMux[3].pin, (unsigned int)&pin_cfg);
-    if (ret)
-    {
-        return ret;
-    }
-
-    return 0;
+    return ret;
 }
 #endif
 
@@ -2163,39 +2213,60 @@ static int pinmux_gm_initialize(struct device *port)
 {
     int ret = 0;
     ARG_UNUSED(port);
+#if defined(CONFIG_TIM1)
+    /** Configure pinmux for an available TIM1 device */
+    tim1_pinmux_config();
+#endif
+
+#if defined(CONFIG_TIM2)
+    /** Configure pinmux for an available TIM2 device */
+    tim2_pinmux_config();
+#endif
+
+#if defined(CONFIG_TIM3)
+    /** Configure pinmux for an available TIM3 device */
+    tim3_pinmux_config();
+#endif
+
+#if defined(CONFIG_TIM4)
+    /** Configure pinmux for an available TIM4 device */
+    tim4_pinmux_config();
+#endif
+
+#if defined(CONFIG_TIM5)
+    /** Configure pinmux for an available TIM5 device */
+    tim5_pinmux_config();
+#endif
+
+#if defined(CONFIG_TIM8)
+    /** Configure pinmux for an available TIM8 device */
+    tim8_pinmux_config();
+#endif
 
 #if defined(CONFIG_UART0)
-    /** Configure pinmux for an available UART device */
-    struct device *portj = device_get_binding(CONFIG_PINMUX_GM_PORTJ_NAME);
-    struct device *portk = device_get_binding(CONFIG_PINMUX_GM_PORTK_NAME);
-    if ((portj != NULL) && (portk != NULL))
-    {
-        ret = uart0_pinmux_config(portj, portk);
-    }
+    //uart0_pinmux_config();
 #endif
 
 #if defined(CONFIG_UART1)
-    /** Configure pinmux for an available UART device */
-    struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTE_NAME);
-    if (porte != NULL)
-    {
-        ret = uart1_pinmux_config(porte);
-    }
+    //uart1_pinmux_config();
 #endif
 
 #if defined(CONFIG_UART2)
-    /** Configure pinmux for an available UART device */
-    struct device *porte2 = device_get_binding(CONFIG_PINMUX_GM_PORTE_NAME);
-    if (porte2 != NULL)
-    {
-        ret = uart2_pinmux_config(porte2);
-    }
+    uart2_pinmux_config();
 #endif
 
 #if defined(CONFIG_UART3)
-    /** Configure pinmux for an available UART device */
-    ret = uart3_pinmux_config();
+    uart3_pinmux_config();
 #endif
+
+#if defined(CONFIG_UART4)
+    //uart4_pinmux_config();
+#endif
+
+#if defined(CONFIG_UART5)
+    uart5_pinmux_config();
+#endif
+
 
 #if defined(CONFIG_I2C0)
     i2c0_pinmux_config();
@@ -2237,15 +2308,7 @@ static int pinmux_gm_initialize(struct device *port)
 #endif
 
 #if defined(CONFIG_MMC)
-
-    /** Configure pinmux for an available MMC device */
-    struct device *portg = device_get_binding(CONFIG_PINMUX_GM_PORTG_NAME);
-    struct device *portf = device_get_binding(CONFIG_PINMUX_GM_PORTF_NAME);
-    if ((portg != NULL) && (portg != NULL))
-    {
-
-        ret = mmc_pinmux_config(portg, portf);
-    }
+    mmc_pinmux_config();
 #endif
 
 #if (defined(CONFIG_FLASH) || defined(CONFIG_SFLASH))
@@ -2271,44 +2334,10 @@ static int pinmux_gm_initialize(struct device *port)
 #endif
 
 
-#if defined(CONFIG_TIM1)
-    /** Configure pinmux for an available TIM1 device */
-    tim1_pinmux_config();
-#endif
 
-#if defined(CONFIG_TIM2)
-    /** Configure pinmux for an available TIM2 device */
-    tim2_pinmux_config();
-#endif
-
-#if defined(CONFIG_TIM3)
-    /** Configure pinmux for an available TIM3 device */
-    tim3_pinmux_config();
-#endif
-
-#if defined(CONFIG_TIM4)
-    /** Configure pinmux for an available TIM4 device */
-    tim4_pinmux_config();
-#endif
-
-#if defined(CONFIG_TIM5)
-    /** Configure pinmux for an available TIM5 device */
-    tim5_pinmux_config();
-#endif
-
-#if defined(CONFIG_TIM8)
-    /** Configure pinmux for an available TIM8 device */
-    tim8_pinmux_config();
-#endif
 
 #if defined(CONFIG_USB_PINMUX)
-    /** Configure pinmux for an available TIM14 device */
-    struct device *usb_porth = device_get_binding(CONFIG_PINMUX_GM_PORTH_NAME);
-    if (usb_porth != NULL)
-    {
-        ret = usb_pinmux_config(usb_porth);
-    }
-
+    usb_pinmux_config();
 #endif
 
 #if defined(CONFIG_CAN)

@@ -212,17 +212,18 @@ HAL_SAI_StatusTypeDef HAL_SAI_Init(SAI_Block_TypeDef *pSAI, SAI_HandleTypeDef *h
         hsai->Init.ClockSource = SAI_PLL_49;
         HW32_REG(0x400000ac) |= (1 << 0); //SAIA_CLK_SEL  49.1428M
         HW32_REG(0x400000ac) |= (1 << 8); //SAIB_CLK_SEL  49.1428M
-        if (Recoder_SAI_Mst_RX)
+        #ifdef  Recoder_SAI_Mst_RX
         {
             mckdiv = 5;
             bckdiv = hsai->Init.ClockSource / ((mckdiv + 1) * \
                                                (hsai->FrameInit.FrameLength + 1) * hsai->Init.AudioFrequency);
         }
-        else
+        #else
         {
             mckdiv = hsai->Init.ClockSource / (512 * hsai->Init.AudioFrequency) - 1;
             bckdiv = 512 / (hsai->FrameInit.FrameLength) - 1;
         }
+		#endif
     }
     else if ((hsai->Init.AudioFrequency == SAI_AUDIO_FREQUENCY_11K) || \
              (hsai->Init.AudioFrequency == SAI_AUDIO_FREQUENCY_22K)  || \
@@ -231,17 +232,18 @@ HAL_SAI_StatusTypeDef HAL_SAI_Init(SAI_Block_TypeDef *pSAI, SAI_HandleTypeDef *h
         hsai->Init.ClockSource = SAI_PLL_11;
         HW32_REG(0x400000ac) &= ~(3 << 0); //SAIA_CLK_SEL  11.2941M
         HW32_REG(0x400000ac) &= ~(3 << 8); //SAIB_CLK_SEL  11.2941M
-        if (Recoder_SAI_Mst_RX)
+        #ifdef Recoder_SAI_Mst_RX
         {
             mckdiv = 5;
             bckdiv = hsai->Init.ClockSource / ((mckdiv + 1) * \
                                                (hsai->FrameInit.FrameLength + 1) * hsai->Init.AudioFrequency);
         }
-        else
+        #else
         {
             mckdiv = hsai->Init.ClockSource / (512 * hsai->Init.AudioFrequency) - 1;
             bckdiv = 512 / (hsai->FrameInit.FrameLength) - 1;
         }
+		#endif
     }
     else
     {
@@ -329,13 +331,14 @@ HAL_SAI_StatusTypeDef HAL_SAI_Init(SAI_Block_TypeDef *pSAI, SAI_HandleTypeDef *h
 
     /* Initialize the error code */
     hsai->ErrorCode = HAL_SAI_ERROR_NONE;
-    if (Recoder_SAI_Mst_RX)
+    #ifdef Recoder_SAI_Mst_RX
     {
         LL_SAI_CPL_2S(pSAI);
         LL_SAI_FSPOL_Falling(pSAI);
         //LL_SAI_FSOFF_CLR(pSAI);
         //LL_SAI_FBOFF_4(pSAI);
     }
+	#endif
     /* Initialize the SAI state */
     hsai->State = HAL_SAI_STATE_READY;
 

@@ -1,0 +1,9 @@
+ugelis_sources_ifdef(CONFIG_MICROBIT_DISPLAY
+	mb_display.c
+	mb_font.c
+)
+ugelis_sources_ifdef(CONFIG_ILI9340 display_ili9340.c)
+ugelis_sources_ifdef(CONFIG_ILI9340_LCD_ADAFRUIT_1480
+	display_ili9340_adafruit_1480.c
+)
+ugelis_sources_ifdef(CONFIG_DISPLAY_GM6721X   display_gm6721x.c)

@@ -14,9 +14,9 @@ K_SYSCALL_DECLARE1(K_SYSCALL_TIM_TIMEBASE_INIT, tim_timebase_init, int, struct d
 
 K_SYSCALL_DECLARE1(K_SYSCALL_TIM_OUTPUTCOMPARE_INIT, tim_outputcompare_init, int, struct device *, dev);
 
-K_SYSCALL_DECLARE1(K_SYSCALL_TIM_PWM_INIT, tim_pwm_init, int, struct device *, dev);
+K_SYSCALL_DECLARE2(K_SYSCALL_TIM_PWM_INIT, tim_pwm_init, int, struct device *, dev, tim_timebaseinit *, init);
 
-K_SYSCALL_DECLARE1(K_SYSCALL_TIM_INPUTCAPTURE_INIT, tim_inputcapture_init, int, struct device *, dev);
+K_SYSCALL_DECLARE2(K_SYSCALL_TIM_INPUTCAPTURE_INIT, tim_inputcapture_init, int, struct device *, dev, tim_timebaseinit *, init);
 
 K_SYSCALL_DECLARE2(K_SYSCALL_TIM_ONEPULSE_INIT, tim_onepulse_init, int, struct device *, dev, uint32_t, opm);
 
@@ -29,6 +29,8 @@ K_SYSCALL_DECLARE1(K_SYSCALL_TIM_TIMEBASE_START, tim_timebase_start, int, struct
 K_SYSCALL_DECLARE2(K_SYSCALL_TIM_OUTPUTCOMPARE_START, tim_outputcompare_start, int, struct device *, dev, uint32_t, ch);
 
 K_SYSCALL_DECLARE2(K_SYSCALL_TIM_PWM_START, tim_pwm_start, int, struct device *, dev, uint32_t, ch);
+
+K_SYSCALL_DECLARE2(K_SYSCALL_TIM_READCAPTUREVALUE_START, tim_readcapturevalue_start, int, struct device *, dev, uint32_t, ch);
 
 K_SYSCALL_DECLARE2(K_SYSCALL_TIM_INPUTCAPTURE_START, tim_inputcapture_start, int, struct device *, dev, uint32_t, ch);
 

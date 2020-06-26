@@ -246,14 +246,15 @@ void pm_standby_wkpin_config(struct pm_frame_wkup_pin_cfg *wkup_pin_cfg)
     memset(&GPIO_InitStruct, 0, sizeof(GPIO_PinConfig_T));
     GPIO_InitStruct.pin =  GPIO_PIN_0; /*GPIOA0*/
     GPIO_InitStruct.mode = GPIO_MODE_INPUT;
-    if (wkup_pin_cfg->wkup_pin_valid == PM_RISING_EDGE)
-    {
-        GPIO_InitStruct.pull = GPIO_PULLDOWN;
-    }
-    else
-    {
-        GPIO_InitStruct.pull = GPIO_PULLUP;
-    }
+    //    if (wkup_pin_cfg->wkup_pin_valid == PM_RISING_EDGE)
+    //    {
+    //        GPIO_InitStruct.pull = GPIO_PULLDOWN;
+    //    }
+    //    else
+    //    {
+    //        GPIO_InitStruct.pull = GPIO_PULLUP;
+    //    }
+    GPIO_InitStruct.pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 
@@ -265,6 +266,13 @@ void pm_standby_wkpin_config(struct pm_frame_wkup_pin_cfg *wkup_pin_cfg)
 }
 void pm_shutdown_wkpin_xpb12_config(struct pm_frame_wkup_pin_cfg *wkup_pin_cfg)
 {
+    GPIO_PinConfig_T GPIO_InitStruct;
+    memset(&GPIO_InitStruct, 0, sizeof(GPIO_PinConfig_T));
+    GPIO_InitStruct.pin =  GPIO_PIN_12;
+    GPIO_InitStruct.mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
     HAL_CLOCK_ClockCmd(CLOCK_LIRC_MASK, ENABLE);
     while (!HAL_CLOCK_WaitForStable(SYS_CMUST_LIRC_STABLE));
     SYS_DEV->CFGPM |= (1 << 12);
@@ -278,6 +286,13 @@ void pm_shutdown_wkpin_xpb12_config(struct pm_frame_wkup_pin_cfg *wkup_pin_cfg)
 
 void pm_shutdown_wkpin_xpb13_config(struct pm_frame_wkup_pin_cfg *wkup_pin_cfg)
 {
+    GPIO_PinConfig_T GPIO_InitStruct;
+    memset(&GPIO_InitStruct, 0, sizeof(GPIO_PinConfig_T));
+    GPIO_InitStruct.pin =  GPIO_PIN_13;
+    GPIO_InitStruct.mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
     HAL_CLOCK_ClockCmd(CLOCK_LIRC_MASK, ENABLE);
     while (!HAL_CLOCK_WaitForStable(SYS_CMUST_LIRC_STABLE));
     SYS_DEV->CFGPM |= (1 << 12);
@@ -285,7 +300,7 @@ void pm_shutdown_wkpin_xpb13_config(struct pm_frame_wkup_pin_cfg *wkup_pin_cfg)
     while (!(IO_BIT_GET(HW32_REG(RTC_BASE + 0x08), 0x1 << 22)));
     IO_BITMASK_SET(*(volatile unsigned long *)(RTC_BASE + 0x58), 0x3ff, ((1 << 9) | ((wkup_pin_cfg->wkup_pin_valid) << 4) | (0x01 << 3)));
     while (!(IO_BIT_GET(HW32_REG(RTC_BASE + 0x08), 0x1 << 22)));
-    IO_BITMASK_SET(*(volatile unsigned long *)(RTC_BASE + 0x58), 3 << 10, 2 << 10);
+    IO_BITMASK_SET(*(volatile unsigned long *)(RTC_BASE + 0x58), 3 << 10, 1 << 10);
     while (!(IO_BIT_GET(HW32_REG(RTC_BASE + 0x08), 0x1 << 22)));
 }
 int main(void)

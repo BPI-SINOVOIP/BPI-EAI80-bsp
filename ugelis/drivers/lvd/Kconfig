@@ -1,0 +1,31 @@
+# Kconfig - LVD configuration options
+#
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# Real-Time Clock (LVD) options
+#
+menuconfig LVD
+	bool
+    prompt "Lower Voltage Detection"
+	help
+	  Enable options for Lower Voltage Detection drivers.
+
+if LVD
+
+config LVD_0_NAME
+	string "Driver instance name"
+	default "LVD_0"
+    depends on LVD && !HAS_DTS
+	help
+	  LVD driver instance name
+
+comment "LVD drivers"
+
+endif # LVD
+
+source "drivers/lvd/Kconfig.gm_lvd"

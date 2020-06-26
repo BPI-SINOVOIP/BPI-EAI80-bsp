@@ -1,0 +1,16 @@
+# KConfig.gm - GM crypto engine driver configuration
+
+config CRYPTO_GM
+    bool "GM crypto engine driver"
+    depends on CRYPTO && SOC_FAMILY_GM
+    help
+        This option enables the crypto engine, which used to
+        encrypt/decrypt data. It's available for GM6721 series.
+
+config CRYPTO_GM_DEV_NAME
+	string "Device name for GM crypto engine"
+	default "CRYPTO_GM_DEV"
+	depends on CRYPTO_GM
+	help
+	  Device name for GM crypto engine.
+

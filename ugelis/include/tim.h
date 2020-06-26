@@ -50,10 +50,10 @@ extern "C" {
 #define TIMx_OCMODE_ACTIVE                  ((uint32_t)0x00000010U)
 #define TIMx_OCMODE_INACTIVE                ((uint32_t)0x00000020U)
 #define TIMx_OCMODE_TOGGLE                  ((uint32_t)0x00000030U)
-#define TIMx_OCMODE_PWM1                    ((uint32_t)0x00000040U)
-#define TIMx_OCMODE_PWM2                    ((uint32_t)0x00000050U)
-#define TIMx_OCMODE_FORCED_ACTIVE           ((uint32_t)0x00000060U)
-#define TIMx_OCMODE_FORCED_INACTIVE         ((uint32_t)0x00000070U)
+#define TIMx_OCMODE_FORCED_INACTIVE         ((uint32_t)0x00000040U)
+#define TIMx_OCMODE_FORCED_ACTIVE           ((uint32_t)0x00000050U)
+#define TIMx_OCMODE_PWM1                    ((uint32_t)0x00000060U)
+#define TIMx_OCMODE_PWM2                    ((uint32_t)0x00000070U)
 
 #define TIMx_ICPOLARITY_RISING              ((uint32_t)0x00000000U)
 #define TIMx_ICPOLARITY_FALLING             ((uint32_t)0x00000002U)
@@ -203,14 +203,15 @@ typedef enum
 
 typedef int (*tim_api_timebase_init)(struct device *dev);
 typedef int (*tim_api_outputcompare_init)(struct device *dev);
-typedef int (*tim_api_pwm_init)(struct device *dev);
-typedef int (*tim_api_inputcapture_init)(struct device *dev);
+typedef int (*tim_api_pwm_init)(struct device *dev, tim_timebaseinit *init);
+typedef int (*tim_api_inputcapture_init)(struct device *dev, tim_timebaseinit *init);
 typedef int (*tim_api_onepulse_init)(struct device *dev, uint32_t opm);
 typedef int (*tim_api_encoder_init)(struct device *dev,  tim_encodeinit *cfg);
 typedef int (*tim_api_hallsensor_init)(struct device *dev,  tim_hallsensorinit *cfg);
 typedef int (*tim_api_timebase_start)(struct device *dev);
 typedef int (*tim_api_outputcompare_start)(struct device *dev, uint32_t ch);
 typedef int (*tim_api_pwm_start)(struct device *dev, uint32_t ch);
+typedef int (*tim_api_readcapturevalue_start)(struct device *dev, uint32_t ch);
 typedef int (*tim_api_inputcapture_start)(struct device *dev, uint32_t ch);
 typedef int (*tim_api_onepulse_start)(struct device *dev, uint32_t ch);
 typedef int (*tim_api_encoder_start)(struct device *dev, uint32_t ch);
@@ -237,6 +238,7 @@ struct tim_driver_api
     tim_api_timebase_start timebase_start;
     tim_api_outputcompare_start outputcompare_start;
     tim_api_pwm_start pwm_start;
+    tim_api_readcapturevalue_start readcapturevalue_start;
     tim_api_inputcapture_start inputcapture_start;
     tim_api_onepulse_start onepulse_start;
     tim_api_encoder_start encoder_start;
@@ -273,26 +275,26 @@ static inline int _impl_tim_outputcompare_init(struct device *dev)
     return api->outputcompare_init(dev);
 }
 
-__syscall int tim_pwm_init(struct device *dev);
+__syscall int tim_pwm_init(struct device *dev, tim_timebaseinit *init);
 
-static inline int _impl_tim_pwm_init(struct device *dev)
+static inline int _impl_tim_pwm_init(struct device *dev, tim_timebaseinit *init)
 {
     struct tim_driver_api *api ;
 
     api = (struct tim_driver_api *)dev->driver_api;
 
-    return api->pwm_init(dev);
+    return api->pwm_init(dev, init);
 }
 
-__syscall int tim_inputcapture_init(struct device *dev);
+__syscall int tim_inputcapture_init(struct device *dev, tim_timebaseinit *init);
 
-static inline int _impl_tim_inputcapture_init(struct device *dev)
+static inline int _impl_tim_inputcapture_init(struct device *dev, tim_timebaseinit *init)
 {
     struct tim_driver_api *api ;
 
     api = (struct tim_driver_api *)dev->driver_api;
 
-    return api->inputcapture_init(dev);
+    return api->inputcapture_init(dev, init);
 }
 
 __syscall int tim_onepulse_init(struct device *dev, uint32_t opm);
@@ -359,6 +361,17 @@ static inline int _impl_tim_pwm_start(struct device *dev, uint32_t ch)
     api = (struct tim_driver_api *)dev->driver_api;
 
     return api->pwm_start(dev, ch);
+}
+
+__syscall int tim_readcapturevalue_start(struct device *dev, uint32_t ch);
+
+static inline int _impl_tim_readcapturevalue_start(struct device *dev, uint32_t ch)
+{
+    struct tim_driver_api *api ;
+
+    api = (struct tim_driver_api *)dev->driver_api;
+
+    return api->readcapturevalue_start(dev, ch);
 }
 
 __syscall int tim_inputcapture_start(struct device *dev, uint32_t ch);

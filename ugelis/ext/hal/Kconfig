@@ -1,0 +1,17 @@
+# Kconfig - external HAL source code configuration options
+
+#
+# Copyright (c) 2016-2017 Linaro Ltd.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# When adding new entries keep the list in alphabetical order
+
+menu "HALs"
+
+source "ext/hal/cmsis/Kconfig"
+
+source "ext/hal/gree/Kconfig"
+
+endmenu

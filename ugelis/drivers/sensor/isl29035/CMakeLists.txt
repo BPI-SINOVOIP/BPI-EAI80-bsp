@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_ISL29035 isl29035.c)
+ugelis_library_sources_ifdef(CONFIG_ISL29035_TRIGGER isl29035_trigger.c)

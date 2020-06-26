@@ -1,0 +1,32 @@
+# Kconfig - MPU6050 Six-Axis Motion Tracking device configuration options
+
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig GC0308
+	bool "OmniVision GC0308 sensor support"
+	depends on CAMERA_HAS_DRIVER
+	default n
+	help
+	  This is a Video4Linux2 sensor-level driver for the Omnivision
+	  GC0308 camera sensor with a MIPI CSI-2 interface.
+
+config GC0308_0
+	bool "Enable GC0308_0"
+	depends on GC0308
+    select DCMI_0
+	default n
+
+config GC0308_1
+	bool "Enable GC0308_1"
+	depends on GC0308
+    select DCMI_1
+	default n
+	
+config GC0308_MIRROR
+	bool "GC0308 get frame by mirror format"
+	depends on GC0308
+	default n

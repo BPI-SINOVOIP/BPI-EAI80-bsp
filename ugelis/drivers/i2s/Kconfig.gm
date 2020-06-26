@@ -1,0 +1,32 @@
+# Kconfig - Gree SAI configuration
+#
+# Copyright (c) 2018 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config SAI_GM
+	bool "SAI Driver for Gree family of MCUs"
+	default n
+	help
+	  Enable SAI driver for Gree line of MCUs
+	
+config SAI_GM_A
+	bool "Enable SAI_A HARDWARE"
+	depends on SAI_GM
+	default n
+	
+config SAI_GM_B
+	bool "Enable SAI_B HARDWARE"
+	depends on SAI_GM
+	default n
+	
+config SAIA
+	bool "Enable SAI_A pinmux"
+	depends on SAI_GM_A
+	default n
+	
+config SAIB
+	bool "Enable SAI_B pinmux"
+	depends on SAI_GM_B
+	default n

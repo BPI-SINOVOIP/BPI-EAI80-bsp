@@ -1,0 +1,19 @@
+# Kconfig - ust configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+
+config RPC_SUBSYS
+	bool
+	prompt "rpc subsys module"
+	default n
+	depends on GM_HAL_RPC
+	help
+	  Enable rpc subsys module.
+
+

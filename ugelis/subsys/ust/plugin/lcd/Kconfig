@@ -1,0 +1,16 @@
+# Kconfig - ust test plugin element configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config UST_PLUGIN_LCD
+	bool
+    default n
+	prompt "UST LCD Plugin"
+	help
+	  This is an option to be enabled ust lcd plugin
+
+

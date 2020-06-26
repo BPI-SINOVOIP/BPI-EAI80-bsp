@@ -1,0 +1,4 @@
+ugelis_library()
+
+ugelis_library_sources_ifdef(CONFIG_MPU6050 mpu6050.c)
+ugelis_library_sources_ifdef(CONFIG_MPU6050_TRIGGER mpu6050_trigger.c)

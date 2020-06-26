@@ -34,11 +34,12 @@
     #define tim_err             printk
 #endif
 
+
 static int gm_tim_init(struct device *dev);
 static int gm_tim_timebase_init(struct device *dev);
 static int gm_tim_outputcompare_init(struct device *dev);
-static int gm_tim_pwm_init(struct device *dev);
-static int gm_tim_inputcapture_init(struct device *dev);
+static int gm_tim_pwm_init(struct device *dev, tim_timebaseinit *init);
+static int gm_tim_inputcapture_init(struct device *dev, tim_timebaseinit *init);
 static int gm_tim_onepulse_init(struct device *dev, uint32_t opm);
 static int gm_tim_encoder_init(struct device *dev, tim_encodeinit *cfg);
 static int gm_tim_hallsensor_init(struct device *dev, tim_hallsensorinit *cfg);
@@ -47,6 +48,7 @@ static int gm_tim_irq_config(struct device *dev);
 static int gm_tim_timebase_start(struct device *dev);
 static int gm_tim_outputcompare_start(struct device *dev, uint32_t ch);
 static int gm_tim_pwm_start(struct device *dev, uint32_t ch);
+static int gm_tim_readcapturevalue_start(struct device *dev, uint32_t ch);
 static int gm_tim_inputcapture_start(struct device *dev, uint32_t ch);
 static int gm_tim_onepulse_start(struct device *dev, uint32_t ch);
 static int gm_tim_encoder_start(struct device *dev, uint32_t ch);
@@ -72,6 +74,7 @@ static const struct tim_driver_api tim_driver_api_funcs =
     .timebase_start = gm_tim_timebase_start,
     .outputcompare_start = gm_tim_outputcompare_start,
     .pwm_start = gm_tim_pwm_start,
+    .readcapturevalue_start = gm_tim_readcapturevalue_start,
     .inputcapture_start = gm_tim_inputcapture_start,
     .onepulse_start = gm_tim_onepulse_start,
     .encoder_start = gm_tim_encoder_start,
@@ -388,6 +391,7 @@ static void gm_tim_isr(struct device *dev)
     }
 }
 
+static struct device DEVICE_NAME_GET(gm_tim1);
 static int gm_tim_irq_config(struct device *dev)
 {
     int ret = 0;
@@ -548,13 +552,13 @@ out:
     return ret;
 }
 
-static int gm_tim_pwm_init(struct device *dev)
+static int gm_tim_pwm_init(struct device *dev, tim_timebaseinit *init)
 {
     int ret = 0;
 
     struct tim_gm_data_t *data = DEV_DATA(dev);
     TIM_Handle_T *hTIM  = data->tim_handle;
-
+    hTIM->instance = DEV_STRUCT(dev);
     ret = gm_tim_init(dev);
     if (!ret)
     {
@@ -565,6 +569,11 @@ static int gm_tim_pwm_init(struct device *dev)
         tim_debug("tim common init fail\n");
     }
 
+    hTIM->init.prescaler = init->prescaler;
+    hTIM->init.clockDivision = init->clockDivision;
+    hTIM->init.counterMode = init->counterMode;
+
+    hTIM->init.period = init->period;
     ret  = HAL_TIM_InitPWM(hTIM);
     if (ret)
     {
@@ -576,13 +585,14 @@ out:
     return ret;
 }
 
-static int gm_tim_inputcapture_init(struct device *dev)
+
+static int gm_tim_inputcapture_init(struct device *dev, tim_timebaseinit *init)
 {
     int ret = 0;
 
     struct tim_gm_data_t *data = DEV_DATA(dev);
     TIM_Handle_T *hTIM  = data->tim_handle;
-
+    hTIM->instance = DEV_STRUCT(dev);
     ret = gm_tim_init(dev);
     if (!ret)
     {
@@ -592,6 +602,15 @@ static int gm_tim_inputcapture_init(struct device *dev)
     {
         tim_debug("tim common init fail\n");
     }
+    hTIM->init.prescaler = init->prescaler;
+    hTIM->init.clockDivision = init->clockDivision;
+    hTIM->init.counterMode = init->counterMode;
+    hTIM->init.period = init->period;
+    hTIM->init.callback = (TIM_IRQCallback_T)init->callback;
+
+
+    HAL_TIM_InitCommon(hTIM);
+
 
     ret  = HAL_TIM_InitInputCapture(hTIM);
     if (ret)
@@ -749,6 +768,7 @@ static int gm_tim_pwm_start(struct device *dev, uint32_t ch)
     struct tim_gm_data_t *data = DEV_DATA(dev);
     TIM_Handle_T *hTIM = data->tim_handle;
 
+    hTIM->instance = DEV_STRUCT(dev);
     ret  = HAL_TIM_StartPWM(hTIM, TIMx, ch);
     if (ret)
     {
@@ -760,6 +780,19 @@ out:
     return ret;
 }
 
+static int gm_tim_readcapturevalue_start(struct device *dev, uint32_t ch)
+{
+    int value = 0;
+    TIM_Device_T *TIMx = DEV_STRUCT(dev);
+
+    struct tim_gm_data_t *data = DEV_DATA(dev);
+    TIM_Handle_T *hTIM = data->tim_handle;
+
+    hTIM->instance = DEV_STRUCT(dev);
+    value  = HAL_TIM_ReadCapturedValue(hTIM, TIMx, ch);
+
+    return value;
+}
 static int gm_tim_inputcapture_start(struct device *dev, uint32_t ch)
 {
     int ret = 0;
@@ -767,7 +800,8 @@ static int gm_tim_inputcapture_start(struct device *dev, uint32_t ch)
 
     struct tim_gm_data_t *data = DEV_DATA(dev);
     TIM_Handle_T *hTIM = data->tim_handle;
-
+    IO_BITMASK_SET(*(volatile uint32_t *)(0x40007100), 0xfff, 0x000);
+    hTIM->instance = DEV_STRUCT(dev);
     ret  = HAL_TIM_StartInputCapture(hTIM, TIMx, ch);
     if (ret)
     {
@@ -899,9 +933,11 @@ static int gm_tim_pwmchannel_cfg(struct device *dev, tim_outputcompareinit *cfg,
 
     TIM_OutputCompareInit_T ocConfig;
 
+    ocConfig.ocMode = cfg->ocMode;
+    ocConfig.pulse = cfg->pulse;
+    ocConfig.ocPolarity = cfg->ocPolarity;
     ocConfig.ocFastMode = cfg->ocFastMode;
     ocConfig.ocIdleState = cfg->ocIdleState;
-    ocConfig.ocMode = cfg->ocMode;
     ocConfig.ocNIdleState = cfg->ocNIdleState;
     ocConfig.ocNPolarity = cfg->ocNPolarity;
 

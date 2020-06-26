@@ -1,0 +1,51 @@
+# Kconfig.stm32 - STM32 PDM configuration options
+
+#
+# Copyright (c) 2018 Alexander Wachter
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config PDM_GM
+	bool "PDM Driver for Gree family of MCUs"
+	default n
+	help
+	  Enable PDM driver for Gree line of MCUs 
+
+config PDM_GM_A
+	bool "Enable PDM_A HARDWARE"
+	depends on PDM_GM
+	default n
+	
+config PDM_GM_B
+	bool "Enable PDM_B HARDWARE"
+	depends on PDM_GM
+	default n
+	
+config PDMA
+	bool "Enable PDM_A pinmux"
+	depends on PDM_GM_A
+	default n
+	
+config PDMB
+	bool "Enable PDM_B pinmux"
+	depends on PDM_GM_B
+	default n
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

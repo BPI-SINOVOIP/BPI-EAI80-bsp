@@ -101,7 +101,9 @@ void kdp_print_op(int code)
 #endif
 }
 
-#if 0//def ARMC4_OPT
+#define ARMC4_OPT
+
+#ifdef ARMC4_OPT
 /*
  *R0: mem_addr   Memory source address
  *R1: bank_addr  Bank source address
@@ -113,13 +115,21 @@ void kdp_print_op(int code)
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToMemRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToMemRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_last_mem_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_mem_relu
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_mem_relu
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
+    STR    R3,  [sp, #0x4c]        //Save dst_mem_addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_mem_relu
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_mem_relu
+    BLT.W  exit_row_loop_add_to_mem_relu
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -206,6 +216,23 @@ __asm void *AsmAddToMemRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_n
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_mem_relu
+    exit_row_loop_add_to_mem_relu
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_mem_relu
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]
+    ADD    R1,  R4
+    oddch_addrinc_add_to_mem_relu
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    LDR    R3,  [sp, #0x4c]        //Get  dst_mem_addr of last channel
+    ADD    R3,  R4
+    B      channel_loop_add_to_mem_relu
+
     exit_add_to_mem_relu
     POP     {R4 - R12, LR}
     BX      lr
@@ -222,13 +249,21 @@ __asm void *AsmAddToMemRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_n
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToBothRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToBothRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_last_mem_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_both_relu
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_both_relu
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
+    STR    R3,  [sp, #0x4c]        //Save dst_mem_addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_both_relu
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_both_relu
+    BLT.W  exit_row_loop_add_to_both_relu
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -325,6 +360,22 @@ __asm void *AsmAddToBothRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_both_relu
+    exit_row_loop_add_to_both_relu
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_both_relu
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_both_relu
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    LDR    R3,  [sp, #0x4c]        //Get  dst_mem_addr of last channel
+    ADD    R3,  R4
+    B      channel_loop_add_to_both_relu
     exit_add_to_both_relu
     POP     {R4 - R12, LR}
     BX      lr
@@ -340,13 +391,20 @@ __asm void *AsmAddToBothRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToBankRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToBankRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_bank_relu
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_bank_relu
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_bank_relu
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_bank_relu
+    BLT.W  exit_row_loop_add_to_bank_relu
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -422,6 +480,20 @@ __asm void *AsmAddToBankRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_bank_relu
+    exit_row_loop_add_to_bank_relu
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_bank_relu
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_bank_relu
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    B      channel_loop_add_to_bank_relu
     exit_add_to_bank_relu
     POP     {R4 - R12, LR}
     BX      lr
@@ -437,13 +509,21 @@ __asm void *AsmAddToBankRelu(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToMemLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToMemLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_last_mem_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_mem_leaky
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_mem_leaky
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
+    STR    R3,  [sp, #0x4c]        //Save dst_mem_addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_mem_leaky
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_mem_leaky
+    BLT.W  exit_row_loop_add_to_mem_leaky
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -568,6 +648,22 @@ __asm void *AsmAddToMemLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_mem_leaky
+    exit_row_loop_add_to_mem_leaky
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_mem_leaky
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_mem_leaky
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    LDR    R3,  [sp, #0x4c]        //Get  dst_mem_addr of last channel
+    ADD    R3,  R4
+    B      channel_loop_add_to_mem_leaky
     exit_add_to_mem_leaky
     POP     {R4 - R12, LR}
     BX      lr
@@ -584,13 +680,20 @@ __asm void *AsmAddToMemLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToBothLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToBothLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_last_mem_addr)
 {
     PUSH   {R4 - R12, LR}
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_both_leaky
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_both_leaky
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
+    STR    R3,  [sp, #0x4c]        //Save dst_mem_addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_both_leaky
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_both_leaky
+    BLT.W  exit_row_loop_add_to_both_leaky
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -725,6 +828,22 @@ __asm void *AsmAddToBothLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_both_leaky
+    exit_row_loop_add_to_both_leaky
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_both_leaky
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_both_leaky
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    LDR    R3,  [sp, #0x4c]        //Get  dst_mem_addr of last channel
+    ADD    R3,  R4
+    B      channel_loop_add_to_both_leaky
     exit_add_to_both_leaky
     POP     {R4 - R12, LR}
     BX      lr
@@ -740,13 +859,20 @@ __asm void *AsmAddToBothLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToBankLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToBankLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_bank_leaky
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_bank_leaky
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_bank_leaky
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_bank_leaky
+    BLT.W  exit_row_loop_add_to_bank_leaky
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -858,6 +984,20 @@ __asm void *AsmAddToBankLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_bank_leaky
+    exit_row_loop_add_to_bank_leaky
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_bank_leaky
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_bank_leaky
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    B      channel_loop_add_to_bank_leaky
     exit_add_to_bank_leaky
     POP     {R4 - R12, LR}
     BX      lr
@@ -874,13 +1014,21 @@ __asm void *AsmAddToBankLeaky(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_last_mem_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_mem
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_mem
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
+    STR    R3,  [sp, #0x4c]        //Save dst_mem_addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_mem
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_mem
+    BLT.W  exit_row_loop_add_to_mem
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -955,6 +1103,22 @@ __asm void *AsmAddToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, 
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_mem
+    exit_row_loop_add_to_mem
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_mem
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_mem
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    LDR    R3,  [sp, #0x4c]        //Get  dst_mem_addr of last channel
+    ADD    R3,  R4
+    B      channel_loop_add_to_mem
     exit_add_to_mem
     POP     {R4 - R12, LR}
     BX      lr
@@ -971,13 +1135,21 @@ __asm void *AsmAddToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, 
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToBoth(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToBoth(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_last_mem_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_both
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_both
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
+    STR    R3,  [sp, #0x4c]        //Save dst_mem_addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_both
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_both
+    BLT.W  exit_row_loop_add_to_both
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -1062,6 +1234,22 @@ __asm void *AsmAddToBoth(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_both
+    exit_row_loop_add_to_both
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_both
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_both
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    LDR    R3,  [sp, #0x4c]        //Get  dst_mem_addr of last channel
+    ADD    R3,  R4
+    B      channel_loop_add_to_both
     exit_add_to_both
     POP     {R4 - R12, LR}
     BX      lr
@@ -1077,13 +1265,20 @@ __asm void *AsmAddToBoth(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
  *R11: row       row loop counter, start from valid_len_row
  *R12: tmp
  */
-__asm void *AsmAddToBank(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmAddToBank(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int16_t *dst_mem_addr, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr)
 {
     PUSH   {R4 - R12, LR}
+
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_add_to_bank
+    LDR    R4,  [sp, #0x38]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_add_to_bank
+    STRD   R0,  R1,  [sp, #0x44]   //Save mem_addr and bank addr
     LDR    R11, [sp, #0x30]  //Get  valid_len_row
     row_loop_add_to_bank
     CMP    R11, #1           //Check bank row end
-    BLT.W  exit_add_to_bank
+    BLT.W  exit_row_loop_add_to_bank
     LDR    R10, [sp, #0x34]  //Get valid_row_off(0x30)
     LDR    R8,  [sp, #0x30]  //Get  valid_len_row
     SUB    R8,  R11
@@ -1147,6 +1342,20 @@ __asm void *AsmAddToBank(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
     ADDEQ  R1,  R1, R9,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop_add_to_bank
+    exit_row_loop_add_to_bank
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x48]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    oddch_addrinc_add_to_bank
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x40]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_add_to_bank
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x3c]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x44]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    B      channel_loop_add_to_bank
     exit_add_to_bank
     POP     {R4 - R12, LR}
     BX      lr
@@ -1160,18 +1369,25 @@ __asm void *AsmAddToBank(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
  *R4-R7:         Data from Bank(4 cols, 2 rows)
  *R8-R9:         Temp Data
  *R10: col       col loop counter, start from valid_len_col
- *R11: row       row loop counter, start from 0
+ *R11: row       row loop counter, start from valid_len_row
  *R12: valid_len_col(backup value)
+ *R14: ch        channel loop counter, start from 0
  */
-__asm void *AsmCopyToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off)
+__asm void *AsmCopyToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr)
 {
     PUSH   {R4 - R12, LR}
-    LDRD   R12, R11, [sp, #0x28]        //Get  valid_len_col, valid_len_row
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop
+    LDR    R4,  [sp, #0x34]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W    exit_copy_to_mem          // BGE
+    STRD   R0,  R1,  [sp, #0x40]   //Save mem_addr and bank addr
+    LDRD   R12, R11, [sp, #0x28]   //Get  valid_len_col, valid_len_row
     row_loop
     CMP    R11, #1                 //Check bank row end
-    BLT    exit_copy_to_mem
+    BLT    exit_row_loop
     LDR    R10, [sp, #0x30]        //Get valid_row_off(0x30)
-    LDR    R8, [sp, #0x2c]        //Get valid_len_row(0x2c)   R8 = 9
+    LDR    R8, [sp, #0x2c]        //Get valid_len_row(0x2c)
     SUB    R8,  R11
     CMP    R8, R10                //Check bank row start
     BLT    exit_col_loop
@@ -1238,6 +1454,20 @@ __asm void *AsmCopyToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
     ADDEQ  R1,  R1, R3,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R11, #0x2              //Decrease 2 rows
     B      row_loop
+    exit_row_loop
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x44]        //Get  bank_addr of last channel
+    ANDS   R4,  R14, #1            //Check Odd channel or even channel
+    BNE    odd_channel_addrinc
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x3c]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    odd_channel_addrinc
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x38]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x40]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    B      channel_loop
     exit_copy_to_mem
     POP     {R4 - R12, LR}
     BX      lr
@@ -1256,9 +1486,16 @@ __asm void *AsmCopyToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num,
  *valid_len_col(sp+0x28) valid_len_row(sp+0x2c) start_col(sp+0x30) start_row(sp+0x34) row_num(sp+0x38) valid_col_off(sp+0x3c)
  *valid_row_off(sp+0x40)
  */
-__asm void *AsmCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t start_col, int32_t start_row, int32_t row_num, int32_t valid_col_off, int32_t valid_row_off)
+__asm void *AsmCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t start_col, int32_t start_row, int32_t row_num, int32_t valid_col_off, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_channel_off, int32_t padding_right_start)
 {
     PUSH   {R4 - R12, LR}
+    MOV    R14, #0                 //Start channel is 0
+    channel_loop_cp_from_mem
+    LDR    R4,  [sp, #0x44]        //Get  len_channel
+    CMP    R14, R4
+    BGE.W  exit_copy_from_mem
+    STRD   R0,  R1,  [sp, #0x50]   //Save mem_addr and bank addr
+
     LDR    R9,  [sp, #0x34]       //Get  start_row
     //Clear padding-up rows R9:row R8: col
     clear_row_loop_cp_from_mem
@@ -1288,7 +1525,7 @@ __asm void *AsmCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_nu
     row_loop_cp_from_mem
     LDR    R10, [sp, #0x2c]        //Get valid_len_row(0x2c)
     CMP    R11, R10                //Check bank row end
-    BGE.W  exit_copy_from_mem
+    BGE.W  exit_row_loop_cp_from_mem
     LDR    R9,  [sp, #0x34]        //Get start_row(0x34)
     ADD    R8,  R11, R9            //row + start_row
     LDR    R7,  [sp, #0x38]        //Get row_num
@@ -1348,8 +1585,7 @@ __asm void *AsmCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_nu
     SUB    R0,  R3, LSL #1       //Mem pointer go back to valid_col_off (- len_col)
     SUB    R1,  R3, LSL #2       //Bank pointer go back to valid_col_off (- len_col)
     //Clear padding-right cols(col_num - start_col)
-    LDR    R7,  [sp, #0x30]        //Get start_col(R7)
-    SUB    R8,  R2, R7
+    LDR    R8,  [sp, #0x5c]      //Get padding_right_start_col(R7)
     MOV    R4,  #0
     clear_col_loop3_cp_from_mem
     CMP    R8,  R3                //Check col_end
@@ -1382,6 +1618,22 @@ __asm void *AsmCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_nu
     ADDEQ  R1,  R1, R3,  LSL #2   //Bank pointer add one col (+ len_col)
     ADD    R11, #0x2              //Add row loop counter (2 rows)
     B      row_loop_cp_from_mem
+    exit_row_loop_cp_from_mem
+    ADD    R14, #1
+    LDR    R1,  [sp, #0x54]        //Get  bank_addr of last channel
+    LDR    R4,  [sp, #0x58]        //Get  dst_bank_channel_off
+    ADD    R4,  R14
+    ANDS   R4,  R4, #1             //Check Odd channel or even channel
+    BNE    oddch_addrinc_copy_from_mem
+    SUB    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x4c]        //Increase bank addr for even channel
+    ADD    R1,  R4
+    oddch_addrinc_copy_from_mem
+    ADDNE  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x48]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x50]        //Get  mem_addr of last channel
+    ADD    R0,  R4
+    B      channel_loop_cp_from_mem
     exit_copy_from_mem
     POP     {R4 - R12, LR}
     BX      lr
@@ -1400,10 +1652,17 @@ __asm void *AsmCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_nu
  *valid_len_col(sp+0x28) valid_len_row(sp+0x2c) start_col(sp+0x30) start_row(sp+0x34) row_num(sp+0x38) valid_col_off(sp+0x3c)
  *valid_row_off(sp+0x40)
  */
-__asm void *AsmCopyFromMem1x1(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t start_col, int32_t start_row, int32_t row_num, int32_t valid_col_off, int32_t valid_row_off)
+__asm void *AsmCopyFromMem1x1(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t start_col, int32_t start_row, int32_t row_num, int32_t valid_col_off, int32_t valid_row_off, int32_t len_channel, int32_t mem_ch_size, int32_t bank_ch_size, int32_t last_mem_addr, int32_t last_bank_addr, int32_t dst_channel_off, int32_t padding_right_start)
 {
     PUSH   {R4 - R12, LR}
-    LDR    R9,  [sp, #0x34]       //Get  start_row
+
+    LDR    R14, [sp, #0x44]       //Get len_channel
+    channel_loop_cp_from_mem1x1
+    CMP    R14, #0
+    BLT.W  exit_copy_from_mem1x1
+    STRD   R0,  R1,  [sp, #0x50]   //Save mem_addr and bank addr
+
+    LDR    R9,  [sp, #0x34]        //Get  start_row
     //Clear padding-up rows R9:row R8: col
     clear_row_loop_cp_from_mem1x1
     CMP    R9,  #0x0
@@ -1431,7 +1690,7 @@ __asm void *AsmCopyFromMem1x1(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
     row_loop_cp_from_mem1x1
     LDR    R10, [sp, #0x2c]       //Get valid_len_row(0x2c)
     CMP    R11, R10               //Check bank row end
-    BGE.W  exit_copy_from_mem1x1
+    BGE.W  exit_row_loop_cp_from_mem1x1
     LDR    R9,  [sp, #0x34]        //Get start_row(0x34)
     ADD    R8,  R11, R9            //row + start_row
     LDR    R7,  [sp, #0x38]        //Get row_num
@@ -1513,8 +1772,11 @@ __asm void *AsmCopyFromMem1x1(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
     exit_dword1_col_loop_cp_from_mem1x1
     SUB    R0,  R3, LSL #1         //Mem pointer go back to valid_col_off (- len_col)
     SUB    R1,  R3, LSL #3         //Bank pointer go back to valid_col_off (- len_col)//Clear padding-right cols(col_num - start_col)
-    LDR    R7,  [sp, #0x30]        //Get start_col(R7)
-    SUB    R8,  R2, R7
+    //Clear padding-right cols(col_num - start_col)
+    LDR    R8,  [sp, #0x5c]      //Get padding_right_start_col(R8)
+    MOV    R4,  #0
+    //LDR    R7,  [sp, #0x30]        //Get start_col(R7)
+    //SUB    R8,  R2, R7
     ADD    R5,  R1, R8, LSL #3
     clear_col_loop3_cp_from_mem1x1
     CMP    R8,  R3                //Check col_end
@@ -1545,6 +1807,22 @@ __asm void *AsmCopyFromMem1x1(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
     ADDEQ  R1,  R1, R3,  LSL #3   //Bank pointer add one col (+ 2*len_col)
     ADD    R11, #0x1              //Add row loop counter (Actually 2 rows)
     B      row_loop_cp_from_mem1x1
+    exit_row_loop_cp_from_mem1x1
+    SUBS   R14, #4                //channel -= 4
+    BLT    exit_copy_from_mem1x1
+    LDR    R1,  [sp, #0x54]        //Get  bank_addr of last channel
+    LSR    R4,  R14, #2            //channel /= 4
+    ANDS   R4,  R4,  #1            //Check Odd channel or even channel
+    BEQ    oddch_addrinc_copy_from_mem1x1
+    ADD    R1,  #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x4c]        //Increase bank addr for even channel
+    SUB    R1,  R4
+    oddch_addrinc_copy_from_mem1x1
+    SUBEQ  R1,  #0x10000           //Increase bank addr for odd channel
+    LDR    R4,  [sp, #0x48]        //Get  mem_ch_size
+    LDR    R0,  [sp, #0x50]        //Get  mem_addr of last channel
+    SUB    R0,  R4                 //Decrease mem address
+    B      channel_loop_cp_from_mem1x1
     exit_copy_from_mem1x1
     POP     {R4 - R12, LR}
     BX      lr
@@ -1560,16 +1838,24 @@ __asm void *AsmCopyFromMem1x1(int16_t *mem_addr, uint8_t *bank_addr, int32_t col
  *R10: col       col loop counter, start from valid_len_col
  *R11: row       row loop counter, start from valid_len_row
  */
-__asm void AsmCopyToBank1x1(uint8_t *bank_addr, uint8_t *dst_bank_addr, int32_t len_row, int32_t len_col)
+__asm void AsmCopyToBank1x1(uint8_t *bank_addr, uint8_t *dst_bank_addr, int32_t len_row, int32_t len_col, int32_t len_row_bak, int32_t channel, int32_t last_bank_addr, int32_t last_dst_bank_addr)
 {
     PUSH   {R4 - R12, LR}
     MOV    R12,  R2               //R12 = len_col * ((len_row + 7)/8)
     ADD    R12,  #0x7
     LSR    R12,  #0x3
     MUL    R12,  R3
+
+    LDR    R14, [sp, #0x2c]       //Get ((len_channel - 1)/4)*4
+    channel_loop_copy_to_bank1x1
+    LDR    R2,  [sp, #0x28]       //Get len_row_bak
+    CMP    R14, #0
+    BLT    exit_copy_to_bank1x1
+    STRD   R0,  R1,  [sp, #0x30]   //Save bank_addr and dst_bank addr
+
     row_loop_cp_to_bank1x1
     SUBS   R2,  #2
-    BLT    exit_copy_to_bank1x1
+    BLT    exit_row_loop_cp_to_bank1x1
     MOV    R10, R3
     dword4_col_loop_cp_to_bank1x1
     SUBS   R10, #0x1
@@ -1599,6 +1885,20 @@ __asm void AsmCopyToBank1x1(uint8_t *bank_addr, uint8_t *dst_bank_addr, int32_t 
     SUBEQ  R1,  #0x10000          //Go back to Bank 0
     ADDEQ  R1,  R1, R3,  LSL #3   //Bank pointer add one col (+ 4*len_col)
     B      row_loop_cp_to_bank1x1
+    exit_row_loop_cp_to_bank1x1
+    SUB    R14, #4                 //channel -= 4
+    LDR    R0,  [sp, #0x30]        //Get last_bank_addr
+    SUB    R0,  R0, R12, LSL #3    //Decrease bank address
+
+    LDR    R1,  [sp, #0x34]        //Get last_dst_bank_addr
+    LSR    R4,  R14, #2            //channel/4
+    ANDS   R4,  R4, #1             //Check Odd channel or even channel
+    BEQ    oddch_addrinc_copy_to_bank1x1
+    ADD    R1,  #0x10000           //Increase bank addr for even channel
+    SUB    R1,  R1, R12, LSL #4
+    oddch_addrinc_copy_to_bank1x1
+    SUBEQ  R1,  R1,  #0x10000     //Increase bank addr for odd channel
+    B      channel_loop_copy_to_bank1x1
     exit_copy_to_bank1x1
     POP     {R4 - R12, LR}
     BX      lr
@@ -1613,13 +1913,22 @@ __asm void AsmCopyToBank1x1(uint8_t *bank_addr, uint8_t *dst_bank_addr, int32_t 
  *R8:  col       col loop counter
  *R9: op
  */
-__asm void AsmCopyChannel(uint8_t *bank_addr, uint8_t *dst_bank_addr, int32_t len_row, int32_t len_col, int op)
+__asm void AsmCopyChannel(uint8_t *bank_addr, uint8_t *dst_bank_addr, int32_t len_row, int32_t len_col, int op, int32_t len_channel, int32_t bank_ch_size, int32_t src_channl_off, int32_t dst_channel_off)
 {
-    PUSH   {R4 - R9, LR}
-    LDR    R9, [sp, #0x1C]  //Get  op
+    PUSH   {R4 - R12, LR}
+    LDR    R9,  [sp, #0x28]  //Get op
+    MOV    R14, #0
+    MOV    R12, R2
+    channel_loop_copy_channel
+    LDR    R4, [sp, #0x2C]  //Get len_channel
+    CMP    R14, R4
+    BGE    exit_copy_channel
+    MOV    R11, R0          //Save last src channel addr to R11
+    MOV    R10, R1          //Save last dst channel addr to R12
+    MOV    R2,  R12
     row_loop_copy_channel
     CMP    R2, #0x1
-    BLT    exit_copy_channel
+    BLT    exit_row_loop_copy_channel
     CMP    R9, #0x1
     BGE    exchange_channel
     MOV    R8, R3
@@ -1662,8 +1971,29 @@ __asm void AsmCopyChannel(uint8_t *bank_addr, uint8_t *dst_bank_addr, int32_t le
     ADDEQ  R1,  R1, R3,  LSL #2   //Bank pointer add one col (+ len_col)
     SUBS   R2,  #0x2              //Decrease 2 rows
     B      row_loop_copy_channel
+    exit_row_loop_copy_channel
+    ADD    R14, #1
+    LDR    R0,  [sp, #0x34]        //Get src_bank_channel_off
+    ADD    R4,  R0,  R14
+    ANDS   R4,  R4, #1             //Check Odd channel or even channel
+    BNE    oddch_addrinc_copy_channel
+    SUB    R11, #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x30]        //Get bank_ch_size
+    ADD    R0,  R11, R4
+    oddch_addrinc_copy_channel
+    ADDNE  R0,  R11,  #0x10000     //Increase bank addr for odd channel
+    LDR    R1,  [sp, #0x38]        //Get dst_bank_channel_off
+    ADD    R4,  R1,  R14           //Get dst_channel
+    ANDS   R4,  R4, #1             //Check Odd channel or even channel
+    BNE    oddch_addrinc_copy_channel1
+    SUB    R10, #0x10000           //Increase bank addr for even channel
+    LDR    R4,  [sp, #0x30]        //Get bank_ch_size
+    ADD    R1,  R10, R4
+    oddch_addrinc_copy_channel1
+    ADDNE  R1,  R10,  #0x10000     //Increase bank addr for odd channel
+    B      channel_loop_copy_channel
     exit_copy_channel
-    POP     {R4 - R9, LR}
+    POP     {R4 - R12, LR}
     BX      lr
 }
 
@@ -1759,7 +2089,7 @@ void FastCopyToMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32
 }
 
 
-void FastCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t start_col, int32_t start_row, int32_t row_num, int32_t valid_col_off, int32_t valid_row_off)
+void FastCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int32_t len_col, int32_t valid_len_col, int32_t valid_len_row, int32_t start_col, int32_t start_row, int32_t row_num, int32_t valid_col_off, int32_t valid_row_off, int32_t padding_right_start)
 {
     int32_t row, col;
 
@@ -1812,7 +2142,7 @@ void FastCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int
                 ((int16_t *)bank_addr)[2 * col + 1] = mem_addr[col];
             }
             /* Padding right col */
-            for (col = col_num - start_col; col < len_col; ++col)
+            for (col = padding_right_start; col < len_col; ++col)
             {
                 ((int16_t *)bank_addr)[2 * col + 1] = 0;
             }
@@ -1840,7 +2170,7 @@ void FastCopyFromMem(int16_t *mem_addr, uint8_t *bank_addr, int32_t col_num, int
                 ((int16_t *)bank_addr)[2 * col] = mem_addr[col_num + col];
             }
             /* Padding right col */
-            for (col = col_num - start_col; col < len_col; ++col)
+            for (col = padding_right_start; col < len_col; ++col)
             {
                 ((int16_t *)bank_addr)[2 * col] = 0;
             }
@@ -2165,15 +2495,21 @@ void kdp_print_bank_op(int code)
 static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
 {
     unsigned char *bank_addr, *bank_start_addr;
-    int16_t *mem_addr;
-    int32_t row_num, col_num, channel, row, col, mem_off;
+    int16_t val, *mem_addr;
+    int32_t row_num, col_num, channel, row, col, mem_off, real_col_num;
     int32_t start_row, valid_len_row, valid_len_col, len_row, start_col, len_col, start_channel, len_channel, valid_row_off, valid_col_off;
     int32_t  activation = param->activation;
-    int buffer = 0;
-    int16_t val = 0;
+
+    int mem_ch_size;
+    int bank_ch_size;
 
     row_num       = param->row_num;
-    col_num       = param->col_num;
+    real_col_num  = param->col_num;
+#ifdef FORCE_COL_NUM_EVEN
+    col_num       = ((param->col_num + 1) / 2) * 2;
+#else
+    col_num       =  real_col_num;
+#endif
     len_channel   = param->len_channel;
     len_row       = param->len_row;
     valid_len_row = param->valid_len_row;
@@ -2183,6 +2519,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
     start_col     = param->start_col;
     valid_row_off = param->valid_start_row - param->start_row;
     valid_col_off = param->valid_start_col - param->start_col;
+    valid_len_col = len_col;
 
     mem_addr      = cxt->layer_buffer[param->buffer];
     if (param->bank == 0)
@@ -2194,66 +2531,86 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
         bank_start_addr = cxt->bank_c_addr;
     }
 
-
-    for (channel = 0; channel < len_channel; channel++)
+    /* Process all bank data of one channel, you can optimize following code by assembly language on platform */
+    switch (param->op)
     {
-        /* Set bank pointer to channel start of bank */
-        bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
-        bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
-        /* Set row pointer to channel start of shorcut buffer */
-        mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
-
-
-        //if (param->op== BANK_CP_TO_MEM && (channel + start_channel) == 0 && start_row + valid_len_row > 26)
-        //{
-        //  printf("pp");
-        //}
-        /* Process all bank data of one channel, you can optimize following code by assembly language on platform */
-        switch (param->op)
-        {
-            case BANK_CP_FROM_MEM:
+        case BANK_CP_FROM_MEM:
 #ifdef ARMC4_OPT
-                AsmCopyFromMem(&mem_addr[mem_off], bank_addr, col_num, len_col, valid_len_col, valid_len_row, start_col, start_row, row_num, valid_col_off, valid_row_off);
+            bank_addr  = bank_start_addr + ((param->dst_channel_off) & 0x1) * 0x10000;
+            bank_addr += (param->dst_channel_off / 2) * len_col * ((len_row + 7) / 8) * 4;
+            mem_off = col_num * (start_row + row_num * start_channel) + start_col;
+            bank_ch_size = len_col * ((len_row + 7) / 8) * 4;
+            mem_ch_size  = row_num * col_num * 2;
+            AsmCopyFromMem(&mem_addr[mem_off], bank_addr, col_num, len_col, valid_len_col, valid_len_row, start_col, start_row, row_num, valid_col_off, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0, param->dst_channel_off, real_col_num - start_col);
 #else
-                FastCopyFromMem(&mem_addr[mem_off], bank_addr, col_num, len_col, valid_len_col, valid_len_row, start_col, start_row, row_num, valid_col_off, valid_row_off);
-#endif
-                break;
-            case BANK_CP_TO_MEM:
+            for (channel = 0; channel < len_channel; channel++)
             {
-                valid_len_col = (len_col <= (col_num - start_col)) ? len_col : (col_num - start_col);
-#ifdef ARMC4_OPT
-                AsmCopyToMem(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, len_col, valid_len_col, valid_len_row, valid_row_off);
-#else
-                FastCopyToMem(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, len_col, valid_len_col, valid_len_row, valid_row_off);
-#endif
-                break;
+                bank_addr  = bank_start_addr + ((param->dst_channel_off + channel) & 0x1) * 0x10000;
+                bank_addr += ((param->dst_channel_off + channel) / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+                FastCopyFromMem(&mem_addr[mem_off], bank_addr, col_num, len_col, valid_len_col, valid_len_row, start_col, start_row, row_num, valid_col_off, valid_row_off, real_col_num - start_col);
             }
 
-            case BANK_ADD_TO_MEM: /* Used for input channel cut */
+#endif
+            break;
+        case BANK_CP_TO_MEM:
+        {
+#ifdef ARMC4_OPT
+            bank_addr  = bank_start_addr;
+            mem_off = col_num * (start_row + row_num * start_channel) + start_col;
+            bank_ch_size = len_col * ((len_row + 7) / 8) * 4;
+            mem_ch_size  = row_num * col_num * 2;
+            valid_len_col = (len_col <= (col_num - start_col)) ? len_col : (col_num - start_col);
+            AsmCopyToMem(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0);
+#else
+            for (channel = 0; channel < len_channel; channel++)
             {
-                int16_t *dst_mem_addr;
-                int32_t dst_mem_off;
+                bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
+                bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+                valid_len_col = (len_col <= (col_num - start_col)) ? len_col : (col_num - start_col);
+                FastCopyToMem(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, len_col, valid_len_col, valid_len_row, valid_row_off);
+            }
+#endif
+            break;
+        }
+        case BANK_ADD_TO_MEM: /* Used for input channel cut */
+        {
+            int16_t *dst_mem_addr;
+            int32_t dst_mem_off;
+#ifdef ARMC4_OPT
+            bank_addr  = bank_start_addr;
+            mem_off = col_num * (start_row + row_num * start_channel) + start_col;
+            bank_ch_size = len_col * ((len_row + 7) / 8) * 4;
+            mem_ch_size  = row_num * col_num * 2;
+            /* Never write beyond valid range */
+            valid_len_col = (len_col <= (col_num - start_col)) ? len_col : (col_num - start_col);
+            dst_mem_addr  = cxt->layer_buffer[param->dst_buffer];
+            dst_mem_off = col_num * (start_row + row_num * start_channel) + start_col;
 
+            if (activation == RELU)
+            {
+                AsmAddToMemRelu(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0, 0);
+            }
+            else if (activation == LEAKY)
+            {
+                AsmAddToMemLeaky(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0, 0);
+            }
+            else
+            {
+                AsmAddToMem(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0, 0);
+            }
+#else
+            for (channel = 0; channel < len_channel; channel++)
+            {
+                bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
+                bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
                 /* Never write beyond valid range */
                 valid_len_col = (len_col <= (col_num - start_col)) ? len_col : (col_num - start_col);
-                dst_mem_addr   = cxt->layer_buffer[param->dst_buffer];
-                dst_mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
-#ifdef ARMC4_OPT
-                if (activation == RELU)
-                {
-                    AsmAddToMemRelu(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-                else if (activation == LEAKY)
-                {
-                    AsmAddToMemLeaky(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-                else
-                {
-                    AsmAddToMem(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-#else
+                dst_mem_addr  = cxt->layer_buffer[param->dst_buffer];
+                dst_mem_off   = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
 
-                /* TODO: Saturation add is necessary */
                 for (row = 0; row < valid_len_row;)
                 {
                     if (row >= valid_row_off)
@@ -2330,24 +2687,36 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                         bank_addr += 0x4000;
                     }
                 };
-#endif
-                break;
             }
-            case BANK_ADD_FROM_MEM: /* Used for shortcut operation */
+#endif
+            break;
+        }
+        case BANK_ADD_FROM_MEM: /* Used for shortcut operation */
 #ifdef ARMC4_OPT
-                if (activation == RELU)
-                {
-                    AsmAddToBankRelu(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, NULL, len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-                else if (activation == LEAKY)
-                {
-                    AsmAddToBankLeaky(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, NULL, len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-                else
-                {
-                    AsmAddToBank(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, NULL, len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
+            bank_addr  = bank_start_addr;
+            mem_off = col_num * (start_row + row_num * start_channel) + start_col;
+            bank_ch_size = len_col * ((len_row + 7) / 8) * 4;
+            mem_ch_size  = row_num * col_num * 2;
+
+            if (activation == RELU)
+            {
+                AsmAddToBankRelu(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, NULL, len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0);
+            }
+            else if (activation == LEAKY)
+            {
+                AsmAddToBankLeaky(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, NULL, len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0);
+            }
+            else
+            {
+                AsmAddToBank(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, NULL, len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0);
+            }
 #else
+            for (channel = 0; channel < len_channel; channel++)
+            {
+                bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
+                bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+
                 /* TODO: Saturation add is necessary */
                 for (row = 0; row < valid_len_row;)
                 {
@@ -2378,7 +2747,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                                 ((int16_t *)bank_addr)[2 * col + 1] += mem_addr[mem_off + col];
                             }
                         }
-                        for (col = col_num - start_col; col < len_col; ++col)
+                        for (col = real_col_num - start_col; col < len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col + 1] = 0;
                         }
@@ -2410,7 +2779,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                                 ((int16_t *)bank_addr)[2 * col] += mem_addr[mem_off + col_num + col];
                             }
                         }
-                        for (col = col_num - start_col; col < len_col; ++col)
+                        for (col = real_col_num - start_col; col < len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col] = 0;
                         }
@@ -2430,31 +2799,45 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                         bank_addr += 0x4000;
                     }
                 };
+            }
 #endif
+            break;
+        case BANK_ADD_BOTH: /* Used for shortcut operation */
+        {
+            int16_t *dst_mem_addr;
+            int32_t dst_mem_off;
 
-                break;
-            case BANK_ADD_BOTH: /* Used for shortcut operation */
+#ifdef ARMC4_OPT
+            bank_addr  = bank_start_addr;
+            mem_off = col_num * (start_row + row_num * start_channel) + start_col;
+            bank_ch_size = len_col * ((len_row + 7) / 8) * 4;
+            mem_ch_size  = row_num * col_num * 2;
+            valid_len_col = (len_col <= (col_num - start_col)) ? len_col : (col_num - start_col);
+            dst_mem_addr   = cxt->layer_buffer[param->dst_buffer];
+            dst_mem_off = col_num * (start_row + row_num * start_channel) + start_col;
+
+            if (activation == RELU)
             {
-                int16_t *dst_mem_addr;
-                int32_t dst_mem_off;
-
+                AsmAddToBothRelu(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0, 0);
+            }
+            else if (activation == LEAKY)
+            {
+                AsmAddToBothLeaky(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0, 0);
+            }
+            else
+            {
+                AsmAddToBoth(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off, len_channel, mem_ch_size, bank_ch_size, 0, 0, 0);
+            }
+#else
+            for (channel = 0; channel < len_channel; channel++)
+            {
+                bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
+                bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
                 valid_len_col = (len_col <= (col_num - start_col)) ? len_col : (col_num - start_col);
                 dst_mem_addr   = cxt->layer_buffer[param->dst_buffer];
                 dst_mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
-#ifdef ARMC4_OPT
-                if (activation == RELU)
-                {
-                    AsmAddToBothRelu(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-                else if (activation == LEAKY)
-                {
-                    AsmAddToBothLeaky(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-                else
-                {
-                    AsmAddToBoth(&mem_addr[mem_off + valid_col_off], (bank_addr + 4 * valid_col_off), col_num, &dst_mem_addr[dst_mem_off + valid_col_off], len_col, valid_len_col, valid_len_row, valid_row_off);
-                }
-#else
+
                 /* TODO: Saturation add is necessary */
                 for (row = 0; row < valid_len_row;)
                 {
@@ -2487,7 +2870,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                                 ((int16_t *)bank_addr)[2 * col + 1]  = dst_mem_addr[dst_mem_off + col] = val;
                             }
                         }
-                        for (col = col_num - start_col; col < valid_len_col; ++col)
+                        for (col = real_col_num - start_col; col < valid_len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col + 1] = 0;
                         }
@@ -2522,7 +2905,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                                 ((int16_t *)bank_addr)[2 * col]  = dst_mem_addr[dst_mem_off + col_num + col] = val;
                             }
                         }
-                        for (col = col_num - start_col; col < len_col; ++col)
+                        for (col = real_col_num - start_col; col < len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col] = 0;
                         }
@@ -2543,10 +2926,17 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                         bank_addr += 0x4000;
                     }
                 };
-#endif
-                break;
             }
-            case BANK_PADDING:
+#endif
+            break;
+        }
+        case BANK_PADDING:
+            for (channel = 0; channel < len_channel; channel++)
+            {
+                bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
+                bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+
                 for (row = start_row; row < 0;)
                 {
                     for (col = 0; col < len_col; ++col)
@@ -2581,7 +2971,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                             ((int16_t *)bank_addr)[2 * col + 1] = 0;
                         }
                         /* Padding right col */
-                        for (col = col_num - start_col; col < len_col; ++col)
+                        for (col = real_col_num - start_col; col < len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col + 1] = 0;
                         }
@@ -2604,7 +2994,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                             ((int16_t *)bank_addr)[2 * col] = 0;
                         }
                         /* Padding right col */
-                        for (col = col_num - start_col; col < len_col; ++col)
+                        for (col = real_col_num - start_col; col < len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col] = 0;
                         }
@@ -2624,10 +3014,16 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                         bank_addr += 0x4000;
                     }
                 };
-                break;
-
-            case BANK_CP_FROM_MEM_WITHBN:
+            }
+            break;
+        case BANK_CP_FROM_MEM_WITHBN:
+        {
+            for (channel = 0; channel < len_channel; channel++)
             {
+                bank_addr  = bank_start_addr + ((param->dst_channel_off + channel) & 0x1) * 0x10000;
+                bank_addr += ((param->dst_channel_off + channel) / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+
                 uint32_t *bn = (uint32_t *)(cxt->weight_start_addr + param->weight_offset);
                 int16_t gamma = (int16_t)(bn[channel] & 0xFFFF);
                 int16_t beta  = (int16_t)((bn[channel] >> 16) & 0xFFFF);;
@@ -2671,7 +3067,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                             ((int16_t *)bank_addr)[2 * col + 1] = fix32_round_truncate(mem_addr[mem_off + col] * gamma) + beta;
                         }
                         /* Padding right col */
-                        for (col = col_num - start_col; col < len_col; ++col)
+                        for (col = real_col_num - start_col; col < len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col + 1] = 0;
                         }
@@ -2699,7 +3095,7 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                             ((int16_t *)bank_addr)[2 * col] = fix32_round_truncate(mem_addr[mem_off + col_num + col] * gamma) + beta;
                         }
                         /* Padding right col */
-                        for (col = col_num - start_col; col < len_col; ++col)
+                        for (col = real_col_num - start_col; col < len_col; ++col)
                         {
                             ((int16_t *)bank_addr)[2 * col] = 0;
                         }
@@ -2720,14 +3116,21 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                         bank_addr += 0x4000;
                     }
                 };
-                break;
             }
-
-            case BANK_ACTIVATION_CHANNEL:
+            break;
+        }
+        case BANK_ACTIVATION_CHANNEL:
+        {
+            for (channel = 0; channel < len_channel; channel++)
             {
+                bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
+                bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+
                 int16_t *relu_num_addr = (int16_t *)(cxt->weight_start_addr + param->weight_offset);
                 int16_t relu_num = relu_num_addr[param->start_channel + channel];
                 uint32_t uint_val_in, uint_val_out;
+
                 for (row = 0; row < len_row;)
                 {
                     for (col = 0; col < len_col; ++col)
@@ -2754,15 +3157,22 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                         bank_addr += 0x4000;
                     }
                 };
-                break;
             }
-
-            case BANK_BATCHNORM_CHANNEL:
+            break;
+        }
+        case BANK_BATCHNORM_CHANNEL:
+        {
+            for (channel = 0; channel < len_channel; channel++)
             {
+                bank_addr  = bank_start_addr + (channel & 0x1) * 0x10000;
+                bank_addr += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+
                 uint32_t *bn = (uint32_t *)(cxt->weight_start_addr + param->weight_offset);
                 int16_t gamma = (int16_t)(bn[channel] & 0xFFFF);
                 int16_t beta  = (int16_t)((bn[channel] >> 16) & 0xFFFF);
                 uint32_t uint_val_in, uint_val_out;
+
                 for (row = 0; row < len_row;)
                 {
                     for (col = 0; col < len_col; ++col)
@@ -2789,14 +3199,16 @@ static void do_bank_op(struct bank_op_param *param, struct conv_hw_context *cxt)
                         bank_addr += 0x4000;
                     }
                 };
-                break;
             }
-
-            default:
-                break;
+            break;
         }
+        default:
+            break;
     }
-    //if (param->op == BANK_CP_TO_MEM && param->layer_num == 12 && param->start_channel + param->len_channel >= cxt->total_out_ch && param->start_row + param->valid_len_row >= param->row_num && param->start_col + param->len_col >= param->col_num)
+
+
+    //if (param->op == BANK_CP_TO_MEM && param->layer_num == 77 && param->start_channel + param->len_channel >= cxt->total_out_ch && param->start_row + param->valid_len_row >= param->row_num && param->start_col + param->len_col >= param->col_num)
+    //if (param->op == BANK_CP_TO_MEM && param->layer_num == 51 && param->start_channel == 0 && param->start_row + param->valid_len_row >= param->row_num && param->start_col + param->len_col >= param->col_num)
     //{
     //  printf("debug\n");
     //}
@@ -2824,6 +3236,15 @@ static void do_channel_cp(struct bank_op_param *param, struct conv_hw_context *c
         bank_start_addr = cxt->bank_c_addr;
     }
 
+#ifdef ARMC4_OPT
+    bank_addr  = bank_start_addr + ((param->src_channel_off) & 0x1) * 0x10000;
+    bank_addr += ((param->src_channel_off) / 2) * len_col * ((len_row + 7) / 8) * 4;
+
+    dst_bank_addr  = bank_start_addr + ((param->dst_channel_off) & 0x1) * 0x10000;
+    dst_bank_addr += ((param->dst_channel_off) / 2) * len_col * ((len_row + 7) / 8) * 4;
+
+    AsmCopyChannel(bank_addr, dst_bank_addr, len_row, len_col, ((param->op == BANK_EXCHANGE_CHANNEL) ? 1 : 0), len_channel, len_col * ((len_row + 7) / 8) * 4, param->src_channel_off, param->dst_channel_off);
+#else
     for (channel = 0; channel < len_channel; channel++)
     {
         /* Set bank pointer to channel start of bank */
@@ -2896,19 +3317,24 @@ static void do_channel_cp(struct bank_op_param *param, struct conv_hw_context *c
                 break;
         }
     }
-
+#endif
 }
 
 static void do_bank_op_1x1(struct bank_op_param *param, struct conv_hw_context *cxt)
 {
-    unsigned char *bank_addr, *bank_start_addr, *dst_bank_addr;
+    void *bank_addr, *bank_start_addr, *dst_bank_addr;
     int16_t val, *mem_addr;
-    int32_t row_num, col_num, channel, row, col, mem_off, ch_size;
+    int32_t row_num, col_num, channel, row, col, mem_off, ch_size, real_col_num;
     int32_t start_row, valid_len_row, valid_len_col, len_row, start_col, len_col, start_channel, len_channel, valid_row_off, valid_col_off;
     int32_t  activation = param->activation;
 
     row_num       = param->row_num;
-    col_num       = param->col_num;
+    real_col_num  = param->col_num;
+#ifdef FORCE_COL_NUM_EVEN
+    col_num       = ((param->col_num + 1) / 2) * 2;
+#else
+    col_num       = real_col_num;
+#endif
     len_channel   = param->len_channel;
     len_row       = param->len_row;
     valid_len_row = param->valid_len_row;
@@ -2930,20 +3356,27 @@ static void do_bank_op_1x1(struct bank_op_param *param, struct conv_hw_context *
         bank_start_addr = cxt->bank_c_addr;
     }
 
-    for (channel = (((len_channel - 1) / 4) * 4); channel >= 0; channel -= 4)
+    /* Process all bank data of one channel, you can optimize following code by assembly language on platform */
+    switch (param->op)
     {
-        /* Set bank pointer to channel start of bank , first 4 channels are all zero */
-        bank_addr  = bank_start_addr + ((channel / 4 + 2) & 0x1) * 0x10000;
-        bank_addr += ((channel / 4 + 2) / 2) * len_col * ((len_row + 7) / 8) * 4 * 4;
-        //bank_addr  = bank_start_addr + (((channel)/4)&0x1) * 0x10000;
-        //bank_addr += (((channel)/4)/2) * len_col * ((len_row + 7)/8) * 4 * 4;
-        /* Set row pointer to channel start of shorcut buffer */
-        mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+        case BANK_CP_FROM_MEM:
+#ifdef ASMC4_OPT
+            channel = (((len_channel - 1) / 4) * 4);
+            bank_addr  = bank_start_addr + ((channel / 4 + 2) & 0x1) * 0x10000;
+            bank_addr += ((channel / 4 + 2) / 2) * len_col * ((len_row + 7) / 8) * 4 * 4;
+            mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
+            bank_ch_size = len_col * ((len_row + 7) / 8) * 4 * 4;
+            mem_ch_size  = row_num * col_num * 2 * 4;
+            AsmCopyFromMem1x1(&mem_addr[mem_off], bank_addr, col_num, len_col, valid_len_col, valid_len_row, start_col, start_row, row_num, valid_col_off, valid_row_off, (((len_channel - 1) / 4) * 4), mem_ch_size, bank_ch_size, 0, 0, 0, real_col_num - start_col);
+#else
+            for (channel = (((len_channel - 1) / 4) * 4); channel >= 0; channel -= 4)
+            {
+                /* Set bank pointer to channel start of bank , first 4 channels are all zero */
+                bank_addr  = bank_start_addr + ((channel / 4 + 2) & 0x1) * 0x10000;
+                bank_addr += ((channel / 4 + 2) / 2) * len_col * ((len_row + 7) / 8) * 4 * 4;
+                /* Set row pointer to channel start of shorcut buffer */
+                mem_off = col_num * (start_row + row_num * (channel + start_channel)) + start_col;
 
-        /* Process all bank data of one channel, you can optimize following code by assembly language on platform */
-        switch (param->op)
-        {
-            case BANK_CP_FROM_MEM:
                 ch_size  = col_num * row_num;
                 for (row = start_row; row < 0;)
                 {
@@ -2981,7 +3414,7 @@ static void do_bank_op_1x1(struct bank_op_param *param, struct conv_hw_context *
 
                         }
                         /* Padding right col */
-                        for (col = 2 * (col_num - start_col); col < 2 * len_col; ++col)
+                        for (col = 2 * (real_col_num - start_col); col < 2 * len_col; ++col)
                         {
                             ((uint32_t *)bank_addr)[col] = 0;
                         }
@@ -3001,9 +3434,23 @@ static void do_bank_op_1x1(struct bank_op_param *param, struct conv_hw_context *
                         bank_addr += 0x4000;
                     }
                 };
+            }
+#endif
+            break;
+        case BANK_CP_TO_BANK:
+#ifdef ASMC4_OPT
+            channel = (((len_channel - 1) / 4) * 4);
 
-                break;
-            case BANK_CP_TO_BANK:
+
+            dst_bank_addr  = (param->bank == 0) ? cxt->bank_a_addr : cxt->bank_c_addr;
+            dst_bank_addr += ((channel / 4 + 2) & 0x1) * 0x10000;
+            dst_bank_addr += ((channel / 4 + 2) / 2) * len_col * ((len_row + 7) / 8) * 4 * 4;
+            bank_addr      = (param->bank == 0) ? cxt->bank_a_addr : cxt->bank_c_addr;
+            bank_addr     += (channel & 0x1) * 0x10000;
+            bank_addr     += (channel / 2) * len_col * ((len_row + 7) / 8) * 4;
+            AsmCopyToBank1x1(bank_addr, dst_bank_addr, len_row, len_col, len_row, (((len_channel - 1) / 4) * 4), 0, 0);
+#else
+            for (channel = (((len_channel - 1) / 4) * 4); channel >= 0; channel -= 4)
             {
                 uint32_t val0, val2, val4, val6;
 
@@ -3063,11 +3510,11 @@ static void do_bank_op_1x1(struct bank_op_param *param, struct conv_hw_context *
                         dst_bank_addr += 0x8000;
                     }
                 }
-                break;
             }
-            default:
-                break;
-        }
+#endif
+            break;
+        default:
+            break;
     }
 }
 
@@ -3105,6 +3552,9 @@ static void do_channel_cp_1x1(struct bank_op_param *param, struct conv_hw_contex
     dst_bank_addr += ((dst_off + 2) & 0x1) * 0x10000;
     dst_bank_addr += ((dst_off + 2) / 2) * len_col * ((len_row + 7) / 8) * 4 * 4;
 
+#ifdef ARMC4_OPT
+    AsmCopyChannel1x1(bank_addr, dst_bank_addr, len_row, len_col, 2 * col_off + ((row_off == 1) ? 0 : 1));
+#else
     /* Process all bank data of one channel, you can optimize following code by assembly language on platform */
     for (row = 0; row < len_row;)
     {
@@ -3140,17 +3590,22 @@ static void do_channel_cp_1x1(struct bank_op_param *param, struct conv_hw_contex
             dst_bank_addr += 0x8000;
         }
     }
-
+#endif
 }
 
 static void do_channel_demap(struct bank_op_param *out_param, struct bank_op_param *in_param, struct conv_hw_context *cxt, int len_channel, int conv_stride)
 {
     void *bank_start_addr, *dst_bank_addr;
     int16_t *mem_addr;
-    int32_t channel, row, col, out_col, i, mem_off;
+    int32_t channel, row, col, out_col, i, mem_off, mem_col_num;
     int32_t len_row, valid_len_row, len_col;
     uint32_t val;
 
+#ifdef FORCE_COL_NUM_EVEN
+    mem_col_num = (((out_param->col_num + 1) / 2) * 2);
+#else
+    mem_col_num = out_param->col_num;
+#endif
     len_row       = in_param->len_row;
     valid_len_row = in_param->valid_len_row;
     len_col       = in_param->len_col;
@@ -3172,7 +3627,7 @@ static void do_channel_demap(struct bank_op_param *out_param, struct bank_op_par
 
 
         mem_addr = cxt->layer_buffer[out_param->buffer];
-        mem_off  = out_param->col_num * out_param->row_num * (channel + out_param->src_channel_off);
+        mem_off  = mem_col_num * out_param->row_num * (channel + out_param->src_channel_off);
 
         for (row = 0; row < len_row;)
         {
@@ -3197,7 +3652,7 @@ static void do_channel_demap(struct bank_op_param *out_param, struct bank_op_par
             }
 
             /* Increase one row to pointer to mem buffer */
-            mem_off += out_param->col_num;
+            mem_off += mem_col_num;
 
             for (i = 0; i < conv_stride; i++)
             {
@@ -3225,10 +3680,15 @@ static void do_channel_demap_compress_1x1(struct bank_op_param *out_param, struc
 {
     void *bank_start_addr, *dst_bank_addr;
     int16_t *mem_addr;
-    int32_t channel, row, col, out_col, i, mem_off;
+    int32_t channel, row, col, out_col, i, mem_off, mem_col_num;
     int32_t len_row, valid_len_row, len_col;
     uint32_t dst_channel_off;
 
+#ifdef FORCE_COL_NUM_EVEN
+    mem_col_num = (((out_param->col_num + 1) / 2) * 2);
+#else
+    mem_col_num = out_param->col_num;
+#endif
     len_row       = in_param->len_row;
     valid_len_row = in_param->valid_len_row;
     len_col       = in_param->len_col;
@@ -3259,7 +3719,7 @@ static void do_channel_demap_compress_1x1(struct bank_op_param *out_param, struc
 
 
         mem_addr = cxt->layer_buffer[out_param->buffer];
-        mem_off  = out_param->col_num * out_param->row_num * (channel + out_param->src_channel_off);
+        mem_off  = mem_col_num * out_param->row_num * (channel + out_param->src_channel_off);
 
         for (row = 0; row < len_row;)
         {
@@ -3269,7 +3729,7 @@ static void do_channel_demap_compress_1x1(struct bank_op_param *out_param, struc
             }
 
             /* Increase one row to pointer to mem buffer */
-            mem_off += out_param->col_num;
+            mem_off += mem_col_num;
 
             for (i = 0; i < conv_stride; i++)
             {
@@ -3462,7 +3922,14 @@ static void do_bank_maxpool(struct bank_op_param *param, struct conv_hw_context 
                         max = val;
                     }
                 }
-                ((int16_t *)dst_bank_addr)[2 * col] = max;
+                if (max == -32768)
+                {
+                    ((int16_t *)dst_bank_addr)[2 * col] = 0;
+                }
+                else
+                {
+                    ((int16_t *)dst_bank_addr)[2 * col] = max;
+                }
             }
 #endif
 #if 0
@@ -3620,13 +4087,19 @@ static void bank_route(struct easynet_ops_param *param, struct conv_hw_context *
 
     int16_t *input;
     uint32_t ch_off, channel, row, col, out_ch;
-    uint32_t row_num, col_num, start_row, len_row, start_col, len_col, start_out_ch, len_out_ch, end_out_ch, bank_ch, start_channel, end_channel, len_channel;
+    uint32_t row_num, col_num, start_row, len_row, valid_len_row, start_col, len_col, start_out_ch, len_out_ch, end_out_ch, bank_ch, start_channel, end_channel, len_channel, real_col_num;
     void *bank_start_addr, *bank_addr;
 
     row_num   = bank_param->row_num;
-    col_num   = bank_param->col_num;
+    real_col_num   = bank_param->col_num;
+#ifdef FORCE_COL_NUM_EVEN
+    col_num   = ((bank_param->col_num + 1) / 2) * 2;
+#else
+    col_num   = real_col_num;
+#endif
     start_row = bank_param->start_row;
     len_row   = bank_param->len_row;
+    valid_len_row   = bank_param->valid_len_row;
     start_col = bank_param->start_col;
     len_col   = bank_param->len_col;
     start_out_ch = bank_param->start_channel;
@@ -3664,6 +4137,26 @@ static void bank_route(struct easynet_ops_param *param, struct conv_hw_context *
         end_channel  -=  out_ch;
         len_channel   = (end_channel - start_channel);
 
+#if 1
+        if (bank_param->weight_offset != 0)
+        {
+            bank_param->op = BANK_CP_FROM_MEM_WITHBN;
+            bank_param->buffer  = op_param->buffers[i];
+            bank_param->dst_channel_off = bank_ch;
+            bank_param->start_channel = start_channel;
+            bank_param->len_channel = len_channel;
+            do_bank_op(bank_param, cxt);
+        }
+        else
+        {
+            bank_param->op = BANK_CP_FROM_MEM;
+            bank_param->buffer  = op_param->buffers[i];
+            bank_param->dst_channel_off = bank_ch;
+            bank_param->start_channel = start_channel;
+            bank_param->len_channel = len_channel;
+            do_bank_op(bank_param, cxt);
+        }
+#else
         for (channel = 0; channel < len_channel; channel++)
         {
             /* Set bank pointer to channel start of bank */
@@ -3689,7 +4182,7 @@ static void bank_route(struct easynet_ops_param *param, struct conv_hw_context *
                         val = fix32_round_truncate(input[ch_off + col] * gamma) + beta;
                         ((int16_t *)bank_addr)[2 * col + 1] = val;
                     }
-                    for (col = col_num - start_col; col < len_col; ++col)
+                    for (col = real_col_num - start_col; col < len_col; ++col)
                     {
                         ((int16_t *)bank_addr)[2 * col + 1] = 0;
                     }
@@ -3700,7 +4193,7 @@ static void bank_route(struct easynet_ops_param *param, struct conv_hw_context *
                         val = fix32_round_truncate(input[ch_off + col_num + col] * gamma) + beta;
                         ((int16_t *)bank_addr)[2 * col] = val;
                     }
-                    for (col = col_num - start_col; col < len_col; ++col)
+                    for (col = real_col_num - start_col; col < len_col; ++col)
                     {
                         ((int16_t *)bank_addr)[2 * col] = 0;
                     }
@@ -3730,7 +4223,7 @@ static void bank_route(struct easynet_ops_param *param, struct conv_hw_context *
                     {
                         ((int16_t *)bank_addr)[2 * col + 1] = input[ch_off + col];
                     }
-                    for (col = col_num - start_col; col < len_col; ++col)
+                    for (col = real_col_num - start_col; col < len_col; ++col)
                     {
                         ((int16_t *)bank_addr)[2 * col + 1] = 0;
                     }
@@ -3740,7 +4233,7 @@ static void bank_route(struct easynet_ops_param *param, struct conv_hw_context *
                     {
                         ((int16_t *)bank_addr)[2 * col] = input[ch_off + col_num + col];
                     }
-                    for (col = col_num - start_col; col < len_col; ++col)
+                    for (col = real_col_num - start_col; col < len_col; ++col)
                     {
                         ((int16_t *)bank_addr)[2 * col] = 0;
                     }
@@ -3762,8 +4255,13 @@ static void bank_route(struct easynet_ops_param *param, struct conv_hw_context *
                 }
             }
         }
+#endif
         bank_ch += len_channel;
     }
+    //Resume start channel and len_channel
+    bank_param->start_channel = start_out_ch;
+    bank_param->len_channel =  len_out_ch;
+    //save_layer_bin("./examples/compiler/posenet/layer_in.bin", input, bank_param->row_num * bank_param->col_num*128*2);
 }
 
 static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_context *cxt, kdp_processor_t *processor)
@@ -3772,8 +4270,9 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
     struct bank_op_param *in_bank_param = &op_param->in_bank_param;
     struct bank_op_param *bank_param = &op_param->out_bank_param;
     struct op_hardware_param *hw_param = &op_param->hw_param;
-    uint32_t len_channel, start_channel, in_bank, out_bank, in_len_channel, in_start_channel, recover_in_bank;
+
     uint32_t op_idx, op;
+    uint32_t len_channel, start_channel, in_bank, out_bank, in_len_channel, in_start_channel, recover_in_bank;
     int32_t ch;
     uint32_t weight_offset, one_weight_size;
 
@@ -3840,7 +4339,7 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
         /* I do it for simulation debug */
         cxt->start_out_row = bank_param->start_row;
         cxt->start_out_col = bank_param->start_col;
-        cxt->simu_start_out_ch = ch;
+        cxt->simu_start_out_ch = start_channel + ch;
 
 
         HAL_CNN_Bram_hfwd_rw_en(ENABLE);
@@ -3879,7 +4378,7 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
                     bank_param->pool_pad_left = op_param->bank_op.pool_pad_left;
                     bank_param->pool_out_col  = op_param->bank_op.hardware_out_col;
                     bank_param->pool_out_row  = op_param->bank_op.hardware_out_row;
-                    do_bank_op(bank_param, cxt);
+                    do_bank_maxpool(bank_param, cxt);
                     break;
                 }
                 case BANK_OP_SHORTCUT:
@@ -3945,21 +4444,13 @@ static void bank_depthwise(struct easynet_ops_param *param, struct conv_hw_conte
         hw_param->weight_offset -= one_weight_size;
     }
 
-    {
-        in_bank_param->bank = recover_in_bank;
-        bank_param->op = recover_out_bank_param_op;
-        bank_param->start_channel = recover_out_bank_param_start_channel;
-        bank_param->len_channel  = recover_out_bank_param_len_channel;
-        bank_param->bank = rcv_out_bank_param_bank ;
-        in_bank_param->op = rcv_in_bank_param_op;
-        in_bank_param->start_channel = rcv_in_bank_param_start_channel;
-        in_bank_param->len_channel = rcv_in_bank_param_len_channel;
-        in_bank_param->src_channel_off = rcv_in_bank_param_src_channel_off;
-        in_bank_param->dst_channel_off = rcv_in_bank_param_dst_channel_off;
 
-        bank_param->src_channel_off  = rcv_out_bank_param_src_channel_off;
-        bank_param->dst_channel_off =  rcv_out_bank_param_dst_channel_off;
-    }
+
+
+    in_bank_param->len_channel = in_len_channel;
+    in_bank_param->start_channel = in_start_channel;
+    bank_param->len_channel = len_channel;
+    bank_param->start_channel = start_channel;
 
     hw_param->weight_offset = weight_offset;
 }
@@ -4069,7 +4560,7 @@ static void bank_input_channel_cut(struct easynet_ops_param *param, struct conv_
                     bank_param->pool_pad_left = op_param->bank_op.pool_pad_left;
                     bank_param->pool_out_col  = op_param->bank_op.hardware_out_col;
                     bank_param->pool_out_row  = op_param->bank_op.hardware_out_row;
-                    do_bank_op(bank_param, cxt);
+                    do_bank_maxpool(bank_param, cxt);
                     break;
                 }
                 case BANK_OP_SHORTCUT:
@@ -4153,7 +4644,7 @@ int bank_ops_process(struct easynet_dev *dev, struct easynet_ops_param *param, k
             else
             {
                 kdp_print_bank_op(op_param->op);
-                if ((op_param->op == BANK_CP_FROM_MEM || op_param->op == BANK_CP_TO_BANK) && op_param->next_1x1 == 1)
+                if (op_param->next_1x1 == 1 && (op_param->op == BANK_CP_FROM_MEM || op_param->op == BANK_CP_TO_BANK))
                 {
                     do_bank_op_1x1(op_param, cxt);
                 }

@@ -1,0 +1,14 @@
+# Kconfig - USB configuration options
+
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig USB
+	bool "USB"
+	help
+	  Enable USB drivers.
+
+source "drivers/usb/device/Kconfig"

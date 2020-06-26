@@ -1,0 +1,1 @@
+cmake -DBOARD=banpiboard_qfn80pin ..

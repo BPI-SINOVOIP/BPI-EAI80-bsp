@@ -1,0 +1,26 @@
+# Kconfig - Sdcard configuration options
+#
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# key options
+#
+menuconfig GPIO_KEY
+	bool
+	prompt "GPIO_KEY Driver Support"
+	default n
+	help
+	  Include support for GPIO_KEY.
+
+config EVENT_BUFF_LENGTH
+	int "Value for Key Event Buffer Length"
+	depends on GPIO_KEY
+	default 20
+	help
+		config for Key Event Buffer Length
+
+

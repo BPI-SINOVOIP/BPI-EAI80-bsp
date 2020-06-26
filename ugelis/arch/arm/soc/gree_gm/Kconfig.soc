@@ -1,0 +1,8 @@
+# Kconfig - GREE Microelectronics MCU line
+#
+# Copyright (c) 2018 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+gsource "arch/arm/soc/gree_gm/*/Kconfig.series"

@@ -1,0 +1,65 @@
+# Kconfig - ACMP configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# ACMP options
+#
+menuconfig ACMP
+	bool
+	prompt "ACMP drivers"
+	help
+	  Enable ACMP (Analog to Digital Converter) driver configuration
+
+if ACMP
+
+config SYS_LOG_ADC_LEVEL
+	int
+	prompt "ACMP drivers log level"
+	depends on ACMP
+	default 0
+	range 0 4
+	help
+
+	  Sets log level for ACMP driver.
+
+	  Levels are:
+
+	  - 0 OFF, do not write
+
+	  - 1 ERROR, only write SYS_LOG_ERR
+
+	  - 2 WARNING, write SYS_LOG_WRN in addition to previous level
+
+	  - 3 INFO, write SYS_LOG_INF in addition to previous levels
+
+	  - 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+config ACMP_INIT_PRIORITY
+	int
+	default 80
+	prompt "Init priority"
+	help
+	  ACMP Device driver initialization priority.
+
+config ACMP_0
+	bool "Enable ACMP 0"
+
+config ACMP_0_NAME
+	string "ACMP 0 Driver's name"
+	depends on ACMP_0
+	default "ACMP_0"
+
+config ACMP_0_IRQ_PRI
+	int
+	depends on ACMP_0
+	prompt "ACMP 0 interrupt priority"
+	default 2
+
+source "drivers/acmp/Kconfig.gm"
+
+endif # ACMP

@@ -27,6 +27,33 @@
 #define	CONFIG_UART2_CLOCKSRC		UART2_CLOCKSRC
 #endif
 
+#ifdef UART3_LABEL
+/*rename uart3 dts generate marco*/
+#define CONFIG_UART3_BAUDRATE		UART3_CURRENT_SPEED
+#define CONFIG_UART3_PARITY			UART3_PARITY
+#define	CONFIG_UART3_STOPBITS		UART3_STOPBITS
+#define	CONFIG_UART3_DATABITS		UART3_WORDLENGTH
+#define	CONFIG_UART3_CLOCKSRC		UART3_CLOCKSRC
+#endif
+
+#ifdef UART4_LABEL
+/*rename uart4 dts generate marco*/
+#define CONFIG_UART4_BAUDRATE		UART4_CURRENT_SPEED
+#define CONFIG_UART4_PARITY			UART4_PARITY
+#define	CONFIG_UART4_STOPBITS		UART4_STOPBITS
+#define	CONFIG_UART4_DATABITS		UART4_WORDLENGTH
+#define	CONFIG_UART4_CLOCKSRC		UART4_CLOCKSRC
+#endif
+
+#ifdef UART5_LABEL
+/*rename uart5 dts generate marco*/
+#define CONFIG_UART5_BAUDRATE		UART5_CURRENT_SPEED
+#define CONFIG_UART5_PARITY			UART5_PARITY
+#define	CONFIG_UART5_STOPBITS		UART5_STOPBITS
+#define	CONFIG_UART5_DATABITS		UART5_WORDLENGTH
+#define	CONFIG_UART5_CLOCKSRC		UART5_CLOCKSRC
+#endif
+
 #ifdef IWDG_LABEL
 /*rename IWDG dts generate marco*/
 #define CONFIG_IWDG_NAME             IWDG_LABEL
@@ -187,8 +214,6 @@
 #define LCD_TS_INT_PIN      GREE_TS_GT911_0_TS_INT_PIN
 #define TOUCH_I2C_NAME      CONFIG_I2C2_NAME
 #define GT911_DEV_NAME      "GT911"
-#define GT9147_DEV_NAME     "GT9147"
-#define FT5426_DEV_NAME     "FT5426"
 
 /*rename some marco about VIN modules*/
 #define CONFIG_VIN_BASE_ADDRESS	       GREE_GM_VIN_40025000_BASE_ADDRESS
@@ -302,44 +327,56 @@
 #ifdef TIM1_LABEL
 /*rename tim1 dts generate marco*/
 #define	CONFIG_TIM1			  		 TIM1_LABEL
-#define CONFIG_TIM1_BASE_ADDRESS      TIM1_BASE_ADDRESS
+#define CONFIG_TIM1_BASE_ADDRESS     TIM1_BASE_ADDRESS
+#define	CONFIG_TIM1_NAME		  	 TIM1_LABEL
 #endif
 
 #ifdef TIM2_LABEL
 /*rename tim2 dts generate marco*/
 #define	CONFIG_TIM2			  		 TIM2_LABEL
 #define CONFIG_TIM2_BASE_ADDRESS     TIM2_BASE_ADDRESS
+#define	CONFIG_TIM2_NAME		  	 TIM2_LABEL
 #endif
 
 #ifdef TIM3_LABEL
 /*rename tim3 dts generate marco*/
 #define	CONFIG_TIM3			  		 TIM3_LABEL
 #define CONFIG_TIM3_BASE_ADDRESS     TIM3_BASE_ADDRESS
+#define	CONFIG_TIM3_NAME			  		 TIM3_LABEL
 #endif
 
 #ifdef TIM4_LABEL
 /*rename tim4 dts generate marco*/
 #define	CONFIG_TIM4			  		 TIM4_LABEL
 #define CONFIG_TIM4_BASE_ADDRESS     TIM4_BASE_ADDRESS
+#define	CONFIG_TIM4_NAME			  		 TIM4_LABEL
 #endif
 
 #ifdef TIM5_LABEL
 /*rename tim5 dts generate marco*/
 #define	CONFIG_TIM5			  		 TIM5_LABEL
 #define CONFIG_TIM5_BASE_ADDRESS     TIM5_BASE_ADDRESS
+#define	CONFIG_TIM5_NAME			  		 TIM5_LABEL
 #endif
 
 #ifdef TIM8_LABEL
 /*rename tim8 dts generate marco*/
 #define	CONFIG_TIM8			  		 TIM8_LABEL
 #define CONFIG_TIM8_BASE_ADDRESS     TIM8_BASE_ADDRESS
+#define	CONFIG_TIM8_NAME			  		 TIM8_LABEL
 #endif
 
-#ifdef SFLASH_LABLE
+#ifdef SFLASH_LABEL
 /*rename sflash dts generate marco*/
 #define CONFIG_SFLASH_READMODE        SFLASH_READMODE
 #define CONFIG_SFLASH_BITMODE         SFLASH_BITMODE
 #define CONFIG_SFLASH_CLKDIV          SFLASH_CLKDIV
+#ifdef  CONFIG_FLASH_BASE_ADDRESS
+#undef  CONFIG_FLASH_BASE_ADDRESS
+#undef  CONFIG_FLASH_SIZE
+#define CONFIG_FLASH_BASE_ADDRESS     GREE_GM_FLASH_CONTROLLER_40001000_ADDR_SPACE_0
+#define CONFIG_FLASH_SIZE             GREE_GM_FLASH_CONTROLLER_40001000_ADDR_SPACE_1
+#endif
 #endif
 
 /* End of SoC Level DTS fixup file */

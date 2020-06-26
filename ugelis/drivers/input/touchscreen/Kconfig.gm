@@ -1,0 +1,13 @@
+# Kconfig - GM6721X CAMERA configuration
+#
+# Copyright (c) 2016 Open-RnD Sp. z o.o.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig TOUCHSCREEN_DRIVERS
+	bool "GM6721X MCU touchscreen driver"
+	default n
+    select TS_CORE
+	help
+	  Enable touchscreen driver for GM6721X line of MCUs.

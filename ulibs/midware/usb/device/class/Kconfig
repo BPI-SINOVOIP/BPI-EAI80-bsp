@@ -1,0 +1,40 @@
+# Kconfig - USB device stack configuration options
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+menu "USB Device Class"
+	depends on GM_USB_DEVICE_STACK
+
+config USB_MASS_STORAGE
+	bool "USB Device Mass Storage Class"
+	default n
+	help
+		This option sets usb class as Mass Storage Class
+
+config USB_HID_MOUSE
+	bool "USB HID Mouse Class"
+	default n
+	help
+	This option sets usb class as HID Mouse Class
+
+config USB_HID_CUSTOM
+	bool "USB HID Custom Class"
+	default n
+	help
+		This option sets usb class as HID Custom Class
+
+config USB_AUDIO
+	bool "USB Audio Class"
+	default n
+	help
+		This option sets usb class as Audio Class
+
+config USB_VIDEO
+	bool "USB Video Class"
+	default n
+	help
+		This option sets usb class as Video Class	
+
+endmenu

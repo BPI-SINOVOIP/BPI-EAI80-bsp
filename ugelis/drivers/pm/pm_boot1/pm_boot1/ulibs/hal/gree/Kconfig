@@ -1,0 +1,34 @@
+# Kconfig - GM HAL config
+
+# Copyright (c) 2016 Linaro Limited.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+
+config HAS_GM_HAL
+	bool
+	select HAS_CMSIS
+	default n
+
+if HAS_GM_HAL
+config  USE_HAL_TEST
+    bool "enable using hal code to test"
+    default n
+    help
+    enable using hal code to test
+
+config  USE_DEVICE_LL_DIRECT
+    bool "Enable user to use the files about regist level directly"
+    default n
+    help
+    Link with local GM hal SDK driverlib sources.
+
+config GM_HAL_BUILTIN
+	bool "Enable building the GM HAL SDK files stored in the uGelis tree"
+    default y
+    help
+    Link with local GM hal SDK driverlib sources.
+endif
+
+   gsource "ext/hal/gree/Kconfig.gm*"
+

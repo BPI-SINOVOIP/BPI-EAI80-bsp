@@ -1,0 +1,22 @@
+# Kconfig.stm32 - STM32 CAN configuration options
+
+#
+# Copyright (c) 2018 Alexander Wachter
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config CAN_GM
+	bool "CAN Driver for Gree family of MCUs"
+	default n
+	help
+	  Enable CAN driver for Gree line of MCUs 
+
+
+
+
+
+
+
+
+
