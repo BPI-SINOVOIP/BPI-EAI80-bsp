@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (c) 2015-2020 QNX Software Systems and others
+
+	This program and the accompanying materials are made available under the
+	terms of the Eclipse Public License 2.0 which is available at
+	https://www.eclipse.org/legal/epl-2.0/.
+
+	SPDX-License-Identifier: EPL-2.0
+
+	Contributors:
+		QNX Software Systems - initial API and implementation
+		Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
+-->
+<feature
+      id="org.eclipse.cdt.arduino"
+      label="%featureName"
+      version="9.11.0.202001140305"
+      provider-name="%providerName"
+      plugin="org.eclipse.cdt.arduino.ui">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.launchbar" version="1.0.0"/>
+      <import feature="org.eclipse.remote.serial" version="1.0.0"/>
+      <import feature="org.eclipse.remote" version="2.0.0"/>
+      <import feature="org.eclipse.remote.console" version="2.0.0"/>
+      <import feature="org.eclipse.cdt" version="9.11.0"/>
+      <import feature="org.eclipse.launchbar.remote" version="1.0.0"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.cdt.arduino.core"
+         download-size="94"
+         install-size="207"
+         version="2.1.300.202001061622"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.arduino.ui"
+         download-size="130"
+         install-size="253"
+         version="2.1.500.202001092011"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tools.templates.freemarker.java11"
+         download-size="9"
+         install-size="12"
+         version="1.1.100.202001140305"
+         fragment="true"
+         unpack="false"/>
+
+</feature>

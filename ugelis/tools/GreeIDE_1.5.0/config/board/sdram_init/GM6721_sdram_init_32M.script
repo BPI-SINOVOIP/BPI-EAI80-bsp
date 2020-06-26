@@ -1,0 +1,254 @@
+#
+# DESCRIPTION: A user-kindly GDB configuration script file, for the IOT uGelis OS on ARM architecture
+#
+# REVISION: 1.0.0  (04/11/2017)
+#
+# CONTRIBUTORS: wizephen.wang
+#
+
+
+#golbal para
+set	$sdram_d0_32m_4b       = 1
+set $SDRAM_MEM_START_ADDR = 0xC0000000
+
+#ifdef SDR_160MHz
+set       $SDRAM_Ras_RefCyc       =	0x7
+set       $SDRAM_RtoC_dly         =	0x2
+set       $SDRAM_Ras_PreTime      =	0x2
+#else
+#set       $SDRAM_Ras_RefCyc       =	0x5
+#set       $SDRAM_RtoC_dly         =	0x1
+#set       $SDRAM_Ras_PreTime      =	0x1
+#endif
+
+
+set       $SDRAM_DQ_Mode          = 0x1 	
+set       $SDRAM_Cas_Latency      = 0x3
+set       $SDRAM_Ras_ActTime      =	0x3
+set       $SDRAM_CtoC_dly         =	0x0
+set       $SDRAM_RtoR_dly         =	0x1
+set       $SDRAM_TurnAround_Mode  =	0x0
+set       $SDRAM_OE_Post_En       = 0x0
+set       $SDRAM_OE_Pre_En        = 0x0
+set       $SDRAM_Burst_Length     = ($SDRAM_DQ_Mode+0x2)
+set       $SDRAM_Dimm1_En         = 0x0
+set       $SDRAM_Dimm_Bank_Map    = 0x1
+set       $SDRAM_Dimm_Map         =	0x4
+set       $SDRAM_Conti_Setting    = 0x0
+set       $SDRAM_CPU_Req_Prio     = 	0x1
+set       $SDRAM_Main_Arbt_Mode    =	0x0
+set       $SDRAM_SubA_Arbt_Mode   = 	0x0
+set       $SDRAM_SubB_Arbt_Mode    =	0x0
+
+#--------FOR LOAD  PARAMTER
+set       $SDRAM_Row_Map           =	0x4
+
+set       $SDRAM_Row1_Base        = 	0x01000000
+set       $SDRAM_WRDLock_Timer_En  =	0x0
+set       $SDRAM_WRDLock_Exit_En   =	0x0
+
+#set      $SDRAM_Refresh_Time     = 	0x0d
+set       $SDRAM_Refresh_Time     = 	0x05
+set       $SDRAM_Clk_Tree_Dly      =	0x0
+set       $SDRAM_Interleave       = 	0x0
+set       $SDRAM_Read_Dly         = 	0x0
+set 	  $SDRAM_CTRL_REG		  =	0x40039280
+
+
+#SDRAM_Wait_Idle
+define SDRAM_Wait_Idle
+	set $flag = 0x1
+	set $temp_mem = 0
+
+	while $flag
+		set $temp_mem = *((unsigned int*)$SDRAM_CTRL_REG)
+		if ($temp_mem & 0x7) == 0
+			set $flag = 0x0
+		else
+			set $flag = 0x1
+		end
+	end	
+end
+
+#SDRAM_Set_DIMM_Map
+define SDRAM_Set_DIMM_Map
+	set $dimm1_en = $arg0
+	set $dimm0_banks = $arg1
+	set $dimm0_map = $arg2
+	set $dimm1_banks = $arg3
+	set $dimm1_map = $arg4
+
+	set $dimm1_active 	= $dimm1_en
+	set $dimm_banks	    = $dimm0_banks
+	set $map_mode 		= $dimm0_map
+	set $map1_mode		= $dimm1_map
+	set $temp = 0
+	set $temp = *((unsigned int*)$SDRAM_CTRL_REG)
+	set *(unsigned int*)$SDRAM_CTRL_REG  = (($temp&0x0000ffff) | (($SDRAM_TurnAround_Mode<<31)|($SDRAM_OE_Post_En<<30) | ($SDRAM_OE_Pre_En<<29)))
+	set *(unsigned int*)$SDRAM_CTRL_REG =(($temp&0x0000ffff)|(($SDRAM_TurnAround_Mode<<31)|($SDRAM_OE_Post_En<<30)|($SDRAM_OE_Pre_En<<29)|($SDRAM_DQ_Mode<<28)|($dimm1_active<<27)|(0x0<<26)|($dimm1_banks<<25)|($dimm_banks<<24)|($map1_mode<<20)|($map_mode<<16)))
+end
+
+#SDRAM_Set_TimeParam
+define SDRAM_Set_TimeParam
+	set $temp = 0
+	set $temp = *((unsigned int*)($SDRAM_CTRL_REG + 4))
+	set *(unsigned int*)($SDRAM_CTRL_REG + 4) = (($temp&0xffff0000)|(($SDRAM_Ras_ActTime<<12)|($SDRAM_Ras_RefCyc<<8)|($SDRAM_CtoC_dly<<7)|($SDRAM_RtoR_dly<<6)|($SDRAM_RtoC_dly<<2)|($SDRAM_Ras_PreTime)))
+end
+
+#SDRAM_NOP
+define SDRAM_NOP
+	set $temp = 0
+	SDRAM_Wait_Idle
+	set $temp = *((unsigned int*)($SDRAM_CTRL_REG))
+	set *(unsigned int*)($SDRAM_CTRL_REG) = (($temp&0xffffff00) | 0x0)
+end
+
+
+#SDRAM_PrechargeAll
+define SDRAM_PrechargeAll
+	set $temp = 0
+	SDRAM_Wait_Idle
+	set $temp = *((unsigned int*)($SDRAM_CTRL_REG))
+	set *(unsigned int*)($SDRAM_CTRL_REG) = (($temp&0xffffff00) | 0x2)
+end
+
+#SDRAM_Mode_Set
+define SDRAM_Mode_Set
+	set $temp = 0
+	SDRAM_Wait_Idle
+	set $temp = *((unsigned int*)($SDRAM_CTRL_REG + 4))
+	set *(unsigned int*)($SDRAM_CTRL_REG + 4) = (($temp&0xff00ffff) | (($SDRAM_Cas_Latency<<20)|($SDRAM_Interleave<<19)|($SDRAM_Burst_Length<<16)))
+	set $temp = *((unsigned int*)($SDRAM_CTRL_REG))
+	set *(unsigned int*)($SDRAM_CTRL_REG) = (($temp&0xffffff00) | 0x1)
+end
+
+#SDRAM_Refresh
+define SDRAM_Refresh
+	set $temp = 0
+	SDRAM_Wait_Idle
+	set $temp = *((unsigned int*)($SDRAM_CTRL_REG))
+	set *(unsigned int*)($SDRAM_CTRL_REG) = (($temp&0xffffff00) | 0x3)
+end
+
+#SDRAM_Set_Refresh_Timer
+define SDRAM_Set_Refresh_Timer
+	set $ref_init = $arg0
+	set $temp = 0
+	set $temp = *((unsigned int*)($SDRAM_CTRL_REG))
+	set *(unsigned int*)($SDRAM_CTRL_REG) = (($temp&0xffff00FF) | ($ref_init<<8))
+end
+
+#SDRAM_Ref_Disable
+define SDRAM_Ref_Disable
+	SDRAM_Wait_Idle
+	SDRAM_Set_Refresh_Timer 0x0
+	SDRAM_Wait_Idle
+end
+
+
+
+#DIMM_Set_Map_Mode
+define DIMM_Set_Map_Mode
+	set $dimm0_banks = 0
+    set $dimm0_map = 0
+    set $dimm1_en = 0
+    set $dimm1_banks = 0
+    set $dimm1_map = 0
+    set $sdram_row0_map = 0
+    set $sdram_row1_base = 0
+    set $sdram_row1_map = 0
+    set $SDRAM_DIMM1_BASE = 0
+
+	set $sdram_row0_map  = 0x6
+	set $sdram_row1_base = 0x04000000
+	
+	if $SDRAM_DQ_Mode == 1
+		set $SDRAM_DIMM1_BASE = 0x02000000
+	else
+		set $SDRAM_DIMM1_BASE = 0x04000000
+	end
+	
+	set $dimm0_banks = 0x1
+    #dimm0_map                     =       0x6
+    set $dimm0_map = 0x9
+	
+	set $dimm1_en        = 0x0
+    set $sdram_row1_map  = 0x0
+    set $dimm1_banks     = 0x0
+    set $dimm1_map       = 0x0
+	
+	
+	SDRAM_Set_DIMM_Map $dimm1_en $dimm0_banks $dimm0_map $dimm1_banks $dimm1_map
+end
+
+
+define dram_pinmux_config
+	printf "pinmux configuration start ... \n"
+	set *(unsigned int*)(0x400002DC) |= 0x01000000
+	set *(unsigned int*)(0x40000324) |= 0x000f0000
+	set *(unsigned int*)(0x400002E8) |= 0x44044555
+	set *(unsigned int*)(0x40000338) |= 0xf0ffffff
+	set *(unsigned int*)(0x4000033C) |= 0xf0f000f0
+	set *(unsigned int*)(0x400002EC) |= 0x00015544
+	set *(unsigned int*)(0x40000340) |= 0xfffff0f0
+	set *(unsigned int*)(0x400002E4) |= 0x54444400
+	set *(unsigned int*)(0x40000330) |= 0xf0f00000
+	set *(unsigned int*)(0x40000334) |= 0xfff0f0f0
+	set *(unsigned int*)(0x40000344) |= 0x0000000f
+	set *(unsigned int*)(0x400002C4) |= 0x00140000
+	set *(unsigned int*)(0x400002F4) |= 0x00000ff0
+	set *(unsigned int*)(0x400002D0) |= 0x55455554
+	set *(unsigned int*)(0x40000308) |= 0xfffffff0
+	set *(unsigned int*)(0x4000030C) |= 0xfffff0ff
+	set *(unsigned int*)(0x400002D4) |= 0x44451111
+	set *(unsigned int*)(0x40000310) |= 0x0f0f0f0f
+	set *(unsigned int*)(0x40000314) |= 0xf0f0f0ff
+	set *(unsigned int*)(0x400002CC) |= 0x44445450
+	set *(unsigned int*)(0x40000304) |= 0xf0f0f0f0
+	set *(unsigned int*)(0x40000300) |= 0xfff0ff00			
+	set *(unsigned int*)(0x40000298) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x4000029c) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002a0) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002a4) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002a8) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002ac) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002b0) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002b4) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002b8) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002bc) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	set *(unsigned int*)(0x400002c0) |= (0xf<<0)|(0xf<<4)|(0xf<<8)|(0xf<<12)|(0xf<<16)|(0xf<<20)|(0xf<<24)|(0xf<<28)
+	printf "pinmux configuration end ... \n"
+end
+
+define dram_init
+	printf "dram_init start ...\n"
+	set $referenceCount = 0
+	if $referenceCount == 0
+		set $temp = *((unsigned int*)(0x40000070))
+        set *(unsigned int*)(0x40000070) = (($temp) | (1<<7))
+		set *(unsigned int*)(0x40000080) = (1<<7)
+		SDRAM_Ref_Disable
+		DIMM_Set_Map_Mode
+		SDRAM_Set_TimeParam
+		SDRAM_NOP
+		SDRAM_NOP
+		SDRAM_NOP
+		SDRAM_PrechargeAll
+		SDRAM_Mode_Set
+		SDRAM_Set_Refresh_Timer 0x05
+		SDRAM_Refresh
+		SDRAM_Refresh
+		SDRAM_Refresh
+		SDRAM_Refresh
+		SDRAM_Refresh
+		SDRAM_Refresh
+		SDRAM_Refresh
+		SDRAM_Refresh
+		SDRAM_Wait_Idle
+		set $referenceCount = 1
+	end
+	set *(unsigned int*)(0x40039290) |= (0xA)<<12
+	printf "dram_init end ...\n"
+end
+
+

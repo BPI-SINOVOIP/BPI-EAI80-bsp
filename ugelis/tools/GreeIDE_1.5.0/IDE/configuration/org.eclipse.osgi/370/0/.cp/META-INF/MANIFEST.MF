@@ -1,0 +1,324 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.eclipse.mylyn.help.ui;singleton:=true
+Archiver-Version: Plexus Archiver
+Built-By: genie.mylyn
+Bundle-ManifestVersion: 2
+Bundle-ActivationPolicy: lazy
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/mylyn/
+ org.eclipse.mylyn.tasks.git;path="org.eclipse.mylyn.help.ui";commitId
+ =afddc68e3afb573f58bf87a1d9fed1cbfd1b42b0
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Name: %Bundle-Name
+Bundle-Version: 3.24.2.v20180905-0003
+Bundle-Localization: plugin
+Created-By: Apache Maven 3.5.4
+Build-Jdk: 1.8.0_162
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Repository-Task1.png
+SHA-256-Digest: MHY9mIxpFKckWoN/q6XGESviB19Dy1hYcm8TRvfWR4Q=
+
+Name: Mylyn/FAQ/Task-Editor.html
+SHA-256-Digest: eCCcVdDbp414VQvQUQgzSnt4+8eYOZugZkCW6ZssReA=
+
+Name: plugin.xml
+SHA-256-Digest: IFOELXUIka7BHCiiefasYC0uDq5yAOKTJp9I2BIKsjE=
+
+Name: Mylyn/FAQ/Task-Repositories.html
+SHA-256-Digest: RuRRBJvdkoXUsADOvyABUzROBZPFmMZ/KYthpfZqni8=
+
+Name: images/topiclabel/ov_legend48_hov.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: images/topiclabel/ov_mylyn48_hov.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: Mylyn/User_Guide/Preferences.html
+SHA-256-Digest: ezmqj1DZdRm+kjN6JqlgiZDf8oET3hvE0+/RqxzodlE=
+
+Name: Mylyn/FAQ/images/Mylyn-content-assist-timeout.gif
+SHA-256-Digest: 1dcZ7PlGtei3MP+1TUNzdxJjtAZWayc84AdOoyVougw=
+
+Name: Mylyn/User_Guide/Shortcuts.html
+SHA-256-Digest: Rc5pEufK41jqXaazWL3b+dw2Ma0us0plXDwQLLGqkBg=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Open-Task.png
+SHA-256-Digest: lwCTVALWc7PpdDd+NAIYtU748RYOvgLnn1EorZHxDT4=
+
+Name: images/prev.gif
+SHA-256-Digest: I4Bs/TypPpF2FValAaI3lNDWuD4KFikkGjdaeiyR4Yc=
+
+Name: Mylyn/FAQ/JIRA-Connector.html
+SHA-256-Digest: 0EAYAlpyLEL1KRb6WtZd1aJKyoMPu6JnRCjwucIvpYM=
+
+Name: book.css
+SHA-256-Digest: qeXVdI1hwl7Puj2dCVza96WuYbq20WI6tMcgIiTxYxI=
+
+Name: primary-toc.xml
+SHA-256-Digest: OzDJZjb0tHQ+y+KgadSfNS9AT+QPWrzsrjcRyzkJLRo=
+
+Name: Mylyn/FAQ/FAQ.html
+SHA-256-Digest: mnr+gosIxmq+yzAtVQTKLSc9mJtYTMYtVx9ZXiZuXqk=
+
+Name: Mylyn/FAQ/Trac-Connector.html
+SHA-256-Digest: TX4RvOmIzyeaXGkUh0zm7vizPbJOnPsZ5T5fhm3/84c=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Presenta
+ tion-Select-Scheduled.png
+SHA-256-Digest: c0Cfr37x8yg3VoUJOBbS9CKiImZlM2D+vMZJ6cwY6Ho=
+
+Name: intro/css/overview.css
+SHA-256-Digest: U1iEw3NR++rjZC8R+K6NGjKqm+xnu0YIiVksBcyKsAk=
+
+Name: images/next.gif
+SHA-256-Digest: IFqoxpwo9EXNAc2xh0M2KmlZWC1RBMxv8nWCwhMwRtI=
+
+Name: Mylyn/FAQ/images/Mylyn-content-assist-prefs.png
+SHA-256-Digest: 8A5e0QA9TnUz6oHnumoKg8SEUxaYVwdQMHto0fMN2Cg=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Change-Sets.png
+SHA-256-Digest: vvVOVIZANJ79hjRu9QXQEewZfhiY2IG2LNvhBKFcAbM=
+
+Name: intro/overviewExtensionContent.xml
+SHA-256-Digest: OJl+WzA3yyUSGQkEcQbUW1FkqudLB+ON4JWMsSzqvUw=
+
+Name: intro/css/whatsnew.css
+SHA-256-Digest: cwJV64vMy+VLf0B6+ciX5DwRusFPnNHFFBGh/g2ZzZs=
+
+Name: Mylyn/User_Guide/images/Generic-web-repository-settings.gif
+SHA-256-Digest: WSFG3sz5HCOt32OWPNs5AeT4r8HrZbCnecOWRIy16l8=
+
+Name: Mylyn/FAQ/images/Mylar-tasklist-weblink-editor.gif
+SHA-256-Digest: fGUp82CTO2ijPLBqV08svHDYjcllKtkmhnIMsY6ysSg=
+
+Name: toc.xml
+SHA-256-Digest: ijK2zPDHS4zI4kYChXW55rGOSPOloSMYDgoeP+k2sL8=
+
+Name: images/topiclabel/tu_task48_hov.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: intro/tutorialsExtensionContent.xml
+SHA-256-Digest: MgnGvmZBr/JZXjXsCJPBIIa2RDT85bDbYnlJL203MM0=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-UI-Legend.png
+SHA-256-Digest: FraFbdwZQiq3Qi3kMpafOLXa87t7rFcbVuxDep/aFek=
+
+Name: images/topiclabel/tu_query48_hov.gif
+SHA-256-Digest: DqcYJN7f5Aco4gyhbsjSADlk6VST5e2Tx8ZdU14+w00=
+
+Name: doc/notices.html
+SHA-256-Digest: cKy+1cUG9NSaQGU4qlndJO6esYTOID8iDYMYq/TwG2E=
+
+Name: images/topiclabel/tu_task48.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: Mylyn/FAQ/Team-Support.html
+SHA-256-Digest: PX0po1iTItwjuU9Jo/JbR+jbZzG+UnW7gmz2gpEwLQE=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Tooltip.
+ png
+SHA-256-Digest: kB68DbHN+utGDlPBaf21WF5MPI76m+eX7BWp83CMTKU=
+
+Name: Mylyn/FAQ/Task-Focused-UI.html
+SHA-256-Digest: 5UcKoCMTUR0lE1qM0x+UNCpeakdmN8ZFWDDCOwj9n0Y=
+
+Name: Mylyn/FAQ/images/Mylar-eclipse-manage-configuration.gif
+SHA-256-Digest: tyc8trSQs2xkqnNKJcLmRwbk/IhuUiAIebyKTgyMbcA=
+
+Name: images/mylyn-overview.gif
+SHA-256-Digest: mTawxNFKGc0SggaUieEZrNMDpBGyem+GbF915684E+M=
+
+Name: intro/css/overview.properties
+SHA-256-Digest: BSplMGzuglCt5DKrUoCYSNcuE5IHyQxTPMq/+0fGRnw=
+
+Name: Mylyn-User-Guide-toc.xml
+SHA-256-Digest: Ifc56U5eF8zb3JYQYT6Lf40pmRfqI55up6Qs/H8CNu4=
+
+Name: images/topiclabel/wn_mylyn48.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: intro/css/tutorials.css
+SHA-256-Digest: guto/swxApwdORwdnJMKVhof6I4VhcaJACeXBgq9Luo=
+
+Name: images/mylyn-overview-small.gif
+SHA-256-Digest: YpgC9a37lxdLmqeVgHdvntfWzOL0g006cNO8XqTjqCM=
+
+Name: images/topiclabel/ov_mylyn48.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: Mylyn/FAQ/Integration-with-other-tools.html
+SHA-256-Digest: cAYhrXQrTFbFHmdfy1cwSok5K/I8snsg5mCOsP0j9ZE=
+
+Name: Mylyn/FAQ/Web-Templates-Connector.html
+SHA-256-Digest: afoHQL9arLs8figTVDkHO/qZx/s8voV/iHNIHYHZaGQ=
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Package-Explorer-Focus
+ ed.png
+SHA-256-Digest: M12alK3b9A5EqdUE06gH5zY0kGOHtqNVsL0AtQXZIss=
+
+Name: Mylyn/FAQ/images/Mylar-java-filtering-declarations.gif
+SHA-256-Digest: uYO5LfmZpzSbkuDRzB2dYMRr/COXoIWyTvkdk0gUBgs=
+
+Name: Mylyn/FAQ/Task-List.html
+SHA-256-Digest: fHqJEEkWUL6z1RZP1dUqBKteHL+6SS+SpucTeHHLJZ4=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-Editor-Bottom
+ .png
+SHA-256-Digest: Ea378fnV5L81gK0R6WqmTHvoHIgPYdWGDEfREeec3ko=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Categori
+ zed1.png
+SHA-256-Digest: 6z+6Tr+stB0mje5aTNtf66KLsopiGC4AGcALagd1rAE=
+
+Name: images/topiclabel/tu_query48.gif
+SHA-256-Digest: DqcYJN7f5Aco4gyhbsjSADlk6VST5e2Tx8ZdU14+w00=
+
+Name: Mylyn/User_Guide/images/Task-list-index-reporter.png
+SHA-256-Digest: gAupUlyk8tajkPqDP6tP731aZ5lyk2i+FI02YIwv/vE=
+
+Name: intro/css/whatsnew.properties
+SHA-256-Digest: uSF8mFFnBiCf8BXAfg308f5sokpHwGwN1auA+JfghX4=
+
+Name: Mylyn/FAQ/Context-and-Timing-data.html
+SHA-256-Digest: mviSCzm1s3knH4jMwEJBQfewYr3mjy7osmci4OgiFgI=
+
+Name: Mylyn/FAQ/images/Mylar-resource-exclusion.gif
+SHA-256-Digest: 2PC9Eg2ZJNKbNfzvn+UuTjxtmHo8V5/swaKxxQ7X2HU=
+
+Name: Mylyn/FAQ/images/Mylyn-project-repository-association.gif
+SHA-256-Digest: 2yCBXO1LZGWXDkjjc44LbPwuy7Qtar72PVGBpnD9WdU=
+
+Name: Mylyn/User_Guide/images/Show_filtered_children.png
+SHA-256-Digest: onklyfWoqBHyxmHnXDqms5tmTUAljRSNfvcL+4bYyOc=
+
+Name: Mylyn/FAQ/Misc.html
+SHA-256-Digest: VIg/ftb8kUSJD5ntqeCTHEGS8lfHJJCbTo+h2JPEMI8=
+
+Name: images/topiclabel/ov_legend48.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Focused-Editor.png
+SHA-256-Digest: /crTGHvwDgSHJ06ybY1An0pio9SVaOuzkfWdVaS6Ajg=
+
+Name: Mylyn/User_Guide/Team-Support.html
+SHA-256-Digest: JaBCUTZRtg2S5Bc4IyQJPsHP2LX6t4o8DL3Hf4AFkMk=
+
+Name: Mylyn/User_Guide/images/Task-list-index-content-assist.png
+SHA-256-Digest: u/kG76z3qmwbYyQKUP60GPktUixEdFeO7FRsK/xRUEw=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Weekly-Progress.pn
+ g
+SHA-256-Digest: HjtGe8T2NiSKWZR7wxEQ96vmG9T9LCv689hTs6nvRuM=
+
+Name: icons/etool16/icons-legend.gif
+SHA-256-Digest: 35apWjEBcFtczt9hdhVE4722PDvgv42NBX0jJqqGduQ=
+
+Name: Mylyn/FAQ/images/Tasklist-filter.png
+SHA-256-Digest: ltfazJaN8+pyqYcBe9V47GOSW5ej3dUJKhEv0vfxomI=
+
+Name: plugin.properties
+SHA-256-Digest: 9g7XBqbsq8NWiIPKR9JXAeIFFApArCd9kG95YKGG2+w=
+
+Name: Mylyn/FAQ/images/AuthenticationTroubleshooting2.png
+SHA-256-Digest: BhtjoZ6DYDU81+wsqIvkVKmSyNrOXR0thbhCs9vxb4A=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Planning-Tab.png
+SHA-256-Digest: d3Ez79e8vfIjckWxqz3MCFzouIwb3pZ6DDsbQiC3Hfk=
+
+Name: .empty
+SHA-256-Digest: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+
+Name: Mylyn-FAQ-toc.xml
+SHA-256-Digest: bZ5K5KxnLAQJu9BAXlAhGkt5Y8zHDw1CexUNTMKwbn0=
+
+Name: images/home.gif
+SHA-256-Digest: 4cB3uzSzawBtPtcQboiWU16+RMytdhxFuZZGzwENCF8=
+
+Name: Mylyn/User_Guide/User-Guide.html
+SHA-256-Digest: G7UQo6g5Jz0Oz2pmdPVfnKnaMgFA88Xyhg0J4dGN8LU=
+
+Name: Mylyn/User_Guide/Task-Editor.html
+SHA-256-Digest: XvTxDsmfsdk22onFOT+/rF5WRFVzlQHo3aHF6qbNX9o=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Add-Task-Repositor
+ y.png
+SHA-256-Digest: NWhE/rPy+hNiFuMnA8+BEqenH6W9ytt77v62yY7i6VU=
+
+Name: Mylyn/FAQ/Bugzilla-Connector.html
+SHA-256-Digest: OKqfg5V8gxTrku1EZRRaFoUuODT1T20hrRLA82IHjYw=
+
+Name: Mylyn/User_Guide/Task-Focused-Interface.html
+SHA-256-Digest: kKYJYgjLcDDArO7eIaOQ7FxZDINwL9ZAytTOLUogx+Y=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-Editor-Top.pn
+ g
+SHA-256-Digest: B9x2eHIa55OapJUVXSpDs8AR34Utf6wKLHdGNAPeDL4=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Presenta
+ tion-Select-Categorized.png
+SHA-256-Digest: IhVXcEJqhwrCcwEczeqtd7f9CftyneTp5ps+G5x2Vjg=
+
+Name: Mylyn/FAQ/images/Mylar-spell-checking-preference.gif
+SHA-256-Digest: EVtLJZRncToqy067ZfGVIOLmd5citthWEHlQpI7HvHI=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Error-Log.png
+SHA-256-Digest: 7RCshByXiwndOQ6i8OBZxqtbvsHGgCE4ptCtUFgZBZQ=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-New-Task1.png
+SHA-256-Digest: Ot5wsUM7edyrLBcNq7MpmrHqcyN3FsfWsqNaEiKW49g=
+
+Name: intro/css/tutorials.properties
+SHA-256-Digest: PrebcpBuPQA7jUa7mHRUfnllXLvRONmuPFC0yoKoyrw=
+
+Name: cheatsheets/TaskFocus.xml
+SHA-256-Digest: ZsArOIQv516S20YclwYfkY+EaJqkt5pt0TlyZkGw10Y=
+
+Name: Mylyn/FAQ/Updating-This-Document.html
+SHA-256-Digest: PTC99NsynjMq1hU56Dqh39u7//8mDoR3nXV7giTEqu8=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-New-Query-Combined
+ .png
+SHA-256-Digest: hPf8dy1GnCHfq8/ZJjj8ITN307o/AmzVYpkcfEE0M0I=
+
+Name: intro/whatsnewExtensionContent.xml
+SHA-256-Digest: EK9Uf4WKdsTgknQedON8oRcp5h8M4vsYSNQQTfVruy0=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Category-Progress.
+ png
+SHA-256-Digest: 3pSu4sBTaPlqLt3vCPWaCe5fJXJ+Oze6a2MRKkLElGk=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Add-To-Context.png
+SHA-256-Digest: 0GetTqMb9OIOceOFLDSnaFswKgpudrQvsug9qQaBZcE=
+
+Name: cheatsheets/Query.xml
+SHA-256-Digest: hQGG8ylYxzlJCaHTedjJHgUy/+e0V0d5uFDghZ4LkvA=
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Local-Task1.png
+SHA-256-Digest: knjev2jyYcQfXPS9lHRyfK6ZVWRQ6u6B7reH3J072v8=
+
+Name: images/topiclabel/wn_mylyn48_hov.gif
+SHA-256-Digest: FMj6HBTsNWjXKYyg0/x2+JbuK4kh14xsNBLASKB21n8=
+
+Name: Mylyn/FAQ/Java-Development.html
+SHA-256-Digest: Sxr8kKb28fjlDg6Quzb42WXu02z71LFxDo8GCE6HdPk=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Context-Tab.png
+SHA-256-Digest: WtWYeSjmK0xkLrX6pU6O/ysz9EpCVMI81KwSpJC3sOM=
+
+Name: about.html
+SHA-256-Digest: WwKSWxYNEk9KIw+W3CKPzhz5zCc57YLBxdFaTYEb4VA=
+
+Name: Mylyn/FAQ/Installation.html
+SHA-256-Digest: jgJyo6a8LWBIserF961gTCqC0Krl0HBL3RK6IsUKsnM=
+
+Name: Mylyn/FAQ/WikiText.html
+SHA-256-Digest: sGatgM9iXtmiRH+aM5kG8yoUaJLpZPGrjPBK8q3/nrs=
+
+Name: Mylyn/User_Guide/Updating-This-Document.html
+SHA-256-Digest: SgPXFbXUCcgLaGq2iDxt912MPMOOpQ4oOunHC1ZOoWw=
+
+Name: Mylyn/User_Guide/Task-Repositories.html
+SHA-256-Digest: 7wJwjcFCcrpwk3ge9KMhZVmrj+dG6yj81AxLIKpTO4s=
+
+Name: Mylyn/User_Guide/Task-Repository-Connectors.html
+SHA-256-Digest: ttfxTFGd10iGTeL/NvF3WgfIDD9M+X/jLUwDFvNwCgU=
+

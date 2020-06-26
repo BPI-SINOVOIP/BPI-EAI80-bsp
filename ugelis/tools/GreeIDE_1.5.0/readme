@@ -1,0 +1,27 @@
+GreeIDE - for 64bit Linux 
+
+1，感谢您使用格力IDE，您的满意是我们最大的成就
+2，双击GreeIDE_1.5.0/launcher运行IDE即可
+3，目录结构说明
+		-compilers
+				编译器目录，这里会存放51或者ARM架构的编译器		
+		-emluators
+				仿真器目录，这里会放jlink，pyOCD等仿真器的驱动程序和gdb-server程序	
+		-config
+				Gree Mcu 板型相关的配置文件	
+		-IDE
+				Eclipse目录		
+		-jre
+				Java虚拟机目录，一般采用最新版本的稳定发现版JRE，目前版本是jre1.8.0_251
+		-tools
+				工具目录，这里会存放网络配置工具和GNU构建工具	
+		-readme.txt
+				本文件		
+4，使用说明
+（1）运行GreeIDE前无需安装任何其他程序，但需要管理员权限，否则运行不了；
+（2）运行后，交叉编译工具链已配置完善；
+（3）GreeIDE现已支持无工程下调试，即打开GreeIDE后无需创建工程，直接new一个Debug Configuration即可进行调试预设的elf文件；
+（4）GreeIDE当然也支持对工程代码的编译和调试，如果想对工程进行调试，需要手动创建Debug Configuration，操作如下：
+		 点击你的工程->Debug As->Debug Configurations...->双击左侧GreeLink Debugging或者GDB SEGGER J-Link Debugging新建一个调试项进行配置即可；
+（5）其他未提及部分保持默认值即可。
+5，如果有任何问题或者建议，请告知通信技术研究院芯片研究所软件小组（邮箱：550239）。

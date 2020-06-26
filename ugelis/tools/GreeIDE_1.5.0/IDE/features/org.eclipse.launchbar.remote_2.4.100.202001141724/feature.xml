@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.launchbar.remote"
+      label="%featureName"
+      version="2.4.100.202001141724"
+      provider-name="%providerName"
+      plugin="org.eclipse.launchbar.remote.ui">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.launchbar.remote.core"
+         download-size="15"
+         install-size="23"
+         version="1.0.100.202001140305"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.launchbar.remote.ui"
+         download-size="15"
+         install-size="20"
+         version="1.0.100.202001140305"
+         unpack="false"/>
+
+</feature>

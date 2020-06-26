@@ -1,0 +1,6 @@
+MAX_RECENT_WORKSPACES=10
+RECENT_WORKSPACES=/home/terrylee/greeide-workspace\n/home/terrylee/eclipse-workspace\n/Resource/home/terrylee/eclipse-workspace2\n/Resource/home/terrylee/eclipse-workspace\n/Resource/home/terry_lee/eclipse-workspace
+RECENT_WORKSPACES_PROTOCOL=3
+SHOW_RECENT_WORKSPACES=false
+SHOW_WORKSPACE_SELECTION_DIALOG=true
+eclipse.preferences.version=1

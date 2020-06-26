@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ilg.gnumcueclipse.templates.stm.feature"
+      label="%featureName"
+      version="2.6.3.202006050855"
+      provider-name="%providerName"
+      plugin="ilg.gnumcueclipse.templates.stm">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="ilg.gnumcueclipse.templates.core"
+         download-size="269"
+         install-size="1217"
+         version="2.5.7.202006050855"
+         unpack="false"/>
+
+   <plugin
+         id="ilg.gnumcueclipse.templates.stm"
+         download-size="5523"
+         install-size="37549"
+         version="2.6.3.202006050855"
+         unpack="false"/>
+
+   <plugin
+         id="ilg.gnumcueclipse.core"
+         download-size="100"
+         install-size="182"
+         version="4.1.1.202006050855"
+         unpack="false"/>
+
+</feature>

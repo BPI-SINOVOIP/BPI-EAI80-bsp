@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: ilg.gnumcueclipse.templates.stm;singleton:=true
+Archiver-Version: Plexus Archiver
+Built-By: terry_lee
+Require-Bundle: ilg.gnumcueclipse.core,ilg.gnumcueclipse.templates.cor
+ e,org.eclipse.core.runtime;bundle-version="3.12.0",org.eclipse.ui;bun
+ dle-version="3.108.1"
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %bundle.vendor
+Bundle-Name: %bundle.name
+Bundle-Version: 2.6.3.202006050855
+Bundle-Localization: plugin
+Bundle-Activator: ilg.gnumcueclipse.templates.stm.Activator
+Created-By: Apache Maven 3.3.9
+Build-Jdk: 1.8.0_181
+Eclipse-BundleShape: dir
+

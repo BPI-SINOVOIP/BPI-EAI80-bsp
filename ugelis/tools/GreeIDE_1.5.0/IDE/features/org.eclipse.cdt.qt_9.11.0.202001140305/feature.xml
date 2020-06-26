@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.cdt.qt"
+      label="%featureName"
+      version="9.11.0.202001140305"
+      provider-name="%providerName"
+      plugin="org.eclipse.cdt.qt.ui">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.launchbar" version="2.0.0" match="compatible"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.cdt.qt.core"
+         download-size="485"
+         install-size="1183"
+         version="2.2.300.202001022318"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.qt.ui"
+         download-size="141"
+         install-size="274"
+         version="2.0.200.202001092011"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tools.templates.freemarker.java11"
+         download-size="9"
+         install-size="12"
+         version="1.1.100.202001140305"
+         fragment="true"
+         unpack="false"/>
+
+</feature>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.cdt.cmake"
+      label="%featureName"
+      version="9.11.0.202001140305"
+      provider-name="%providerName"
+      plugin="org.eclipse.cdt.cmake.ui">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.cdt.cmake.core"
+         download-size="40"
+         install-size="77"
+         version="1.2.400.202001091416"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.cmake.ui"
+         download-size="53"
+         install-size="94"
+         version="1.2.300.202001092011"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tools.templates.freemarker.java11"
+         download-size="9"
+         install-size="12"
+         version="1.1.100.202001140305"
+         fragment="true"
+         unpack="false"/>
+
+</feature>

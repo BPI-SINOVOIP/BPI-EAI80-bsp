@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.cdt.native"
+      label="%featureName"
+      version="9.11.0.202002181755"
+      provider-name="%providerName"
+      plugin="org.eclipse.cdt.core.native">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.cdt.core.native"
+         download-size="41"
+         install-size="67"
+         version="5.10.400.202001092011"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux"
+         os="linux"
+         download-size="13"
+         install-size="20"
+         version="5.3.100.202002181755"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux.ppc64le"
+         os="linux"
+         arch="ppc64le"
+         download-size="21"
+         install-size="56"
+         version="1.0.1.201811241055"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux.x86_64"
+         os="linux"
+         arch="x86_64"
+         download-size="20"
+         install-size="42"
+         version="5.3.1.201811241055"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.macosx"
+         os="macosx"
+         download-size="30"
+         install-size="75"
+         version="5.3.1.201811241055"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.win32"
+         os="win32"
+         download-size="13"
+         install-size="17"
+         version="5.4.2.201811241055"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.win32.x86_64"
+         os="win32"
+         arch="x86_64"
+         download-size="361"
+         install-size="757"
+         version="5.4.2.201811241055"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.cdt.native.serial"
+         download-size="133"
+         install-size="443"
+         version="1.1.400.202002181634"
+         unpack="false"/>
+
+</feature>
