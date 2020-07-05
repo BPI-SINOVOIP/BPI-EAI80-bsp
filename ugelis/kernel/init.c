@@ -59,10 +59,10 @@ static const unsigned int boot_delay;
 #endif
 
 #ifdef BUILD_VERSION
-#define BOOT_BANNER "Booting uGelis OS "	\
+#define BOOT_BANNER "[BPI]Booting uGelis OS "	\
 	 STRINGIFY(BUILD_VERSION) BOOT_DELAY_BANNER
 #else
-#define BOOT_BANNER "Booting uGelis OS "	\
+#define BOOT_BANNER "[BPI]Booting uGelis OS "	\
 	 KERNEL_VERSION_STRING BOOT_DELAY_BANNER
 #endif
 
