@@ -71,14 +71,44 @@ void gpio_output_demo(void)
     }
 }
 
-void gpio40_demo(void)
+void wifi_gpio(void)
 {
-    struct device *PB, *PC, *PE, *PF;
+    struct device *PB, *PC, *PE, *PF, *PJ;
+
+    printk("Run Func[%s]\n", __FUNCTION__);
 
     PB = device_get_binding("GPIOB");
     PC = device_get_binding("GPIOC");
     PE = device_get_binding("GPIOE");
     PF = device_get_binding("GPIOF");
+    PJ = device_get_binding("GPIOJ");
+
+    gpio_pin_configure(PC, 5, GPIO_MODE_INPUT);
+    gpio_pin_configure(PJ, 1, GPIO_MODE_INPUT);
+    gpio_pin_configure(PJ, 2, GPIO_MODE_INPUT);
+    gpio_pin_configure(PJ, 3, GPIO_MODE_INPUT);
+    gpio_pin_configure(PJ, 4, GPIO_MODE_INPUT);
+
+    gpio_pin_configure(PB, 15, GPIO_MODE_OUTPUT);
+    gpio_pin_write(PB, 15, GPIO_PIN_SET);
+}
+
+void gpio40_demo(void)
+{
+    int val ;
+    struct device *PB, *PC, *PE, *PF;
+
+    printk("Run Func[%s]\n", __FUNCTION__);
+
+    PB = device_get_binding("GPIOB");
+    PC = device_get_binding("GPIOC");
+    PE = device_get_binding("GPIOE");
+    PF = device_get_binding("GPIOF");
+
+    gpio_pin_configure(PB, 13, GPIO_MODE_INPUT);
+    //gpio_pin_configure(PB, 15, GPIO_MODE_INPUT);
+
+    gpio_pin_configure(PB, 10, GPIO_MODE_OUTPUT);
 
     gpio_pin_configure(PE, 2, GPIO_MODE_OUTPUT);
     gpio_pin_configure(PE, 1, GPIO_MODE_OUTPUT);
@@ -112,6 +142,13 @@ void gpio40_demo(void)
 
     while (1)
     {
+        printk("LED ON\n");
+	gpio_pin_write(PB,10, GPIO_PIN_RESET);
+
+        gpio_pin_read(PB, 13, &val);
+        printk("WKU_KEY = [%d]\n", val);
+        //gpio_pin_read(PB, 15, &val);
+        //printk("XPB15 = [%d]\n", val);
 
 	gpio_pin_write(PE, 2, GPIO_PIN_SET);
 	gpio_pin_write(PE, 1, GPIO_PIN_SET);
@@ -143,9 +180,10 @@ void gpio40_demo(void)
 	gpio_pin_write(PE, 6, GPIO_PIN_SET);
 	gpio_pin_write(PE, 5, GPIO_PIN_SET);
 
-        printk("Run Func[%s]\n", __FUNCTION__);
         k_sleep(1000);
 
+        printk("LED OFF\n");
+	gpio_pin_write(PB,10, GPIO_PIN_SET);
 
 	gpio_pin_write(PE, 2, GPIO_PIN_RESET);
 	gpio_pin_write(PE, 1, GPIO_PIN_RESET);
@@ -245,9 +283,10 @@ void main(void)
 {
     patch_config();
 
-    printk("SRAM BringUp:GPIO TEST DEMO! %s\n", CONFIG_ARCH);
+    printk("SRAM BringUp:GPIO40 DEMO! %s (20200704 V0.3)\n", CONFIG_ARCH);
     /*gpio_output_demo();*/
     /*gpio_input_demo();*/
     //gpio_interrput_demo();
+    wifi_gpio();
     gpio40_demo();
 }
