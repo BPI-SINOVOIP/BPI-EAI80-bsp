@@ -219,9 +219,9 @@ USB_DMA_INIT_DATA_ALIGN(4)
 uint8_t g_UsbDeviceString1[] =
 {
     2U + 2U * 18U, USB_DESCRIPTOR_TYPE_STRING,
-    'N',           0x00U,
-    'X',           0x00U,
+    'B',           0x00U,
     'P',           0x00U,
+    'I',           0x00U,
     ' ',           0x00U,
     'S',           0x00U,
     'E',           0x00U,
@@ -241,9 +241,9 @@ uint8_t g_UsbDeviceString1[] =
 
 USB_DMA_INIT_DATA_ALIGN(4)
 uint8_t g_UsbDeviceString2[] = {2U + 2U * 16U, USB_DESCRIPTOR_TYPE_STRING,
-                                'M',           0x00U,
-                                'C',           0x00U,
-                                'U',           0x00U,
+                                'B',           0x00U,
+                                'P',           0x00U,
+                                'I',           0x00U,
                                 ' ',           0x00U,
                                 'M',           0x00U,
                                 'A',           0x00U,

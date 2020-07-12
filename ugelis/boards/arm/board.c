@@ -24,6 +24,9 @@ extern "C" {
 #if defined(F6721B_EVB_176PIN)
 #include "f6721b_evb_176pin/board.c"
 #else
+#if defined(BPI_EAI80_QFN80PIN)
+#include "bpi_eai80_qfn80pin/board.c"
+#else
 #if defined(BANPIBOARD_QFN80PIN)
 #include "banpiboard_qfn80pin/board.c"
 #else

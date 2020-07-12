@@ -9,4 +9,5 @@ pip3 install pyyaml
 
 #
 ## cmake -DBOARD=banpiboard_qfn80pin ..
+## cmake -DBOARD=bpi_eai80_qfn80pin ..
 #

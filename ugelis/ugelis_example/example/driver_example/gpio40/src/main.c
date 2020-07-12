@@ -106,6 +106,7 @@ void gpio40_demo(void)
     PF = device_get_binding("GPIOF");
 
     gpio_pin_configure(PB, 13, GPIO_MODE_INPUT);
+    gpio_pin_configure(PC, 04, GPIO_MODE_INPUT);
     //gpio_pin_configure(PB, 15, GPIO_MODE_INPUT);
 
     gpio_pin_configure(PB, 10, GPIO_MODE_OUTPUT);
@@ -147,6 +148,8 @@ void gpio40_demo(void)
 
         gpio_pin_read(PB, 13, &val);
         printk("WKU_KEY = [%d]\n", val);
+        gpio_pin_read(PC, 04, &val);
+        printk("VBAT-DET = [%d]\n", val);
         //gpio_pin_read(PB, 15, &val);
         //printk("XPB15 = [%d]\n", val);
 
@@ -283,7 +286,7 @@ void main(void)
 {
     patch_config();
 
-    printk("SRAM BringUp:GPIO40 DEMO! %s (20200704 V0.3)\n", CONFIG_ARCH);
+    printk("SRAM BringUp:GPIO40 DEMO! %s (20200707 V0.4)\n", CONFIG_ARCH);
     /*gpio_output_demo();*/
     /*gpio_input_demo();*/
     //gpio_interrput_demo();

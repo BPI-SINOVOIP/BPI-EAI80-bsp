@@ -28,6 +28,10 @@ extern "C" {
 #include "f6721b_evb_176pin/board.h"
 #include "f6721b_evb_176pin/mem_cfg.h"
 #else
+#if defined(BPI_EAI80_QFN80PIN)
+#include "bpi_eai80_qfn80pin/board.h"
+#include "bpi_eai80_qfn80pin/mem_cfg.h"
+#else
 #if defined(BANPIBOARD_QFN80PIN)
 #include "banpiboard_qfn80pin/board.h"
 #include "banpiboard_qfn80pin/mem_cfg.h"

@@ -1,0 +1,11 @@
+identifier: bpi_eai80_qfn80pin
+name: BPI-EAI80-QFN80PIN
+type: mcu
+arch: arm
+toolchain:
+  - ugelis
+  - gccarmemb
+supported:
+  - serial
+testing:
+  default: true  

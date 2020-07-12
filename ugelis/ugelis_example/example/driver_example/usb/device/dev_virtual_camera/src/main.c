@@ -585,8 +585,46 @@ static void USB_DeviceApplicationInit(void)
     USB_DeviceRun(g_UsbDeviceVideoVirtualCamera.deviceHandle);
 }
 
+#include <gm_hal_gpio.h>
+#include <device.h>
+#include <gpio.h>
+
+void gpio_usb(void)
+{
+    int val ;
+    struct device *PB, *PC, *PE, *PF;
+
+    printk("Run Func[%s]\n", __FUNCTION__);
+
+    PB = device_get_binding("GPIOB");
+    PC = device_get_binding("GPIOC");
+    PE = device_get_binding("GPIOE");
+    PF = device_get_binding("GPIOF");
+
+    gpio_pin_configure(PB, 13, GPIO_MODE_INPUT);
+    gpio_pin_configure(PB, 14, GPIO_MODE_INPUT);
+
+    gpio_pin_configure(PB, 10, GPIO_MODE_OUTPUT);
+    gpio_pin_write(PB,10, GPIO_PIN_SET);
+
+    gpio_pin_read(PB, 14, &val);
+    printk("USB-SEL = [%d]\n", val);
+    if(val == 1) {
+	    gpio_pin_configure(PB, 14, GPIO_MODE_OUTPUT);
+	    gpio_pin_write(PB,14, GPIO_PIN_SET);
+	    gpio_pin_write(PB,10, GPIO_PIN_RESET);
+    }
+
+
+    //printk("LED ON\n");
+    //gpio_pin_write(PB,10, GPIO_PIN_RESET);
+
+}
+
 void main(void)
 {
+    gpio_usb();
+
     USB_DeviceApplicationInit();
 
     while (1)

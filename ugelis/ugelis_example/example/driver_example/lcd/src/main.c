@@ -44,8 +44,13 @@
 #define WORD_COLOR      0xFFFF0000
 #define LOGO_BG_COLOR   0xFFFF0000
 #define LAYER_COLOR     0xFFFFFF
+#ifdef BPI
 #define PIC_WIDTH       480
 #define PIC_HEIGHT      266
+#else
+#define PIC_WIDTH       800
+#define PIC_HEIGHT      480
+#endif
 
 uint32_t addr   = 0xc0a00000;
 
@@ -607,11 +612,57 @@ void lcd_config(void)
     set_pos(0, &wininfo);
 }
 
+
+//#include <ugelis.h>
+#include <ts.h>
+
+int ts_main(void)
+{
+    struct device *touch = device_get_binding(GT911_DEV_NAME);
+    int ret = 0;
+    static uint32_t cnt = 0;
+    struct ts_input_event event;
+    printk("\n###########Touch Screen DEMO################\n");
+    while (1)
+    {
+        ret = read_ts_event(&event, K_FOREVER);
+        if (!ret)
+        {
+            if (event.type == ABS_XY)
+            {
+                printk("\n###########Touch Screen Action:%d################\n", ++cnt);
+                if (event.press_status == TS_PRESS)
+                {
+                    /*ts press*/
+                    printk("ts prss: x_abs:%d y_abs:%d\n", event.x_abs, event.y_abs);
+                }
+                else
+                {
+                    /*ts release*/
+                    printk("ts release\n");
+		    break;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+
 int main(void)
 {
+    struct device *touch = device_get_binding(GT911_DEV_NAME);
+    int ret = 0;
+    static uint32_t cnt = 0;
+    struct ts_input_event event;
+
     char dist_str[16];
     uint8_t x = 0;
+    printk("\n###########Touch Screen DEMO################\n");
     sprintf(dist_str, "ZhuHai Edgeless");
+    printk("ZhuHai Edgeless - Banana Pi \n");
 #ifdef RABBIT_NO_OS_SYSTEM
     SysTick_Init();
 #endif
@@ -635,12 +686,35 @@ int main(void)
             case 4:
                 Creat_pic_bg(PIC_WIDTH, PIC_HEIGHT, addr, BLACK);
                 break;
+            case 100:
+                ts_main();
+                break;				
         }
         LCD_drawlogo(PIC_WIDTH - LOGO_W - 1, 1, LOGO_BG_COLOR);
-        LCD_showstring(10, 40, 400, 32, 32, "GREE ELECTRIC APPLIANCES", WORD_COLOR);
+        LCD_showstring(10, 40, 800, 32, 32, "GREE ELECTRIC APPLIANCES - Banana Pi", WORD_COLOR);
         LCD_showstring(10, 80, 240, 24, 24, dist_str, WORD_COLOR);
-        LCD_showstring(10, 110, 240, 16, 16, "VOUT LCD TEST", WORD_COLOR);
-        LCD_showstring(10, 130, 240, 12, 12, "2019/4/30", WORD_COLOR);
+        LCD_showstring(10, 110, 240, 16, 16, "BPI: VOUT LCD TEST", WORD_COLOR);
+        //LCD_showstring(10, 130, 240, 12, 12, "2019/4/30", WORD_COLOR);
+        LCD_showstring(10, 130, 240, 12, 12, "2020/07/08", WORD_COLOR);
+        LCD_showstring(10, 200, 600, 32, 32, "Banana Pi BPI-EAI80", WORD_COLOR);
+	//ts_main();
+        while (1) {
+        ret = read_ts_event(&event, K_FOREVER);
+        if (!ret) {
+            if (event.type == ABS_XY) {
+                printk("\n###########Touch Screen Action:%d################\n", ++cnt);
+                if (event.press_status == TS_PRESS) {
+                    /*ts press*/
+                    printk("ts prss: x_abs:%d y_abs:%d\n", event.x_abs, event.y_abs);
+                }
+                else {
+                    /*ts release*/
+                    printk("ts release\n");
+		    break;
+                }
+            }
+        }
+        }
         x++;
         if (x == 5)
         {
