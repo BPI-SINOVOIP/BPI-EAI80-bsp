@@ -96,6 +96,7 @@ int adc_channel_sync_demo(int demo_sel)
     int i = 0;
     int j = 0;
     int cnt = 0;
+    float vo;
 
     gpio_output_High();
 
@@ -118,7 +119,9 @@ int adc_channel_sync_demo(int demo_sel)
     sample.init.timeOut = TIMEOUT_WAIT_FOREVER;
     sample.init.lowpowerEn = DISABLE;
 
-    sample.channel_cfg[0].rchn_sel = ADC_CHANNEL_15;
+    //sample.channel_cfg[0].rchn_sel = ADC_CHANNEL_15;
+    sample.channel_cfg[0].rchn_sel = ADC_CHANNEL_0; //XPC4 VBAT-DET
+    //sample.channel_cfg[0].rchn_sel = ADC_CHANNEL_1;
 
     if (sample.init.trigermode == ADC_HW_TRIGER)
     {
@@ -150,7 +153,11 @@ int adc_channel_sync_demo(int demo_sel)
 
         gm_adc_read(adc_dev, &g_adc_table_handler);
         convert_data = g_adc_table_handler.entries->buffer[0];
-        PR_DEBUG("Channel:%d Convert Success Value:%d\n", sample.channel_cfg[0].rchn_sel, convert_data);
+	//vo = 0.001573034 * convert_data;
+	//vo = 1.573034 * convert_data;
+	vo = 1.611328125 * convert_data;
+        //PR_DEBUG("Channel:%d Convert Success Value:%d VBAT-DET=%f\n", sample.channel_cfg[0].rchn_sel, convert_data, vo);
+        printf("Channel:%d Convert Success Value:%d VBAT-DET=%f\n", sample.channel_cfg[0].rchn_sel, convert_data, vo);
 
         k_sleep(1000);
     }
@@ -238,6 +245,7 @@ int adc_sequence_async_demo(int demo_sel)
 
 void main(void)
 {
+    printk("SRAM BringUp:Hello World! (20200730 V1.1)%s\n", CONFIG_ARCH);
     printk("enter func[%s]... \n", __FUNCTION__);
 
     adc_channel_sync_demo(0);

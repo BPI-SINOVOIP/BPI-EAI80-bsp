@@ -56,7 +56,11 @@ static struct SQI_Config  gSQIConfig;
 #define FLASH_TEST_ERASE_SIZE    0x500000
 #define FLASH_TEST_REGION_OFFSET 0xff000
 #define FLASH_SECTOR_SIZE        (4096)
+#ifdef BPI-ALL
 #define FLASH_TOTALSIZE_LEN      (0x1000000)
+#else
+#define FLASH_TOTALSIZE_LEN      (0x0010000)
+#endif
 #define FLASH_TEST_OFFSET        (0x0000000)
 uint8_t buff_to_flash[FLASH_SECTOR_SIZE * 3];//Sector,page,block32,block all use this buffer,not will change
 uint8_t flash_to_buff[FLASH_SECTOR_SIZE * 3];//Sector,page,block32,block all use this buffer
@@ -520,11 +524,14 @@ int sqi_flash_driver_write_read_demo(void)
 void main(void)
 {
     printf("================SFlash Test Start=================\n\n\n");
+    printf("================SFlash erase boot1=================\n\n\n");
     sqi_flash_earse_demo();
+#if 0
     sqi_flash_write_read_demo();
     sqi_flash_writeall_read_demo();
     sqi_flash_dma_write_read_demo();
     sqi_flash_driver_write_read_demo();
+#endif
     printf("================SFlash Test  End==================\n\n\n");
 }
 

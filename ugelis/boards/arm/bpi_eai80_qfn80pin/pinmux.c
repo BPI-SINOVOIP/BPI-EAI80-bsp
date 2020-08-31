@@ -339,7 +339,7 @@ static int uart4_pinmux_config(void)
 static int uart5_pinmux_config(void)
 {
     int ret = 0;
-    struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTD_NAME);
+    struct device *porte = device_get_binding(CONFIG_PINMUX_GM_PORTJ_NAME);
     if (porte == NULL)
     {
         return -1;
@@ -348,8 +348,10 @@ static int uart5_pinmux_config(void)
     GPIO_PinConfig_T pin_cfg;
     Device_Pinmux_T s_uartPinMux[2] =
     {
-        {PINMUX_GPIO_PIN_0, GPIOD, GPIOD0_AF1_UART5_TX},
-        {PINMUX_GPIO_PIN_1, GPIOD, GPIOD1_AF1_UART5_RX},
+        //{PINMUX_GPIO_PIN_0, GPIOD, GPIOD0_AF1_UART5_TX},
+        //{PINMUX_GPIO_PIN_1, GPIOD, GPIOD1_AF1_UART5_RX},
+        {PINMUX_GPIO_PIN_4, GPIOJ, GPIOHJ4_AF2_UART5_TX},
+        {PINMUX_GPIO_PIN_3, GPIOJ, GPIOHJ3_AF2_UART5_RX},
     };
 
     pin_cfg.pin = BIT(s_uartPinMux[0].pin);
@@ -1135,8 +1137,9 @@ static int adc_pinmux_config(void)
 #if 1
     static Device_Pinmux_T s_pinmux[] =
     {
-        {PINMUX_GPIO_PIN_0,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_0 pinmux config paramter */
-        {PINMUX_GPIO_PIN_1,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_1 pinmux config paramter */
+        {PINMUX_GPIO_PIN_4,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_0 pinmux config paramter */
+        {PINMUX_GPIO_PIN_0,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_1 pinmux config paramter */
+        {PINMUX_GPIO_PIN_1,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_2 pinmux config paramter */
 #if 0
         {PINMUX_GPIO_PIN_2,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_2 pinmux config paramter */
         {PINMUX_GPIO_PIN_7,  GPIOC, GPIO_AF_NONE}, /* ADC_CHANNEL_3 pinmux config paramter */
@@ -1189,7 +1192,7 @@ static int adc_pinmux_config(void)
 
     memset(&pin_cfg, 0, sizeof(pin_cfg));
     pin_cfg.pin = BIT(pADCPinmux->pin);
-    pin_cfg.mode = GPIO_MODE_ANALOG;
+    pin_cfg.mode = GPIO_MODE_ANALOG_2;
     pin_cfg.pull = GPIO_NOPULL;
     pin_cfg.alternate = 0;
 
@@ -1862,7 +1865,8 @@ static int tim8_pinmux_config(void)
     {
         {PINMUX_GPIO_PIN_2,  GPIOC, GPIOC2_AF5_TIM8_BKIN},
         {PINMUX_GPIO_PIN_3,  GPIOC, GPIOC3_AF5_TIM8_ETR},
-        {PINMUX_GPIO_PIN_4,  GPIOC, GPIOC4_AF5_TIM8_CH1N},
+	//BPI
+        //{PINMUX_GPIO_PIN_4,  GPIOC, GPIOC4_AF5_TIM8_CH1N},
         {PINMUX_GPIO_PIN_5,  GPIOC, GPIOC5_AF5_TIM8_CH1},
         //{PINMUX_GPIO_PIN_8,  GPIOC, GPIOC8_AF5_TIM8_CH1N},
         {PINMUX_GPIO_PIN_9,  GPIOC, GPIOC9_AF5_TIM8_CH2N},

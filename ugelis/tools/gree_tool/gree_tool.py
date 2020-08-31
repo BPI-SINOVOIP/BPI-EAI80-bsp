@@ -423,36 +423,37 @@ class Download(object):
             
             while 1:
               a = self.ser.read(1)  
-              logging.info(a)
+              #logging.info(a)
               if a == b':' : 
                 break;
             logging.info("send '<' to EAI enter control mode ....")
             while 1:
               self.ser.write(b'<')
               a = self.ser.read(1)  
-              logging.info(a)
+              #logging.info(a)
               if a == b'>' : 
                 break;
 
             while 1:
               self.ser.write(b'B')
               a = self.ser.read(1)  
-              logging.info(a)
+              #logging.info(a)
               if a == b'B' : 
                 break;
 
             while 1:
               self.ser.write(b'A')
               a = self.ser.read(1)  
-              logging.info(a)
+              #logging.info(a)
               if a == b'A' : 
                 break;
 
             while 1:
               self.ser.write(b'#')
               a = self.ser.read(1)  
-              logging.info(a)
-              if a == b'#' : 
+              #logging.info(a)
+              #if a == b'#' : 
+              if a == b'\n' : 
                 break;
 
             ret = self.SerialProgramFlash()

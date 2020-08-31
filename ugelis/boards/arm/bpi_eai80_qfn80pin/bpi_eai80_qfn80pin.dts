@@ -43,7 +43,7 @@
 	};
 
 	chosen {
-		ugelis,console = &uart0;
+		ugelis,console = &uart2;
         ugelis,sram = &sram0;
         #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
         ugelis,sdram = &sdram0;
@@ -124,11 +124,13 @@
 };
 
 &uart5 {
-	current-speed  = <19200>; //19200 for 8M clock
+	//current-speed  = <19200>; //19200 for 8M clock
+	current-speed  = <115200>; //19200 for 8M clock
 	parity         = <1>;
 	wordLength     = <3>;
 	stopBits       = <0>;
-	clockSrc       = <8000000>;
+	//clockSrc       = <8000000>;
+	clockSrc       = <48000000>;
 	status         = "ok";
 };
 
