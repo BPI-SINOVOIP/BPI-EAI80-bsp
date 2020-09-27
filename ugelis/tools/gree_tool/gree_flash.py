@@ -453,9 +453,11 @@ class Download(object):
             config.read(r'./config.ini')
         except Exception as e:
             logging.error(str(e))
+            sys.exit(1)
         #config.read('./Config.ini')
         self.m_partInfo = file_config()
         try:
+            logging.info("config.get SETTING STORAGE")
             self.storage = config.get('SETTING', 'STORAGE')
         except Exception as e:
             logging.error(str(e))

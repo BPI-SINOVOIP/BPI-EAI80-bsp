@@ -435,17 +435,17 @@ class Download(object):
                 break;
 
             while 1:
-              self.ser.write(b'B')
+              self.ser.write(b'F')
               a = self.ser.read(1)  
               #logging.info(a)
-              if a == b'B' : 
+              if a == b'F' : 
                 break;
 
             while 1:
-              self.ser.write(b'A')
+              self.ser.write(b'S')
               a = self.ser.read(1)  
               #logging.info(a)
-              if a == b'A' : 
+              if a == b'S' : 
                 break;
 
             while 1:
