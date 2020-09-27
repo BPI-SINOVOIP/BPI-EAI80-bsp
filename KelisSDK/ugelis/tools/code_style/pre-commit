@@ -1,0 +1,10 @@
+#!/bin/sh
+shell_folder=$(dirname "$0")
+
+python -c "print(\"Start reformat code now.\")"
+
+if [ $? -eq 0 ]; then
+    python $shell_folder/auto_reformat_code.py
+    python -c "print(\"Reformating is finished.\")"
+fi
+

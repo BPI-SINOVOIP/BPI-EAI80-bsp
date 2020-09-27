@@ -1,0 +1,8 @@
+#include "gm_hal_test_rtc.h"
+#include "gm_hal_test_lvd.h"
+#include "dac_test.h"
+#include "gm_test_wwdg.h"
+#include "gm_test_iwdg.h"
+#include "dma_test.h"
+#include "gpio_test.h"
+#include "adc_test.h"

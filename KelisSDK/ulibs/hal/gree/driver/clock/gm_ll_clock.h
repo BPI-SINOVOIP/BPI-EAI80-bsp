@@ -1,0 +1,678 @@
+/**
+ *
+ * Copyright (C) 2016 Gree Microelectronics.  All Rights Reserved.
+ *
+ * @file          gpio_dev.h
+ *
+ * @author        bert.Ding
+ *
+ * @version       1.0.0
+ *
+ * @date          2018/04/23
+ *
+ * @brief         System Register Header file
+ *
+ * @note
+ */
+
+#ifndef _GM_LL_CLOCK_H_
+#define _GM_LL_CLOCK_H_
+
+#include<gm_common.h>
+#include<gm_soc.h>
+//#include"sys_reg/gm_ll_sys.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+/**********************************MACRO definition**************************************************/
+/**
+  * Enable or disable HIRC
+  */
+#define LL_HIRC_ENABLE_DISABLE(VALUE)               IO_BITMASK_SET(SYS_DEV->HIRCCR, SYS_HIRCCR_HIRC_MASK, \
+        (VALUE << SYS_HIRCCR_EN_POS))
+
+/**
+  * Enable or disable LIRC
+  */
+#define LL_LIRC_ENABLE_DISABLE(VALUE)               IO_BITMASK_SET(SYS_DEV->HIRCCR, SYS_LIRCCR_LIRC_MASK, \
+        (VALUE << SYS_LIRCCR_EN_POS))
+
+/**
+  * Adjust LIRC tmr
+  */
+#define LL_ADJUST_LIRC_TMR(VALUE)                   IO_BITMASK_SET(SYS_DEV->LIRCCR, SYS_LIRCCR_TMR_MASK, \
+        (VALUE << SYS_LIRCCR_TMR_POS))
+/**
+  * Adjust LIRC tmc
+  */
+#define LL_ADJUST_LIRC_TMC(VALUE)                   IO_BITMASK_SET(SYS_DEV->LIRCCR, SYS_LIRCCR_TMC_MASK,\
+        (VALUE << SYS_LIRCCR_TMC_POS))
+#if defined(CHIP_GM6721)
+/**
+  * Set HOSC pinmux
+  */
+#define LL_HOSC_IN_PINMUX_SET                       IO_BITS_SET(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_HOSCIN)
+
+/**
+  * Clear HOSC pinmux
+  */
+#define LL_HOSC_IN_PINMUX_CLEAR                     IO_BIT_CLEAR(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_HOSCIN)
+
+/**
+  * Set HOSC pinmux
+  */
+#define LL_HOSC_OUT_PINMUX_SET                      IO_BITS_SET(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_HOSCOUT)
+
+/**
+  * Clear HOSC pinmux
+  */
+#define LL_HOSC_OUT_PINMUX_CLEAR                    IO_BIT_CLEAR(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_HOSCOUT)
+
+#elif defined(CHIP_F6721B)
+/**
+  * Set HOSC pinmux
+  */
+#define LL_HOSC_IN_PINMUX_SET                       IO_BITMASK_SET(SYS_DEV->IOMODE[2], SYS_IOMODE2_ENABLE_HOSCIN_MSK, SYS_IOMODE2_ENABLE_HOSCIN)
+
+/**
+  * Clear HOSC pinmux
+  */
+#define LL_HOSC_IN_PINMUX_CLEAR                     IO_BIT_CLEAR(SYS_DEV->IOMODE[2], SYS_IOMODE2_ENABLE_HOSCIN_MSK)
+
+/**
+  * Set HOSC pinmux
+  */
+#define LL_HOSC_OUT_PINMUX_SET                      IO_BITMASK_SET(SYS_DEV->IOMODE[2], SYS_IOMODE2_ENABLE_HOSCOUT_MSK, SYS_IOMODE2_ENABLE_HOSCOUT)
+
+/**
+  * Clear HOSC pinmux
+  */
+#define LL_HOSC_OUT_PINMUX_CLEAR                    IO_BIT_CLEAR(SYS_DEV->IOMODE[2], SYS_IOMODE2_ENABLE_HOSCOUT_MSK)
+#endif
+
+
+/**
+  * Enable or disable HOSC
+  */
+#define LL_HOSC_ENABLE_DISABLE(VALUE)               IO_BITMASK_SET(SYS_DEV->HOSCCR, SYS_HOSCCR_HOSC_MASK, \
+        (VALUE << SYS_HOSCCR_EN_POS))
+
+/**
+  * Adjust HOSC default config
+  */
+#define LL_ADJUST_HOSC_CAP_SEL(CAP)                 IO_BITMASK_SET(SYS_DEV->HOSCCR, SYS_HOSCCR_CAPSEL_MASK,\
+        (CAP << SYS_HOSCCR_CAPSEL_POS))
+#define LL_ADJUST_HOSC_CRYSTAL(CRYSTAL)             IO_BITMASK_SET(SYS_DEV->HOSCCR, SYS_HOSCCR_CS_MASK,\
+        (CRYSTAL << SYS_HOSCCR_CS_POS))
+
+#if defined(CHIP_GM6721)
+/**
+  * Set LOSC pinmux
+  */
+#define LL_LOSC_IN_PINMUX_SET                       IO_BITS_SET(SYS_DEV->IOMODE[0], SYS_IOMODE0_ENABLE_LOSCIN)
+
+/**
+  * Clear LOSC pinmux
+  */
+#define LL_LOSC_IN_PINMUX_CLEAR                     IO_BITS_SET(SYS_DEV->IOMODE[0], SYS_IOMODE0_ENABLE_LOSCIN)
+
+
+/**
+  * Set LOSC pinmux
+  */
+#define LL_LOSC_OUT_PINMUX_SET                      IO_BITS_SET(SYS_DEV->IOMODE[0], SYS_IOMODE0_ENABLE_LOSCOUT)
+
+/**
+  * Clear LOSC pinmux
+  */
+#define LL_LOSC_OUT_PINMUX_CLEAR                    IO_BIT_CLEAR(SYS_DEV->IOMODE[0], SYS_IOMODE0_ENABLE_LOSCOUT)
+
+#elif defined(CHIP_F6721B)
+/**
+  * Set LOSC pinmux
+  */
+#define LL_LOSC_IN_PINMUX_SET                       IO_BITMASK_SET(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_LOSCIN_MSK, SYS_IOMODE1_ENABLE_LOSCIN)
+
+/**
+  * Clear LOSC pinmux
+  */
+#define LL_LOSC_IN_PINMUX_CLEAR                     IO_BITS_SET(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_LOSCIN)
+
+
+/**
+  * Set LOSC pinmux
+  */
+#define LL_LOSC_OUT_PINMUX_SET                      IO_BITMASK_SET(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_LOSCOUT_MSK, SYS_IOMODE1_ENABLE_LOSCOUT)
+
+/**
+  * Clear LOSC pinmux
+  */
+#define LL_LOSC_OUT_PINMUX_CLEAR                    IO_BIT_CLEAR(SYS_DEV->IOMODE[1], SYS_IOMODE1_ENABLE_LOSCOUT)
+#endif
+
+
+/**
+  * Enable or disable LOSC
+  */
+#define LL_LOSC_ENABLE_DISABLE(VALUE)               IO_BITMASK_SET(SYS_DEV->LOSCCR, SYS_LOSCCR_LOSC_MASK, \
+        (VALUE << SYS_LOSCCR_EN_POS))
+
+/**
+  * Adjust LOSC default config
+  */
+#define LL_ADJUST_LOSC_CAP_SEL(CAP)                 IO_BITMASK_SET(SYS_DEV->LOSCCR, SYS_LOSCCR_CAPSEL_MASK,\
+        (CAP << SYS_LOSCCR_CAPSEL_POS))
+#define LL_ADJUST_LOSC_BIAS_CURRENT(VALUE)          IO_BITMASK_SET(SYS_DEV->LOSCCR, SYS_LOSCCR_ISEL_MASK,\
+        (VALUE << SYS_LOSCCR_ISEL_POS))
+
+/**
+  * Enable or disable pll
+  */
+#define LL_PLL_ENABLE_DISABLE(VALUE)                IO_BITMASK_SET(SYS_DEV->PLL[0], SYS_PLL_EN_MASK, \
+        (VALUE << SYS_PLL_EN_POS))
+
+/**
+  * Adjust PLL VCO and Charge pump current
+  */
+#define LL_ADJUST_PLL_VCO(VCO)                      IO_BITMASK_SET(SYS_DEV->PLL[0], SYS_PLL_VCO_MASK,\
+        (VCO << SYS_PLL_VCO_POS))
+#define LL_ADJUST_PLL_CPC(CPC)                      IO_BITMASK_SET(SYS_DEV->PLL[0], SYS_PLL_CPC_MASK,\
+        (CPC << SYS_PLL_CPC_POS))
+
+/**
+  * Configure parameters of PLL
+  */
+#define LL_PLL_CONFIG_DIVN(VALUE)                   IO_BITMASK_SET(SYS_DEV->PLL[1], SYS_PLL_DIVN_MASK,\
+        (VALUE << SYS_PLL_DIVN_POS))
+
+/**
+  * Configure parameters of PLL
+  */
+#define LL_PLL_CONFIG_DIVP(VALUE)                   IO_BITMASK_SET(SYS_DEV->PLL[1], SYS_PLL_DIVP_MASK,\
+        (VALUE << SYS_PLL_DIVP_POS))
+
+/**
+  * Configure parameters of PLL
+  */
+#define LL_PLL_CONFIG_DIVQ(VALUE)                   IO_BITMASK_SET(SYS_DEV->PLL[1], SYS_PLL_DIVQ_MASK,\
+        (VALUE << SYS_PLL_DIVQ_POS))
+
+/**
+  * Configure parameters of PLL
+  */
+#define LL_PLL_CONFIG_DIVR(VALUE)                   IO_BITMASK_SET(SYS_DEV->PLL[1], SYS_PLL_DIVR_MASK,\
+        (VALUE << SYS_PLL_DIVR_POS))
+
+/**
+  * Configure PLLs reference clock
+  */
+#define LL_PLLs_REFERENCE_CLOCK(REFCLK)             IO_BITMASK_SET(SYS_DEV->PLLREF, SYS_PLLREF_SEL_MASK,\
+        (REFCLK << SYS_PLLREF_SEL_POS))
+
+/**
+  * Check if any PLLs is stable
+  */
+#define LL_PLLs_ANY_IS_STABLE                       IO_BITS_GET(SYS_DEV->CMUST, SYS_CMUST_PLLs_ANY_STABLE)
+
+
+/**
+  * Configure PLLs DIVM
+  */
+#define LL_PLLs_CONFIG_DIVM(VALUE)                  IO_BITMASK_SET(SYS_DEV->PLLREF, SYS_PLLREF_DIVM_MASK,\
+        (VALUE << SYS_PLLREF_DIVM_POS))
+
+/**
+  * Enable or disable PLLKDP
+  */
+#define LL_PLLKDP_ENABLE_DISABLE(VALUE)             IO_BITMASK_SET(SYS_DEV->PLLKDP[0], SYS_PLLKDP_EN_MASK, \
+        (VALUE << SYS_PLLKDP_EN_POS))
+
+/**
+  * Configure parameters of PLLKDP
+  */
+#define LL_PLLKDP_CONFIG_DIVN(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLKDP[0], SYS_PLLKDP_DIVN_MASK,\
+        (VALUE << SYS_PLLKDP_DIVN_POS))
+
+/**
+  * Configure parameters of PLLKDP
+  */
+#define LL_PLLKDP_CONFIG_DIVP(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLKDP[1], SYS_PLLKDP_DIVP_MASK,\
+        (VALUE << SYS_PLLKDP_DIVP_POS))
+
+/**
+  * Configure parameters of PLLKDP
+  */
+#define LL_PLLKDP_CONFIG_DIVQ(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLKDP[1], SYS_PLLKDP_DIVQ_MASK,\
+        (VALUE << SYS_PLLKDP_DIVQ_POS))
+
+/**
+  * Configure parameters of PLLKDP
+  */
+#define LL_PLLKDP_CONFIG_DIVR(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLKDP[1], SYS_PLLKDP_DIVR_MASK,\
+        (VALUE << SYS_PLLKDP_DIVR_POS))
+
+/**
+  * Adjust PLLKDP VCO and Charge pump current
+  */
+#define LL_ADJUST_PLLKDP_VCO(VCO)                   IO_BITMASK_SET(SYS_DEV->PLLKDP[0], SYS_PLLKDP_VCO_MASK,\
+        (VCO << SYS_PLLKDP_VCO_POS))
+#define LL_ADJUST_PLLKDP_CPC(CPC)                   IO_BITMASK_SET(SYS_DEV->PLLKDP[0], SYS_PLLKDP_CPC_MASK,\
+        (CPC << SYS_PLLKDP_CPC_POS))
+
+/**
+  * Enable or disable PLLI2S
+  */
+#define LL_PLLI2S_ENABLE_DISABLE(VALUE)             IO_BITMASK_SET(SYS_DEV->PLLI2S[0], SYS_PLLI2S_EN_MASK, \
+        (VALUE << SYS_PLLI2S_EN_POS))
+
+/**
+  * Adjust PLLI2S VCO and Charge pump current
+  */
+#define LL_ADJUST_PLLI2S_VCO(VCO)                   IO_BITMASK_SET(SYS_DEV->PLLI2S[0], SYS_PLLI2S_VCO_MASK,\
+        (VCO << SYS_PLLI2S_VCO_POS))
+#define LL_ADJUST_PLLI2S_CPC(CPC)                   IO_BITMASK_SET(SYS_DEV->PLLI2S[0], SYS_PLLI2S_CPC_MASK,\
+        (CPC << SYS_PLLI2S_CPC_POS))
+
+/**
+  * Configure parameters of PLLI2S
+  */
+#define LL_PLLI2S_CONFIG_DIVN(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLI2S[1], SYS_PLLI2S_DIVN_MASK,\
+        (VALUE << SYS_PLLI2S_DIVN_POS))
+
+/**
+  * Configure parameters of PLLI2S
+  */
+#define LL_PLLI2S_CONFIG_DIVP(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLI2S[1], SYS_PLLI2S_DIVP_MASK,\
+        (VALUE << SYS_PLLI2S_DIVP_POS))
+
+/**
+  * Configure parameters of PLLI2S
+  */
+#define LL_PLLI2S_CONFIG_DIVQ(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLI2S[1], SYS_PLLI2S_DIVQ_MASK,\
+        (VALUE << SYS_PLLI2S_DIVQ_POS))
+
+/**
+  * Configure parameters of PLLI2S
+  */
+#define LL_PLLI2S_CONFIG_DIVR(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLI2S[1], SYS_PLLI2S_DIVR_MASK,\
+        (VALUE << SYS_PLLI2S_DIVR_POS))
+
+/**
+  * Enable or disable PLLSAI
+  */
+#define LL_PLLSAI_ENABLE_DISABLE(VALUE)             IO_BITMASK_SET(SYS_DEV->PLLSAI[0], SYS_PLLSAI_EN_MASK, \
+        (VALUE << SYS_PLLSAI_EN_POS))
+
+/**
+  * Adjust PLLSAI VCO and Charge pump current
+  */
+#define LL_ADJUST_PLLSAI_VCO(VCO)                   IO_BITMASK_SET(SYS_DEV->PLLSAI[0], SYS_PLLSAI_VCO_MASK,\
+        (VCO << SYS_PLLSAI_VCO_POS))
+#define LL_ADJUST_PLLSAI_CPC(CPC)                   IO_BITMASK_SET(SYS_DEV->PLLSAI[0], SYS_PLLSAI_CPC_MASK,\
+        (CPC << SYS_PLLSAI_CPC_POS))
+
+/**
+  * Configure parameters of PLLSAI
+  */
+#define LL_PLLSAI_CONFIG_DIVN(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLSAI[1], SYS_PLLSAI_DIVN_MASK,\
+        (VALUE << SYS_PLLSAI_DIVN_POS))
+
+/**
+  * Configure parameters of PLLSAI
+  */
+#define LL_PLLSAI_CONFIG_DIVP(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLSAI[1], SYS_PLLSAI_DIVP_MASK,\
+        (VALUE << SYS_PLLSAI_DIVP_POS))
+
+/**
+  * Configure parameters of PLLSAI
+  */
+#define LL_PLLSAI_CONFIG_DIVQ(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLSAI[1], SYS_PLLSAI_DIVQ_MASK,\
+        (VALUE << SYS_PLLSAI_DIVQ_POS))
+
+/**
+  * Configure parameters of PLLSAI
+  */
+#define LL_PLLSAI_CONFIG_DIVR(VALUE)                IO_BITMASK_SET(SYS_DEV->PLLSAI[1], SYS_PLLSAI_DIVR_MASK,\
+        (VALUE << SYS_PLLSAI_DIVR_POS))
+
+/**
+  * Configure system clock selection
+  */
+#define LL_SYSCLOCK_SEL_CONFIG(SYSCLOCK)            IO_BITMASK_SET(SYS_DEV->SYSCLK, SYS_SYSCLK_FCLK_SEL_MASK,\
+        (SYSCLOCK << SYS_SYSCLK_FCLK_SEL_POS))
+/**
+  * Configure system clock prescaler
+  */
+#define LL_SYSCLOCK_DIV_CONFIG(PRESCALER)           IO_BITMASK_SET(SYS_DEV->SYSCLK, SYS_SYSCLK_FCLK_DIV_MASK,\
+        (PRESCALER << SYS_SYSCLK_FCLK_DIV_POS))
+
+
+/**
+  * Get system clock selection
+  */
+#define LL_SYSCLOCK_GET_SYSCLK_SEL                  IO_BITS_GET(SYS_DEV->SYSCLK, SYS_SYSCLK_FCLK_SEL_MASK)
+/**
+  * Configure system clock prescaler
+  */
+#define LL_SYSCLOCK_GET_SYSCLK_DIV                  IO_BITS_GET(SYS_DEV->SYSCLK, SYS_SYSCLK_FCLK_DIV_MASK)
+/**
+  * Get system clock switch error flag
+  */
+#define LL_SYSCLOCK_GET_ERR_FLAG                    IO_BITS_GET(SYS_DEV->SYSCLK, SYS_SYSCLK_FCLK_SWT_ERR)
+/**
+  * Clear system clock switch error flag
+  */
+#define LL_SYSCLOCK_CLEAR_ERR_FLAG                  IO_BITS_SET(SYS_DEV->SYSCLK, SYS_SYSCLK_FCLK_SWT_ERR)
+
+
+
+
+/**
+  * Enable peripheral clock
+  */
+#define LL_SYSCLOCK_ENABLE_PERIPHERAL_CLOCK0(VALUE)     IO_BIT_SET(SYS_DEV->ENABLECLK[0], VALUE)
+
+/**
+  * Disable peripheral clock
+  */
+#define LL_SYSCLOCK_DISABLE_PERIPHERAL_CLOCK0(VALUE)    IO_BIT_CLEAR(SYS_DEV->ENABLECLK[0], VALUE)
+
+/**
+  * Enable peripheral clock
+  */
+#define LL_SYSCLOCK_ENABLE_PERIPHERAL_CLOCK1(VALUE)     IO_BIT_SET(SYS_DEV->ENABLECLK[1], VALUE)
+
+/**
+  * Disable peripheral clock
+  */
+#define LL_SYSCLOCK_DISABLE_PERIPHERAL_CLOCK1(VALUE)    IO_BIT_CLEAR(SYS_DEV->ENABLECLK[1], VALUE)
+
+/**
+  * Enable peripheral clock
+  */
+#define LL_SYSCLOCK_ENABLE_PERIPHERAL_CLOCK2(VALUE)     IO_BIT_SET(SYS_DEV->ENABLECLK[2], VALUE)
+
+/**
+  * Disable peripheral clock
+  */
+#define LL_SYSCLOCK_DISABLE_PERIPHERAL_CLOCK2(VALUE)    IO_BIT_CLEAR(SYS_DEV->ENABLECLK[2], VALUE)
+
+/***********************************MACRO definitions to configure peripheral clock*********************/
+/**
+  * Configure SDRAM clock
+  */
+#define LL_PERIPHECLK_SDRAM_CONFIG(PRESCALER)           IO_BITMASK_SET(SYS_DEV->CLKSRC[0], SYS_CLKSRC0_SDRAM_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC0_SDRAM_DIV_POS))
+/**
+  * Configure WWDT clock
+  */
+#define LL_PERIPHECLK_WWDT_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[0], SYS_CLKSRC0_WWDT_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC0_WWDT_DIV_POS))
+/**
+  * Configure LPSTM clock
+  */
+#define LL_PERIPHECLK_LPSTM_CONFIG(SOURCECLK)           IO_BITMASK_SET(SYS_DEV->CLKSRC[1], SYS_CLKSRC1_LPSTM_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC1_LPSTM_SEL_POS))
+/**
+  * Configure MCO1 clock
+  */
+#define LL_PERIPHECLK_MCO1_SEL_CONFIG(SOURCECLK)        IO_BITMASK_SET(SYS_DEV->CLKSRC[1], SYS_CLKSRC1_MCO1_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC1_MCO1_SEL_POS))
+#define LL_PERIPHECLK_MCO1_DIV_CONFIG(PRESCALER)        IO_BITMASK_SET(SYS_DEV->CLKSRC[1], SYS_CLKSRC1_MCO1_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC1_MCO1_DIV_POS))
+/**
+  * Configure MCO2 clock
+  */
+#define LL_PERIPHECLK_MCO2_SEL_CONFIG(SOURCECLK)        IO_BITMASK_SET(SYS_DEV->CLKSRC[1], SYS_CLKSRC1_MCO2_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC1_MCO2_SEL_POS))
+#define LL_PERIPHECLK_MCO2_DIV_CONFIG(PRESCALER)        IO_BITMASK_SET(SYS_DEV->CLKSRC[1], SYS_CLKSRC1_MCO2_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC1_MCO2_DIV_POS))
+/**
+  * Configure RTC clock
+  */
+#define LL_PERIPHECLK_RTC_SEL_CONFIG(SOURCECLK)         IO_BITMASK_SET(SYS_DEV->CLKSRC[1], SYS_CLKSRC1_RTC_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC1_RTC_SEL_POS))
+#define LL_PERIPHECLK_RTC_DIV_CONFIG(PRESCALER)         IO_BITMASK_SET(SYS_DEV->CLKSRC[1], SYS_CLKSRC1_RTC_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC1_RTC_DIV_POS))
+
+/**
+  * Configure KDP clock
+  */
+#define LL_PERIPHECLK_KDP_CONFIG(SOURCECLK)             IO_BITMASK_SET(SYS_DEV->CLKSRC[2], SYS_CLKSRC2_KDP_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC2_KDP_SEL_POS))
+
+/**
+  * Configure ADC clock
+  */
+#define LL_PERIPHECLK_ADC1_SEL_CONFIG(SOURCECLK)        IO_BITMASK_SET(SYS_DEV->CLKSRC[2], SYS_CLKSRC2_ADC_SEL_POS,\
+        (SOURCECLK << SYS_CLKSRC2_ADC_SEL_POS))
+#define LL_PERIPHECLK_ADC1_DIV_CONFIG(PRESCALER)        IO_BITMASK_SET(SYS_DEV->CLKSRC[2], SYS_CLKSRC2_ADC_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC2_ADC_DIV_POS))
+
+
+/**
+  * Configure ADC2 clock
+  */
+#define LL_PERIPHECLK_ADC2_SEL_CONFIG(SOURCECLK)        IO_BITMASK_SET(SYS_DEV->CLKSRC[2], SYS_CLKSRC2_ADC2_SEL_POS,\
+        (SOURCECLK << SYS_CLKSRC2_ADC2_SEL_POS))
+#define LL_PERIPHECLK_ADC2_DIV_CONFIG(PRESCALER)        IO_BITMASK_SET(SYS_DEV->CLKSRC[2], SYS_CLKSRC2_ADC2_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC2_ADC2_DIV_POS))
+
+
+/**
+  * Configure ADC3 clock
+  */
+#define LL_PERIPHECLK_ADC3_SEL_CONFIG(SOURCECLK)        IO_BITMASK_SET(SYS_DEV->CLKSRC[2], SYS_CLKSRC2_ADC3_SEL_POS,\
+        (SOURCECLK << SYS_CLKSRC2_ADC3_SEL_POS))
+#define LL_PERIPHECLK_ADC3_DIV_CONFIG(PRESCALER)        IO_BITMASK_SET(SYS_DEV->CLKSRC[2], SYS_CLKSRC2_ADC3_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC2_ADC3_DIV_POS))
+
+
+/**
+  * Configure DAC clock
+  */
+#define LL_PERIPHECLK_DAC_CONFIG(SOURCECLK)             IO_BITMASK_SET(SYS_DEV->CLKSRC[3], SYS_CLKSRC3_DAC_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC3_DAC_SEL_POS))
+
+/**
+  * Configure SDMMC clock
+  */
+#define LL_PERIPHECLK_SDMMC_CONFIG(SOURCECLK)           IO_BITMASK_SET(SYS_DEV->CLKSRC[3], SYS_CLKSRC3_SDMMC_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC3_SDMMC_SEL_POS))
+
+/**
+  * Configure VOUT clock
+  */
+#define LL_PERIPHECLK_VOUT_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[3], SYS_CLKSRC3_VOUT_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC3_VOUT_DIV_POS))
+
+/**
+  * Configure I2C1 clock
+  */
+#define LL_PERIPHECLK_I2C1_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[4], SYS_CLKSRC4_I2C1_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC4_I2C1_DIV_POS))
+
+/**
+  * Configure I2C2 clock
+  */
+#define LL_PERIPHECLK_I2C2_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[4], SYS_CLKSRC4_I2C2_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC4_I2C2_DIV_POS))
+
+/**
+  * Configure I2C3 clock
+  */
+#define LL_PERIPHECLK_I2C3_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[5], SYS_CLKSRC5_I2C3_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC5_I2C3_DIV_POS))
+
+/**
+  * Configure BTM1 clock
+  */
+#define LL_PERIPHECLK_BTM1_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[5], SYS_CLKSRC5_BTM1_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC5_BTM1_DIV_POS))
+
+/**
+  * Configure BTM2 clock
+  */
+#define LL_PERIPHECLK_BTM2_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[6], SYS_CLKSRC6_BTM2_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC6_BTM2_DIV_POS))
+
+/**
+  * Configure SAIA clock
+  */
+#define LL_PERIPHECLK_SAIA_CONFIG(SOURCECLK)            IO_BITMASK_SET(SYS_DEV->CLKSRC[6], SYS_CLKSRC6_SAIA_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC6_SAIA_SEL_POS))
+
+/**
+  * Configure SAIB clock
+  */
+#define LL_PERIPHECLK_SAIB_CONFIG(SOURCECLK)            IO_BITMASK_SET(SYS_DEV->CLKSRC[6], SYS_CLKSRC6_SAIB_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC6_SAIB_SEL_POS))
+
+/**
+  * Configure UART1 clock
+  */
+#define LL_PERIPHECLK_UART1_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART1_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC7_UART1_SEL_POS))
+#define LL_PERIPHECLK_UART1_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART1_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC7_UART1_DIV_POS))
+
+/**
+  * Configure UART2 clock
+  */
+#define LL_PERIPHECLK_UART2_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART2_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC7_UART2_SEL_POS))
+#define LL_PERIPHECLK_UART2_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART2_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC7_UART2_DIV_POS))
+
+/**
+  * Configure UART3 clock
+  */
+#define LL_PERIPHECLK_UART3_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART3_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC7_UART3_SEL_POS))
+#define LL_PERIPHECLK_UART3_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART3_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC7_UART3_DIV_POS))
+
+/**
+  * Configure UART4 clock
+  */
+#define LL_PERIPHECLK_UART4_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART4_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC7_UART4_SEL_POS))
+#define LL_PERIPHECLK_UART4_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[7], SYS_CLKSRC7_UART4_DIV_MASK,\
+        (uint32_t)(PRESCALER << SYS_CLKSRC7_UART4_DIV_POS))
+
+/**
+  * Configure UART5 clock
+  */
+#define LL_PERIPHECLK_UART5_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART5_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC8_UART5_SEL_POS))
+#define LL_PERIPHECLK_UART5_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART5_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC8_UART5_DIV_POS))
+
+/**
+  * Configure UART6 clock
+  */
+#define LL_PERIPHECLK_UART6_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART6_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC8_UART6_SEL_POS))
+#define LL_PERIPHECLK_UART6_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART6_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC8_UART6_DIV_POS))
+
+/**
+  * Configure UART7 clock
+  */
+#define LL_PERIPHECLK_UART7_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART7_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC8_UART7_SEL_POS))
+#define LL_PERIPHECLK_UART7_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART7_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC8_UART7_DIV_POS))
+
+/**
+  * Configure UART8 clock
+  */
+#define LL_PERIPHECLK_UART8_SEL_CONFIG(SOURCECLK)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART8_SEL_MASK,\
+        (SOURCECLK << SYS_CLKSRC8_UART8_SEL_POS))
+#define LL_PERIPHECLK_UART8_DIV_CONFIG(PRESCALER)       IO_BITMASK_SET(SYS_DEV->CLKSRC[8], SYS_CLKSRC8_UART8_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC8_UART8_DIV_POS))
+
+/**
+  * Configure TIM1 clock
+  */
+#define LL_PERIPHECLK_TIM1_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM1_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM1_DIV_POS))
+
+/**
+  * Configure TIM2 clock
+  */
+#define LL_PERIPHECLK_TIM2_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM2_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM2_DIV_POS))
+
+/**
+  * Configure TIM3 clock
+  */
+#define LL_PERIPHECLK_TIM3_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM3_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM3_DIV_POS))
+
+/**
+  * Configure TIM4 clock
+  */
+#define LL_PERIPHECLK_TIM4_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM4_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM4_DIV_POS))
+
+/**
+  * Configure TIM5 clock
+  */
+#define LL_PERIPHECLK_TIM5_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM5_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM5_DIV_POS))
+
+/**
+  * Configure TIM8 clock
+  */
+#define LL_PERIPHECLK_TIM8_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM8_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM8_DIV_POS))
+
+/**
+  * Configure TIM9 clock
+  */
+#define LL_PERIPHECLK_TIM9_CONFIG(PRESCALER)            IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM9_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM9_DIV_POS))
+
+/**
+  * Configure TIM10 clock
+  */
+#define LL_PERIPHECLK_TIM10_CONFIG(PRESCALER)           IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM10_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM10_DIV_POS))
+
+/**
+  * Configure TIM11 clock
+  */
+#define LL_PERIPHECLK_TIM11_CONFIG(PRESCALER)           IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM11_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM11_DIV_POS))
+
+/**
+  * Configure TIM12 clock
+  */
+#define LL_PERIPHECLK_TIM12_CONFIG(PRESCALER)           IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM12_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM12_DIV_POS))
+
+/**
+  * Configure TIM13 clock
+  */
+#define LL_PERIPHECLK_TIM13_CONFIG(PRESCALER)           IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM13_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM13_DIV_POS))
+
+/**
+  * Configure TIM14 clock
+  */
+#define LL_PERIPHECLK_TIM14_CONFIG(PRESCALER)           IO_BITMASK_SET(SYS_DEV->CLKSRC[9], SYS_CLKSRC9_TIM14_DIV_MASK,\
+        (PRESCALER << SYS_CLKSRC9_TIM14_DIV_POS))
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
+
+#endif
+

@@ -1,0 +1,18 @@
+#
+# DESCRIPTION: A user-kindly GDB configuration script file, for the IOT uGelis OS on ARM architecture
+#
+# REVISION: 1.0.0  (04/11/2017)
+#
+# CONTRIBUTORS: evan.wu
+#
+
+
+
+define load_slave
+	# slave bootloader
+	restore Y:\workspace\repo_ugelis\ugelis\samples\gm6721_prj\es_test\rpc_sdram\slave_bootloader\example\bootloader\build\keil\bootloader.bin binary 0x20000000
+	# slave system
+	restore Y:\workspace\repo_ugelis\ugelis\samples\gm6721_prj\es_test\rpc_sdram\slave\build\ugelis\ugelis.bin binary 0xc0800000
+	
+	printf "load slave done\n"
+end

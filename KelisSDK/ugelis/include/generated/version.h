@@ -1,0 +1,14 @@
+#ifndef _KERNEL_VERSION_H_
+#define _KERNEL_VERSION_H_
+
+#define UGELIS_VERSION_CODE 68707
+#define UGELIS_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
+#define KERNELVERSION          0x10C6300
+#define KERNEL_VERSION_NUMBER  0x10C63
+#define KERNEL_VERSION_MAJOR   1
+#define KERNEL_VERSION_MINOR   12
+#define KERNEL_PATCHLEVEL      99
+#define KERNEL_VERSION_STRING  "1.12.99"
+
+#endif /* _KERNEL_VERSION_H_ */

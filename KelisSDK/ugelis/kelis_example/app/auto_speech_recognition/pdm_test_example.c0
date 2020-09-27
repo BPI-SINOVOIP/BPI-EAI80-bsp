@@ -1,0 +1,207 @@
+/*====================================================================
+ *
+ * Copyright (C) 2015 Gree Microelectronics.  All Rights Reserved.
+ *
+ * @file pdm_example.c
+ *
+ * @version 1.0.0
+ *
+ * @date 2019/11/02
+ *
+ * @contents Verification and example code of PDM.
+ *
+ * @history
+ *  Date               By             Comments          Ver.
+ *  =========       =========        =========        =========
+ *  2019/11/02    Robert_hu       Create           1.0.0
+ **********************************************************************/
+#include <gm_common.h>
+//#include "stdio.h"
+#include <gm_hal_pdm.h>
+#include <pinmux.h>
+#include <gm_hal_clock.h>
+#include <gm_hal_reset.h>
+#include <gm_hal_rtc.h>
+#include <gm_hal_dma.h>
+#include <gm_hal_gpio.h>
+#include <ugelis.h>
+#include <device.h>
+#include <init.h>
+/******************************************************************************
+* Constants and macros
+******************************************************************************/
+#define PDM_MASTER_DEVICE       (PDMB_DEV)
+#define PDM_MAX_DATALEN         16000
+#define RECORD_TIMES            10
+typedef struct
+{
+    uint32_t pin;                  /**< Specifies the GPIO pins to be configured */
+    GPIO_Device_T *device;         /**< GPIO device: 0x4 */
+    uint32_t alternate;            /**< Alternate function */
+} Device_Pinmux_T;
+/******************************************************************************
+* Global variables
+******************************************************************************/
+static volatile uint32_t s_mstReceCmplt = 0;
+PDM_Handle_T    g_PDMSlvHandle;
+static int16_t  g_rdbuf[PDM_MAX_DATALEN] = {0}; // 1 second buffer.
+static int16_t  g_copybuf[PDM_MAX_DATALEN * RECORD_TIMES] = {0};
+static int32_t s_dmabuffer[PDM_MAX_DATALEN] = {0};
+static uint32_t s_dmaBufferLen = PDM_MAX_DATALEN;
+static int32_t pingpong_offset = 0;
+
+void pdmReceiveCallback(struct PDM_Handle_T *pPDM, uint8_t event, unsigned long param)
+{
+    if (event == PDM_DMAMST_RECEIVE_EVENT)
+    {
+        s_mstReceCmplt += 1 ;
+        memcpy(&g_copybuf[pingpong_offset], &g_rdbuf[0], (PDM_MAX_DATALEN / 2)*sizeof(int16_t));
+        pingpong_offset += PDM_MAX_DATALEN / 2;
+    }
+    if (event == PDM_DMASLV_RECEIVE_EVENT)
+    {
+        s_mstReceCmplt += 1 ;
+        memcpy(&g_copybuf[pingpong_offset], &g_rdbuf[PDM_MAX_DATALEN / 2], (PDM_MAX_DATALEN / 2)*sizeof(int16_t));
+        pingpong_offset += PDM_MAX_DATALEN / 2;
+    }
+}
+/** Configure pinmux for an available PDM device */
+RET_CODE PDMAPinMuxConfig()
+{
+    int ret = 0;
+    struct device *portd = device_get_binding(CONFIG_PINMUX_GM_PORTD_NAME);
+    if (portd == NULL)
+    {
+        return -1;
+    }
+    GPIO_PinConfig_T pin_cfg;
+    Device_Pinmux_T s_pdmPinMux[2] =
+    {
+        {PINMUX_GPIO_PIN_6, GPIOD, GPIOD6_AF5_PDM_BCK_A},
+        {PINMUX_GPIO_PIN_7, GPIOD, GPIOD7_AF5_PDM_SD_A},
+    };
+    pin_cfg.pin = BIT(s_pdmPinMux[0].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[0].alternate;
+    ret = pinmux_pin_set(portd, s_pdmPinMux[0].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+
+    pin_cfg.pin = BIT(s_pdmPinMux[1].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[1].alternate;
+    ret = pinmux_pin_set(portd, s_pdmPinMux[1].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+    return 0;
+
+
+}
+RET_CODE PDMBPinMuxConfig()
+{
+    int ret = 0;
+    struct device *portd = device_get_binding(CONFIG_PINMUX_GM_PORTD_NAME);
+    if (portd == NULL)
+    {
+        return -1;
+    }
+    GPIO_PinConfig_T pin_cfg;
+    Device_Pinmux_T s_pdmPinMux[2] =
+    {
+        {PINMUX_GPIO_PIN_2, GPIOD, GPIOD2_AF3_PDM_BCK_B},
+        {PINMUX_GPIO_PIN_0, GPIOD, GPIOD0_AF3_PDM_SD_B},
+    };
+    pin_cfg.pin = BIT(s_pdmPinMux[0].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[0].alternate;
+    ret = pinmux_pin_set(portd, s_pdmPinMux[0].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+
+    pin_cfg.pin = BIT(s_pdmPinMux[1].pin);
+    pin_cfg.mode = GPIO_MODE_AF;
+    pin_cfg.pull = GPIO_PULLUP;
+    pin_cfg.alternate = s_pdmPinMux[1].alternate;
+    ret = pinmux_pin_set(portd, s_pdmPinMux[1].pin, (unsigned int)&pin_cfg);
+    if (ret)
+    {
+        return ret;
+    }
+    return 0;
+}
+void pdm_clk_choose(void)
+{
+    HW32_REG(0x40000198) |= (1 << 0); //D_PLLPDM_EN
+    HW32_REG(0x40000190) |= (1 << 0); //D_PLLI2S_EN
+    HW32_REG(0x400000ac) |= (1 << 4); //PDMA_CLK_SEL  48M
+    HW32_REG(0x400000ac) |= (1 << 6); //PDMB_CLK_SEL
+    HW32_REG(0x400000ac) |= (1 << 12); //PDMC_CLK_SEL
+    HW32_REG(0x400000ac) |= (1 << 14); //PDMD_CLK_SEL
+}
+
+int main()
+{
+    int ret = 0;
+    PDM_Config_T pdm_config;
+    RET_CODE retval;
+    printf("test_pdm_dma Start\n");
+
+    pdm_clk_choose();
+    PDMBPinMuxConfig();
+    pdm_config.DataSize            = PDM_DATASIZE_16;
+    pdm_config.Fifo_Thr            = PDM_FIFO_THRESHOLD_FULL;
+    pdm_config.Cid                 = DISABLE;
+    pdm_config.CH_FLAG             = PDM_CH_RIGHT;
+    pdm_config.Capt                = ENABLE;
+    pdm_config.Shift_Level         = PDM_SHIFT_LEVEL_6;
+    pdm_config.bckdiv              = PDM_BCK_1M;
+    pdm_config.FS                  = PDM_FS_16K;
+    pdm_config.Dual_Ch             = PDM_Dual_R;  //right channel
+    pdm_config.NBSlot              = PDM_NB_SLOT_2;
+    pdm_config.SlotSize            = PDM_SLOTSZ_32;
+    pdm_config.enableDMA           = TRUE;
+    pdm_config.dmaBufferLength     = s_dmaBufferLen;
+    pdm_config.pdmaBuffer          = s_dmabuffer;
+    pdm_config.pdm_callback        = pdmReceiveCallback;
+
+    retval = HAL_PDM_Init(&g_PDMSlvHandle, PDM_MASTER_DEVICE, &pdm_config);
+    if (retval != HAL_PDM_OK)
+    {
+        printf("HAL_PDM_Init() fail %d!\n", retval);
+        return HAL_PDM_ERROR;
+    }
+    retval = HAL_PDM_Receive_DMA(&g_PDMSlvHandle, PDM_MASTER_MODE, g_rdbuf, PDM_MAX_DATALEN);
+    if (retval != HAL_PDM_OK)
+    {
+        printf("HAL_PDM_Receive_DMA() fail %d!\n", retval);
+        return HAL_PDM_ERROR;
+    }
+
+    while (1)
+    {
+        // Record nRecordTimes seconds
+        if (s_mstReceCmplt == RECORD_TIMES * 2)
+        {
+            break;
+        }
+    }
+    printf("s_mstReceCmplt = %d\n", s_mstReceCmplt);
+    printf("pingpong_offset = %d\n", pingpong_offset);
+    s_mstReceCmplt = 0;
+    //  for (i = 0; i < PDM_MAX_DATALEN; i++)
+    //      printf("%d\n", g_rdbuf[i]);
+    HAL_DMA_Abort(g_PDMSlvHandle.hDMA);
+    printf("test_pdm_dma Stop\n");
+
+    return HAL_PDM_OK;
+}
+

@@ -1,0 +1,77 @@
+
+/*
+ * Copyright (c) 2016 Open-RnD Sp. z o.o.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+#include <ugelis.h>
+#include <board.h>
+#include <device.h>
+#include <gpio.h>
+#include <misc/util.h>
+#include <misc/printk.h>
+#include "string.h"
+#include <kernel.h>
+#include <stdint.h>
+
+#define AUDIO_SIZE   (32168/2) //(AUDIO_LEN_MS * SAMP_FREQ)
+
+#define DET_LEN         ((int)(16000*2*0.02))
+#define AUDIO_LEN       ((int)(16000*2*2.3))
+#define AUDIO_FULL_LEN  ((int)(16000*2*2.5))
+#define LEFT_OFFSET_LEN ((int)(16000*2*0.3))
+#define FLAG_OFFSET_LEN ((int)(16000*2*0.5))
+#define CONTINUE_DET_CNT (2)
+#define CONTINUE_DET_UNIT (0.3) //0.1s
+#define CONTINUE_DET_OFF ((int)(16000*2*CONTINUE_DET_UNIT))
+#define CONTINUE_DET_LEN ((int)(16000*2*CONTINUE_DET_CNT*CONTINUE_DET_UNIT))
+
+#define CYCLE_BUF_UNIT ((int)(16000*2*0.1*3))
+
+//#define MFCC_DEBUG
+
+#ifdef MFCC_DEBUG
+#define CYCLE_BUF_CNT   (50) //50*0.3  15s
+#else
+#define CYCLE_BUF_CNT   (300) //300*0.3  90s
+#endif
+
+#define malloc(size)    malloc_ext(SRAMEX, size)
+#define free(ptr)    free_ext(SRAMEX, ptr)
+
+int onewav_buffer_finished(void *p1, void *p2);
+
+int next_index;
+
+typedef struct
+{
+    char *wav_data;
+    char *wav_data_withheader;
+    float *mfcc_data;
+    int next_mfcc_data_index;
+    char *cycle_buf;
+    int first_mfcc_flag;
+    float *mfcc_buffer_last;
+    float *mfcc_buffer;
+    float *mfcc_buffer_unit;
+    int mfcc_cycle_buf_next_index;
+    char *mfcc_wav_bak;
+    int det_index;
+    char *wav_data_withheader_saved;
+    char *mfcc_wav_det;
+    char *mfcc_data_saved;
+} AudioData;
+
+AudioData vad_mfcc_data;
+
+
+void get_mfcc_features_data(short* wav_data_without_header, int num_frames, float *mfcc_out)
+{
+    extract_features(&wav_data_without_header[0], num_frames, mfcc_out);
+}
+
+#define STACKSIZE                4096
+char __noinit __stack record_stack_area[STACKSIZE];
+char __noinit __stack vad_stack_area[STACKSIZE+1024];
+
+

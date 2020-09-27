@@ -1,0 +1,171 @@
+/* This file is a temporary workaround for mapping of the generated information
+ * to the current driver definitions.  This will be removed when the drivers
+ * are modified to handle the generated information, or the mapping of
+ * generated data matches the driver definitions.
+ */
+/* SoC level DTS fixup file */
+
+#define CONFIG_NUM_IRQ_PRIO_BITS	        ARM_V7M_NVIC_E000E100_ARM_NUM_IRQ_PRIORITY_BITS
+
+#ifdef UART0_LABEL
+/*rename uart0 dts generate marco*/
+#define	CONFIG_UART0			    UART0_LABEL
+#define CONFIG_UART0_BASE			UART0_BASE_ADDRESS
+#define CONFIG_UART0_REG_LENGTH		UART0_WORDLENGTH
+#define	CONFIG_UART0_IRQ_NUM		UART0_IRQ
+#define CONFIG_UART0_IRQ_PRIORITY	UART0_IRQ_PRIORITY
+#endif
+
+#ifdef UART1_LABEL
+/*rename uart1 dts generate marco*/
+#define	CONFIG_UART1			    UART1_LABEL
+#define CONFIG_UART1_BASE			UART1_BASE_ADDRESS
+#define CONFIG_UART1_REG_LENGTH		UART1_WORDLENGTH
+#define	CONFIG_UART1_IRQ_NUM		UART1_IRQ
+#define CONFIG_UART1_IRQ_PRIORITY	UART1_IRQ_PRIORITY
+#endif
+
+#ifdef UART2_LABEL
+/*rename uart2 dts generate marco*/
+#define	CONFIG_UART2			    UART2_LABEL
+#define CONFIG_UART2_BASE			UART2_BASE_ADDRESS
+#define CONFIG_UART2_REG_LENGTH		UART2_WORDLENGTH
+#define	CONFIG_UART2_IRQ_NUM		UART2_IRQ
+#define CONFIG_UART2_IRQ_PRIORITY	UART2_IRQ_PRIORITY
+#endif
+
+#ifdef UART3_LABEL
+/*rename uart3 dts generate marco*/
+#define	CONFIG_UART3			    UART3_LABEL
+#define CONFIG_UART3_BASE			UART3_BASE_ADDRESS
+#define CONFIG_UART3_REG_LENGTH		UART3_WORDLENGTH
+#define	CONFIG_UART3_IRQ_NUM		UART3_IRQ
+#define CONFIG_UART3_IRQ_PRIORITY	UART3_IRQ_PRIORITY
+#endif
+
+#ifdef UART4_LABEL
+/*rename uart4 dts generate marco*/
+#define	CONFIG_UART4			    UART4_LABEL
+#define CONFIG_UART4_BASE			UART4_BASE_ADDRESS
+#define CONFIG_UART4_REG_LENGTH		UART4_WORDLENGTH
+#define	CONFIG_UART4_IRQ_NUM		UART4_IRQ
+#define CONFIG_UART4_IRQ_PRIORITY	UART4_IRQ_PRIORITY
+#endif
+
+#ifdef UART5_LABEL
+/*rename uart5 dts generate marco*/
+#define	CONFIG_UART5			    UART5_LABEL
+#define CONFIG_UART5_BASE			UART5_BASE_ADDRESS
+#define CONFIG_UART5_REG_LENGTH		UART5_WORDLENGTH
+#define	CONFIG_UART5_IRQ_NUM		UART5_IRQ
+#define CONFIG_UART5_IRQ_PRIORITY	UART5_IRQ_PRIORITY
+#endif
+
+#ifdef UART6_LABEL
+/*rename uart6 dts generate marco*/
+#define	CONFIG_UART6			    UART6_LABEL
+#define CONFIG_UART6_BASE			UART6_BASE_ADDRESS
+#define CONFIG_UART6_REG_LENGTH		UART6_WORDLENGTH
+#define	CONFIG_UART6_IRQ_NUM		UART6_IRQ
+#define CONFIG_UART6_IRQ_PRIORITY	UART6_IRQ_PRIORITY
+#endif
+
+#ifdef UART7_LABEL
+/*rename uart7 dts generate marco*/
+#define	CONFIG_UART7			    UART7_LABEL
+#define CONFIG_UART7_BASE			UART7_BASE_ADDRESS
+#define CONFIG_UART7_REG_LENGTH		UART7_WORDLENGTH
+#define	CONFIG_UART7_IRQ_NUM		UART7_IRQ
+#define CONFIG_UART7_IRQ_PRIORITY	UART7_IRQ_PRIORITY
+#endif
+
+
+#ifdef IWDG_LABEL
+/*rename IWDG dts generate marco*/
+#define CONFIG_IWDG_NAME             IWDG_LABEL
+#define CONFIG_IWDG_BASE_ADDRESS     IWDG_BASE_ADDRESS
+#endif
+
+#ifdef WWDG_LABEL
+/*rename IWDG dts generate marco*/
+#define CONFIG_WWDG_NAME             WWDG_LABEL
+#define CONFIG_WWDG_BASE_ADDRESS     WWDG_BASE_ADDRESS
+#endif
+
+#ifdef RTC_LABEL
+/*rename RCT dts generate marco*/
+#define CONFIG_RTC_NAME             RTC_LABEL
+#define CONFIG_RTC_BASE_ADDRESS     RTC_BASE_ADDRESS
+#endif
+
+#ifdef LVD_LABEL
+/*rename LVD dts generate marco*/
+#define CONFIG_LVD_NAME             LVD_LABEL
+#define CONFIG_LVD_BASE_ADDRESS     LVD_BASE_ADDRESS
+#endif
+
+#ifdef TIM1_LABEL
+/*rename tim1 dts generate marco*/
+#define	CONFIG_TIM1			  		 TIM1_LABEL
+#endif
+
+#ifdef TIM2_LABEL
+/*rename tim2 dts generate marco*/
+#define	CONFIG_TIM2			  		 TIM2_LABEL
+#endif
+
+#ifdef TIM3_LABEL
+/*rename tim3 dts generate marco*/
+#define	CONFIG_TIM3			  		 TIM3_LABEL
+#endif
+
+#ifdef TIM4_LABEL
+/*rename tim4 dts generate marco*/
+#define	CONFIG_TIM4			  		 TIM4_LABEL
+#endif
+
+#ifdef TIM5_LABEL
+/*rename tim5 dts generate marco*/
+#define	CONFIG_TIM5			  		 TIM5_LABEL
+#endif
+
+#ifdef TIM8_LABEL
+/*rename tim8 dts generate marco*/
+#define	CONFIG_TIM8			  		 TIM8_LABEL
+#endif
+
+#ifdef TIM9_LABEL
+/*rename tim9 dts generate marco*/
+#define	CONFIG_TIM9			  		 TIM9_LABEL
+#endif
+
+#ifdef TIM10_LABEL
+/*rename tim10 dts generate marco*/
+#define	CONFIG_TIM10			     TIM10_LABEL
+#endif
+
+#ifdef TIM11_LABEL
+/*rename tim11 dts generate marco*/
+#define	CONFIG_TIM11			     TIM11_LABEL
+#endif
+
+#ifdef TIM12_LABEL
+/*rename tim12 dts generate marco*/
+#define	CONFIG_TIM12			     TIM12_LABEL
+#endif
+
+#ifdef TIM13_LABEL
+/*rename tim13 dts generate marco*/
+#define	CONFIG_TIM13			     TIM13_LABEL
+#endif
+
+#ifdef TIM14_LABEL
+/*rename tim14 dts generate marco*/
+#define	CONFIG_TIM14			     TIM14_LABEL
+#endif
+
+#ifdef POWER_LABEL
+#define CONFIG_PMU_IRQn     		POWER_IRQ
+#define CONFIG_PMU_IRQ_PRIORITY     POWER_IRQ_PRIORITY
+#endif
+/* End of SoC Level DTS fixup file */

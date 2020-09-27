@@ -1,0 +1,2 @@
+--create .\processor_common.lib
+.\processor_common.o

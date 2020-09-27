@@ -1,0 +1,82 @@
+filter demo以Sobel算子为例，演示如何使用KDP进行卷积图像处理优化；其他卷积相关图像处理操作跟Sobel算子处理方式类似。
+Sobel算子主要用作边缘检测，卷积因子为：
+Gx：
+-1 0 1
+-2 0 2
+-1 0 1
+Gy：
+ 1  2  1
+ 0  0  0
+-1 -2 -1
+此demo只用横向的卷积核Gx以便更简单的介绍KDP使用流程。
+
+Step1: 构建卷积运算keras模型
+运行model\filter_cnn_gray.py，生成keras模型：filter_cnn_gray.h5
+如果需要使用其他算子，修改filter_cnn_gray.py的weights值即可。
+
+Step2: compiler转换keras模型为KDP算子流文件
+参考《KDP使用简介00B02.pdf》运行compiler。
+[COMPILER页面]
+   - 选择Level1
+   - Yolo去除勾选
+   - Model选择Step1中生成的filter_cnn_gray.h5
+   点击"Compile"按钮，生成KDP算子流文件：output\seq_ai.ops
+
+Step3: KDP加载算子流文件并执行运算
+1. 编译/烧录/调试
+   1) 编译：打开mdk_qfn80\filter.uvprojx进行编译
+   2) 烧录：
+   打开uGelisFlash_f6721b目录：
+	-拷贝编译出来的filter.bin到.\images\filter_weights\system.bin
+	-拷贝Step2生成的seq_ai.ops到.\images\filter_weights\seq_ai_ops.bin
+	-拷贝images\filter_weights\Config.ini到.\Config.ini
+	-运行uGelisFlash，烧录权值和系统镜像到flash。
+   3) 重启运行或调试
+2. 代码解读
+int main(void)
+{
+…
+    device_init();//初始化kdp/lcd/camera/flash等设备
+    ret = ai_load_ops_data(OPS_BIN_FLASH_START, OPS_BIN_SIZE_OPTIMIZE, IMAGE_BIN_FLASH_START, IMAGE_BUFFER_SIZE,  OPS_WEI_BASE, RecvBuffer); //从加载OPS
+    filter_process();//filter处理
+    OBJ_DBG_PRINTF("filter demo exit\n");
+
+    return ret;
+}
+void filter_process(void)
+{
+	dev = easynet_process_init(&dev_cfg, OPS_WEI_BASE, &inputImage[0], &OutputImage[0]);   
+	show_demo_pic = 1; //1：预烧的图片作为输入； 0：Camera帧作为输入
+	while (1)
+    {
+        if (show_demo_pic) //预烧的图片作为输入
+        {
+            dev->input = RecvBuffer; 
+        }
+        else//Camera帧作为输入
+        {
+            ret = dcmi_ioctl(dcmi, VIDIOC_DQBUF, &dis_buf);
+            if(ret == 0)
+            {
+                #ifdef INPUT_RGB
+                rgb_split2rrggbb((unsigned char*)dis_buf.addr, pred_buf_in, INPUT_WIDTH, INPUT_HEIGHT);//转换为kdp所需格式(rgb rgb rgb rgb …?rrr…ggg…. bbb…)
+                #else//INPUT_GRAY
+                imp_format(dis_buf.addr, (uint32_t)pred_buf_in, IMP_INPUT_RGB888, FMT_L8, 0, 0, INPUT_WIDTH, INPUT_HEIGHT);//转换为灰度图输入
+                #endif
+                dev->input = pred_buf_in;
+                …
+            }
+            …
+        }
+        t_last = k_uptime_get_32();
+        #ifdef FILTER_CPU_TEST
+        filter_cpu(dev->input, INPUT_HEIGHT, INPUT_WIDTH);//测试CPU运算时间
+        #else
+        predict(dev, OPS_WEI_BASE, &inputImage[0], &OutputImage[0]);//KDP计算
+        #endif
+        …
+    }    
+	
+}
+
+

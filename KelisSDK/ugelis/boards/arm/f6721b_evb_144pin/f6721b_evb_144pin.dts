@@ -1,0 +1,319 @@
+/*
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <gree/f6721b.dtsi>
+
+/ {
+	model = "GREEicroelectronics F6721B-EVB-144PIN board";
+	compatible = "gree,f6721b-evb-144pin", "gree,f6721b";
+
+	aliases {
+		uart0 = &uart0;
+		uart1 = &uart1;
+		uart2 = &uart2;
+		mmc0  = &mmc0;
+		can0  = &can0;
+        wwdg  = &wwdg;
+        iwdg  = &iwdg;
+        rtc  = &rtc;
+        lvd  = &lvd;
+        camera0 = &camera0;
+		camera1 = &camera1;
+        sccb0 = &sccb0;
+        sccb1 = &sccb1;
+        i2c0 = &i2c0;
+        i2c1 = &i2c1;
+        i2c2 = &i2c2;
+		tim1 = &tim1;
+		tim2 = &tim2;
+		tim3 = &tim3;
+		tim4 = &tim4;
+		tim5 = &tim5;
+		tim8 = &tim8;
+		power = &power;
+		sflash = &sflash;
+	};
+
+	chosen {
+		ugelis,console = &uart2;
+        ugelis,sram = &sram0;
+        #if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
+        ugelis,sdram = &sdram0;
+        #endif
+		ugelis,vout = &vout;
+		ugelis,vin = &vin;
+        ugelis,imp = &imp;
+		ugelis,iwdg = &iwdg;
+		ugelis,wwdg = &wwdg;
+		ugelis,rtc = &rtc;
+		ugelis,lvd = &lvd;
+        ugelis,tim1 = &tim1;
+		ugelis,tim2 = &tim2;
+		ugelis,tim3 = &tim3;
+		ugelis,tim4 = &tim4;
+		ugelis,tim5 = &tim5;
+		ugelis,tim8 = &tim8;
+		ugelis,power = &power;
+		ugelis,i2c0  = &i2c0;
+		ugelis,i2c1  = &i2c1;
+		ugelis,i2c2  = &i2c2;
+		ugelis,sflash = &sflash;
+	};
+};
+
+#if (defined(CONFIG_SDRAM_BOOT) || defined(CONFIG_SLAVE_SDRAM))
+    &sdram0{
+	    reg = <0xc0000000 16777216>; /*16M Sdram Size*/
+	};
+#endif
+
+&i2c0 {
+	baudRate        = <100000>;              //100k
+	addrMode        = <0>;                   //I2C_7BIT_MODE
+	mastertxmode    = <0>;                   //General Call mode
+	speedmode       = <0>;                   //I2C_STANDARD_MODE
+	workmode        = <0>;                   //I2C_MASTER_MODE
+	enableDMA       = <0>;                   //FALSE
+	status          = "ok";
+};
+&i2c1 {
+	baudRate        = <100000>;              //100k
+	addrMode        = <0>;                   //I2C_7BIT_MODE
+	mastertxmode    = <0>;                   //General Call mode
+	speedmode       = <0>;                   //I2C_STANDARD_MODE
+	workmode        = <0>;                   //I2C_MASTER_MODE
+	enableDMA       = <0>;                   //FALSE
+	status          = "ok";
+};
+&i2c2 {
+	mastertxmode    = <0>;                   //General Call mode
+	speedmode       = <0>;                   //I2C_STANDARD_MODE
+	baudRate        = <100000>;              //100k
+	addrMode        = <0>;                   //I2C_7BIT_MODE
+	workmode        = <1>;                   //I2C_SLAVE_MODE
+	enableDMA       = <0>;                   //FALSE
+	status          = "ok";
+};
+
+&uart0 {
+	current-speed  = <19200>;
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&uart1 {
+	current-speed  = <19200>;
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&uart2 {
+	current-speed  = <19200>; //19200 for 8M clock
+	parity         = <1>;
+	wordLength     = <3>;
+	stopBits       = <0>;
+	clockSrc       = <8000000>;
+	status         = "ok";
+};
+
+&vout {
+#if defined (CONFIG_LCD1024x600)
+       vbp = <20>;
+       vfp = <12>;
+       hbp = <140>;
+       hfp = <160>;
+       vsw = <3>;
+       hsw = <20>;
+       pllsain = <170>;
+       pllsaiq = <2>;
+       pllsaidivr = <3>;
+       width = <1024>;
+       height = <600>;
+#elif defined(CONFIG_LCD800x480)
+       vbp = <23>;
+       vfp = <22>;
+       hbp = <46>;
+       hfp = <210>;
+       vsw = <10>;
+       hsw = <20>;
+       pllsain = <150>;
+       pllsaiq = <2>;
+       pllsaidivr = <4>;
+       width = <800>;
+       height = <480>;
+#else
+       vbp = <8>;
+       vfp = <8>;
+       hbp = <40>;
+       hfp = <5>;
+       vsw = <1>;
+       hsw = <1>;
+       pllsain = <0>;
+       pllsaiq = <8>;
+       pllsaidivr = <4>;
+       width = <480>;
+       height = <272>;
+#endif
+       status = "ok";
+};
+
+&camera0 {
+       gpio_rst_port = "GPIOC";
+       gpio_rst_pin  =  <1>;
+       gpio_pwdn_port = "GPIOB";
+       gpio_pwdn_pin  =  <15>;
+       gpio_scl_port = "GPIOI";
+       gpio_scl_pin  =  <2>;
+       gpio_sda_port = "GPIOI";
+       gpio_sda_pin  =  <3>;
+#if defined (CONFIG_OV5640)||defined(OV7725)||defined(BF3007)
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <0>;
+#elif defined (CONFIG_GC0308)
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <1>;
+#elif defined (CONFIG_GC2145)
+       pclk_polarity  =  <0>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <1>;
+#endif
+       status = "ok";
+};
+
+&camera1 {
+       gpio_rst_port = "GPIOG";
+       gpio_rst_pin  =  <11>;
+       gpio_pwdn_port = "GPIOG";
+       gpio_pwdn_pin  =  <7>;
+       gpio_scl_port = "GPIOC";
+       gpio_scl_pin  =  <9>;
+       gpio_sda_port = "GPIOC";
+       gpio_sda_pin  =  <8>;
+#if defined (CONFIG_OV5640)||defined(OV7725)||defined(BF3007)
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <0>;
+#elif defined (CONFIG_GC0308)
+       pclk_polarity  =  <1>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <1>;
+#elif defined (CONFIG_GC2145)
+       pclk_polarity  =  <0>;
+       hsync_polarity =  <0>;
+       vsync_polarity  =  <1>;
+#endif
+       status = "ok";
+};
+
+&vin {
+      status = "ok";
+};
+&imp {
+	status = "ok";
+};
+
+&sccb0 {
+	status = "ok";
+};
+
+&sccb1 {
+	status = "ok";
+};
+
+&i2c0 {
+	status = "ok";
+};
+
+&i2c1 {
+	status = "ok";
+};
+
+&i2c2 {
+	status = "ok";
+};
+&iwdg {
+	status = "ok";
+};
+&wwdg {
+	status = "ok";
+};
+&mmc0 {
+	type                        =  <0>;              /*0:sdcard*/
+	busWitch                    =  <1>;              /*0:BUS_WIDTH_1 1:BUS_WIDTH_4 2:BUS_WIDTH_8*/
+	removable                   =  <1>;              /*0:can not remove  1:can remove*/
+    poll_detect_card_hotplug     ;                   /*use poll to detect card hotplug*/
+    status                      =  "ok";
+};
+&can0 {
+	workmode                    =  <1>;              /*0:CAN_INIT_MODE 1:CAN_STAND_MODE 2:CAN_LISTEN_MODE 3:CAN_SELFTEST_MODE*/
+	baudrate                    =  <20000>;          /*can work baudrate*/
+	errWarnThreshold            =  <110>;            /*can erroe and waring threshold*/
+    sample                      =  <1>;              /*0:CAN_SAM_1 1:CAN_SAM_3 */
+    sjw                         =  <0>;              /*0:CAN_SJW_1TQ 1:CAN_SJW_2TQ 2:CAN_SJW_3TQ 3:CAN_SJW_4TQ */
+    bs1                         =  <6>;              /*n:CAN_TSEG_(n)TQ*/	
+    bs2                         =  <3>;              /*n:CAN_TSEG_(n)TQ*/
+    status                      =  "ok";
+};
+&rtc {
+    status = "ok";
+};
+
+&lvd {
+    status = "ok";
+};
+
+&tim1 {
+    status = "disabled";
+};
+
+&tim2 {
+    status = "disabled";
+};
+
+&tim3 {
+    status = "disabled";
+};
+
+&tim4 {
+    status = "disabled";
+};
+
+&tim5 {
+    status = "disabled";
+};
+
+&tim8 {
+    status = "disabled";
+};
+
+&power {
+       wkpin_xpa0_status                =  <1>; // 0: disable    1: enable
+       wkpin_xpa0_valid_edge            =  <1>; // 0: rising edge  1:falling edge
+       wkpin_xpb12_status               =  <0>; // 0: disable    1: enable
+       wkpin_xpb12_valid_edge           =  <0>; // 0: rising edge  1:falling edge
+       wkpin_xpb13_status               =  <1>; // 0: disable    1: enable
+       wkpin_xpb13_valid_edge           =  <1>; // 0: rising edge  1:falling edge
+       pm_hash_status                   =  <1>; // 0: disable    1: enable
+       pm_shutdown_status_pin_inv       =  <1>; // 0: when system enter shutdown mode,status pin is High,when wake up,shut down pin is Low; 1:inverse
+       status = "ok";
+};
+
+&sflash {
+	readmode                 =  <0>;              /*0:read by cpu mode 1:read by dma mode*/
+	bitmode                  =  <0>;              /*0:read use 4line 1:read use 1line*/
+	clkdiv                   =  <1>;              /*clock div*/
+    status                    =  "ok";
+    addr_space               =  <0x10000000 0x4000>;/*0x10000000:base address 0x4000:flash size(unit :kb)*/
+};
