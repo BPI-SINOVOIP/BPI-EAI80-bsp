@@ -99,11 +99,13 @@
 };
 
 &uart2 {
-	current-speed  = <19200>; //19200 for 8M clock
+	//current-speed  = <19200>; //19200 for 8M clock
+	current-speed  = <115200>; //19200 for 8M clock
 	parity         = <1>;
 	wordLength     = <3>;
 	stopBits       = <0>;
-	clockSrc       = <8000000>;
+	//clockSrc       = <8000000>;
+	clockSrc       = <48000000>;
 	status         = "ok";
 };
 
