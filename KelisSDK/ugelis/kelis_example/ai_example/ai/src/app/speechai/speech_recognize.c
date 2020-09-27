@@ -88,6 +88,47 @@ void pdmReceiveCallback(struct PDM_Handle_T *pPDM, PDM_Event_T event, unsigned l
     }
 }
 
+
+#ifdef BPI
+#else
+/** Configure B9/B10 enable */
+RET_CODE AIoT_Config(void)
+{
+    RET_CODE ret = RET_OK;
+    GPIO_PinConfig_T GPIO_InitStruct;
+
+    HAL_GPIO_PinWrite(GPIOB9, GPIO_PIN_RESET);
+
+    GPIO_InitStruct.pin = GPIO_PIN_9;
+    GPIO_InitStruct.mode = GPIO_MODE_OUTPUT;
+    GPIO_InitStruct.pull = GPIO_PULLUP;
+    GPIO_InitStruct.alternate = 0;
+
+    ret = HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    if (ret != RET_OK)
+    {
+        ret = RET_ERROR;
+    }
+    HAL_GPIO_PinWrite(GPIOB9, GPIO_PIN_RESET);
+		
+    HAL_GPIO_PinWrite(GPIOB10, GPIO_PIN_RESET);
+
+    GPIO_InitStruct.pin = GPIO_PIN_10;
+    GPIO_InitStruct.mode = GPIO_MODE_OUTPUT;
+    GPIO_InitStruct.pull = GPIO_PULLUP;
+    GPIO_InitStruct.alternate = 0;
+
+    ret = HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    if (ret != RET_OK)
+    {
+        ret = RET_ERROR;
+    }
+    HAL_GPIO_PinWrite(GPIOB10, GPIO_PIN_RESET);		
+    return ret;
+}
+
+#endif
+
 /** Configure pinmux for an available PDM device */
 RET_CODE PDMAPinMuxConfig()
 {
@@ -223,7 +264,15 @@ static int pdm_init(speech_recognized_data_t *sp)
         printf("HAL_PDM_Receive_DMA() fail %d!\n", retval);
         return -1;
     }
-
+#ifdef BPI
+#else
+	printf("AIoT: INIT\r\n");	
+  AIoT_Config();		
+  HAL_GPIO_SetPinDirection(GPIOB9, GPIO_PIN_OUTPUT);
+  HAL_GPIO_PinWrite(GPIOB9, GPIO_PIN_RESET);		
+  HAL_GPIO_SetPinDirection(GPIOB10, GPIO_PIN_OUTPUT);
+  HAL_GPIO_PinWrite(GPIOB10, GPIO_PIN_RESET);		
+#endif
     return 0;
 }
 
@@ -438,7 +487,12 @@ void speech_recognize_thread(void *data, void *param, void *not_used)
                 {
                     printf("Timeout!\r\n");
                     printf("\r\n");
-
+#ifdef BPI
+#else									
+										printf("AIoT: BYE\r\n");										
+                    HAL_GPIO_SetPinDirection(GPIOB9, GPIO_PIN_OUTPUT);
+                    HAL_GPIO_PinWrite(GPIOB9, GPIO_PIN_RESET);
+#endif
                     sp->hDSpotter = DSpotterReInit(sp, sp->hDSpotter, RECOGNITION_MODE_TRIGGER);
                     if (sp->hDSpotter == NULL)
                     {
@@ -455,7 +509,20 @@ void speech_recognize_thread(void *data, void *param, void *not_used)
                 if (GetTriggerStringByIndex(nCmdIndex) != NULL)
                 {
                     printf("Get trigger : %s(%d)\r\n", GetTriggerStringByIndex(nCmdIndex), nCmdIndex);
-
+#ifdef BPI
+#else
+									if(nCmdIndex==0) {
+										 printf("AIoT: GO\r\n");
+                     HAL_GPIO_SetPinDirection(GPIOB9, GPIO_PIN_OUTPUT);
+                     HAL_GPIO_PinWrite(GPIOB9, GPIO_PIN_SET);										
+									}
+									else {
+										 printf("AIoT: BYE\r\n");										
+                     HAL_GPIO_SetPinDirection(GPIOB9, GPIO_PIN_OUTPUT);
+                     HAL_GPIO_PinWrite(GPIOB9, GPIO_PIN_RESET);	
+                  }										
+#endif	
+									
                     // show string on lcd
                     speech_ui_init(painter, &notice, UI_BKGRD_COLOR);
                     //speech_ui_show(painter, &notice, nCmdIndex, UI_FOCUS_COLOR);
@@ -480,7 +547,20 @@ void speech_recognize_thread(void *data, void *param, void *not_used)
                 if (GetCommandStringByIndex(nCmdIndex) != NULL)
                 {
                     printf("Get command : %s(%d)\r\n", GetCommandStringByIndex(nCmdIndex), nCmdIndex);
-
+#ifdef BPI
+#else
+									if(nCmdIndex==0) {
+										 printf("AIoT: ON\r\n");
+                     HAL_GPIO_SetPinDirection(GPIOB10, GPIO_PIN_OUTPUT);
+                     HAL_GPIO_PinWrite(GPIOB10, GPIO_PIN_SET);										
+									}
+									else {
+										 printf("AIoT: OFF\r\n");										
+                     HAL_GPIO_SetPinDirection(GPIOB10, GPIO_PIN_OUTPUT);
+                     HAL_GPIO_PinWrite(GPIOB10, GPIO_PIN_RESET);	
+                  }										
+#endif	
+									
                     // show string on lcd
                     if (sp->last_cmd_index >= 0)
                     {

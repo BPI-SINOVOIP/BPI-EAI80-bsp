@@ -225,7 +225,7 @@ void window_1_callback(UG_MESSAGE *msg)
                     case BTN_ID_5:
                     case BTN_ID_6:
                         UG_TextboxSetForeColor(&ugui->window, TXB_ID_0, 0xFFFFFFFF);
-                        UG_TextboxSetText(&ugui->window, TXB_ID_0, "AI Demo");
+                        UG_TextboxSetText(&ugui->window, TXB_ID_0, "BPI-EAI80");
                         UG_ImageSetBMP(&ugui->window, msg->sub_id, &icons[msg->sub_id].btn.img_pressed);
                         _UG_UpdateObjects(&ugui->window);
                         //ui_clear_area(CAM_DISP_X, 0, CAM_DISP_W, CAM_DISP_H);
@@ -371,7 +371,7 @@ gui_info_t *ugui_start()
 
     UG_TextboxCreate(window, textbox, TXB_ID_0, 0, 15 * DESIGN_W, CAM_DISP_X - 2, 30 + 15 * DESIGN_W - 1);
     UG_TextboxSetFont(window, TXB_ID_0, &FONT_8X12);
-    UG_TextboxSetText(window, TXB_ID_0, "AI Demo");//This is a \n test sample window!");
+    UG_TextboxSetText(window, TXB_ID_0, "BPI-EAI80");//This is a \n test sample window!");
     UG_TextboxSetForeColor(window, TXB_ID_0, 0xFFFFFFFF);
     UG_TextboxSetBackColor(window, TXB_ID_0, UI_BKGRD_COLOR);
     UG_TextboxSetAlignment(window, TXB_ID_0, ALIGN_CENTER);

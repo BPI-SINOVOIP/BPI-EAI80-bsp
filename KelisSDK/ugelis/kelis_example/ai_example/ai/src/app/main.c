@@ -160,7 +160,8 @@ int app_unbind_event()
 int main()
 {
     app_t *app = &gAI;
-    printf("\n ------- AI Demo ver.20200421 ------- \n");
+    //printf("\n ------- AI Demo ver.20200731(BPI-EAI80) ------- \n");
+	  printf("\n ------- AI Demo ver.20200927(BPI-EAI80) B9/B10 ------- \n");
 
     app_init(app);
     stream_start_videoview();
